@@ -1,0 +1,45 @@
+<!--
+  Generated template for the NewsPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>Ανακοινώσεις</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+<div id="news-button-bar3" class="button-bar">
+      <button id="news-button19" ng-class="{'active': activeSection==1}" ng-click="changeSection(1)" class="button button-positive button-block">Νέες</button>
+      <button id="news-button20" ng-class="{'active': activeSection==2}" ng-click="changeSection(2)" class="button button-positive button-block">Προηγούμενες</button>
+    </div>
+    <div class="spacer" style="width: 300px; height: 39px;"></div>
+    <div>
+      <ion-refresher on-refresh="doRefresh(true)">
+      </ion-refresher>
+
+
+      <ion-list>
+        <ion-item class="item-thumbnail-left item" data-tap-disabled="true" ng-repeat="new in news" ui-sref="new({id:new.F401ID})">
+          <img src="http://192.168.10.107/zeportalapi/PreviewImage.ashx?refItemId={{new.F401ID}}&amp;refTableId=401&amp;imageSize=S&amp;imgHeight=100&amp;imgWidth=100&amp;language=EL">
+          <h2>{{new.F401PUBDATE | date: 'dd/MM/yyyy'}}</h2>
+          <p>{{new.F401TITLE}}</p>
+        </ion-item>
+      </ion-list>
+
+      <div overflow-scroll="true" padding="true" class="has-header">
+        <ion-infinite-scroll on-infinite="doInfinite()" distance="1%">
+          <ion-infinite-scroll-content></ion-infinite-scroll-content>
+        </ion-infinite-scroll>
+      </div>
+
+    </div>
+    <div id="news-markdown38" ng-show="noData" style="text-align:center;" class="show-list-numbers-and-dots">
+      <p style="color:#000000;">Δεν υπάρχουν δεδομένα</p>
+    </div>
+</ion-content>

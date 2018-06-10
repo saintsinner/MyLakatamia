@@ -1,0 +1,8 @@
+{
+  "name": "MyLakatamia",
+  "app_id": "af849ae1",
+  "type": "ionic-angular",
+  "integrations": {
+    "cordova": {}
+  }
+}
