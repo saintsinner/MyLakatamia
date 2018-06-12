@@ -13,34 +13,15 @@ export class ServicesProvider {
     baseUrlLocal: String = "http://192.168.10.104/";
     baseUrlLive: String = "https://mylakatamia.zebrac.com/";
     baseUrl: String = this.baseUrlLocal;
-    //data: any;
+    data: any;
     constructor(public http: HttpClient, public alertCtrl: AlertController) {
         console.log('Hello ServicesProvider Provider');
     }
 
-    getLakatamia2(params: HttpParams): Observable<any> {
-        return this.http.get(this.baseUrl + 'zePortalAPI/api/mylakatamia/getpages', { params }, { responseType: 'json' })
-            .subscribe(
-            data => {
-                console.log("User Login: " + JSON.parse(data).data);
-                //this.data = data;
-                //console.log(this.data.F420HTMLTOPDESC);
-                //resolve(this.data);
-            },
-            (err: HttpErrorResponse) => {
-                console.log(err.message)
-                    //console.log(JSON.parse(params))
-                    const alert = this.alertCtrl.create({
-                    title: 'Πρόβλημα',
-                    subTitle: err.message,
-                    buttons: ['ΕΝΤΑΞΕΙ']
-                });
-                alert.present();
-            });
-    }
-    getLakatamia(params: HttpParams) {
+   
+    getPage(params: HttpParams) {
         //if (this.data) {
-        //    alert('ok');
+        //    //alert('ok');
         //    return Promise.resolve(this.data);
         //}
 
@@ -51,7 +32,7 @@ export class ServicesProvider {
                     //console.log("User Login: " + data.F420HTMLTOPDESC);
                         this.data = data;
                         //console.log(this.data.F420HTMLTOPDESC);
-                        resolve(this.data);
+                    resolve(this.data);
                 },
                 (err: HttpErrorResponse) => {
                     console.log(err.message)

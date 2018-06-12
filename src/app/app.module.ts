@@ -3,8 +3,8 @@ import { ErrorHandler, NgModule } from '@angular/core';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 import { HTTP } from '@ionic-native/http';
 import { HttpClientModule } from '@angular/common/http';
-import { CommonModule } from "@angular/common";
 import { FormsModule } from '@angular/forms';
+import { SQLite } from '@ionic-native/sqlite';
 
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
@@ -49,6 +49,8 @@ import { YpovoliApopsisEisigisisPage } from '../pages/ypovoli-apopsis-eisigisis/
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { ServicesProvider } from '../providers/services/services';
+import { SqlLiteProvider } from '../providers/sql-lite/sql-lite';
+
 
 @NgModule({
   declarations: [
@@ -90,13 +92,12 @@ import { ServicesProvider } from '../providers/services/services';
 	SubmitProblemPage,
 	TeliForoiKaiAllesAdeiesPage,
 	YdatopromitheiaPage,
-	YpovoliApopsisEisigisisPage
+      YpovoliApopsisEisigisisPage
   ],
   imports: [
     BrowserModule,
       IonicModule.forRoot(MyApp),
       HttpClientModule,
-      CommonModule,
       FormsModule,
   ],
   bootstrap: [IonicApp],
@@ -139,17 +140,18 @@ import { ServicesProvider } from '../providers/services/services';
 	SubmitProblemPage,
 	TeliForoiKaiAllesAdeiesPage,
 	YdatopromitheiaPage,
-	YpovoliApopsisEisigisisPage
+      YpovoliApopsisEisigisisPage
   ],
   providers: [
     StatusBar,
       SplashScreen,
       HTTP,
       HttpClientModule,
-      CommonModule,
       FormsModule,
+      SQLite,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
-    ServicesProvider
+    ServicesProvider,
+    SqlLiteProvider
   ]
 })
 export class AppModule {}
