@@ -1,11 +1,13 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { ErrorHandler, NgModule } from '@angular/core';
-import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
+import { IonicApp, IonicErrorHandler, IonicModule, Platform } from 'ionic-angular';
 import { HTTP } from '@ionic-native/http';
+import { Network } from '@ionic-native/network';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { SQLite } from '@ionic-native/sqlite';
 
+import { SafePipe } from '../pipes/safe/safe';
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import { ListPage } from '../pages/list/list';
@@ -92,7 +94,8 @@ import { SqlLiteProvider } from '../providers/sql-lite/sql-lite';
 	SubmitProblemPage,
 	TeliForoiKaiAllesAdeiesPage,
 	YdatopromitheiaPage,
-      YpovoliApopsisEisigisisPage
+	  YpovoliApopsisEisigisisPage,
+	  SafePipe
   ],
   imports: [
     BrowserModule,
@@ -145,7 +148,8 @@ import { SqlLiteProvider } from '../providers/sql-lite/sql-lite';
   providers: [
     StatusBar,
       SplashScreen,
-      HTTP,
+	  HTTP,
+	  Network,
       HttpClientModule,
       FormsModule,
       SQLite,

@@ -2,7 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { IonicPage, NavController, NavParams, Refresher } from 'ionic-angular';
 //import { HTTP } from '@ionic-native/http';
 import { ServicesProvider } from '../../providers/services/services';
-import { SqlLiteProvider } from '../../providers/sql-lite/sql-lite';
+//import { SqlLiteProvider } from '../../providers/sql-lite/sql-lite';
 import { HttpParams } from '@angular/common/http';
 
 /**
@@ -18,9 +18,6 @@ import { HttpParams } from '@angular/common/http';
     templateUrl: 'lakatamia.html',
 })
 export class LakatamiaPage {
-    baseUrlLocal: String = "http://192.168.10.104/";
-    baseUrlLive: String = "https://mylakatamia.zebrac.com/";
-    baseUrl: String = this.baseUrlLocal;
     params: any;
     dataset: any;
     isDataAvailable: boolean = false;
@@ -30,35 +27,15 @@ export class LakatamiaPage {
     //// Declaring the Promise, yes! Promise!
     //filtersLoaded: Promise<boolean>;
     mysections: string = '1';
-    constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider, private sqlLiteProvider: SqlLiteProvider) {
-        console.log('Constructor LakatamiaPage');
+    //constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider, private sqlLiteProvider: SqlLiteProvider) {
+    constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider) {
+        //console.log('Constructor LakatamiaPage');
         //sqlLiteProvider.addDanceMove('tango');
         //sqlLiteProvider.getDanceMoves();
-        //alert(this.filtersLoaded);
-        //this.http = httpClient;
-        //        this.getContent();
-
-        //this.http.get('http://192.168.10.104/' + 'zePortalAPI/api/mylakatamia/getpages', this.params, {})
-        //    .then(data => {
-        //        this.dataset = JSON.parse(data.data);
-        //        console.log(data.status);
-        //        console.log(this.dataset); // data received by server
-        //        console.log(data.headers);
-
-        //    })
-        //    .catch(error => {
-
-        //        console.log(error.status);
-        //        console.log(error.error); // error message as string
-        //        console.log(error.headers);
-
-        //    });
     }
 
-
-
     doRefresh(refresher) {
-        console.log('Begin async operation', refresher);
+        //console.log('Begin async operation', refresher);
         //this.getContent(http)
         this.mysections = '1';
         this.getContent(refresher, '1004');
@@ -120,7 +97,8 @@ export class LakatamiaPage {
         this.servicesProvider.getPage(this.params)
             .then(data => {
                 //alert('');
-                this.dataset = JSON.parse(data);
+                this.dataset = JSON.parse(data.toString());
+                //this.dataset = data;
                 //this.filtersLoaded = Promise.resolve(true);
                 this.isDataAvailable = true;
                 if (this.mysections == "1") {
@@ -137,34 +115,10 @@ export class LakatamiaPage {
                 //console.log("User Login: " + JSON.parse(this.dataset)[0].F420TITLE);
             });
     }
-    //    this.params = {
-    //        INSTID: '1044', ID: '1004',
-    //        TITLE: '', SECTIONS: '0', desc: '', enablesum: '', keywords: '', pagename: '', masterp: '0', path: '', htmltopimg: '',
-    //        htmltopdesc: '', htmloverview: '', htmlconclusion: '', htmls1: '', htmll1: '', htmls2: '', htmll2: '', htmls3: '',
-    //        htmll3: '', htmls4: '', htmll4: '', htmls5: '', htmll5: '', htmls6: '', htmll6: '', htmls7: '', htmll7: '', htmls8: '',
-    //        htmll8: '', htmls9: '', htmll9: '', htmls10: '', htmll10: '', lang: 'EL', sortby: 'F420ID', sortorder: 'ASC', currentpage: '1',
-    //        pagesize: '10', count: '0', runoption: 'I', USER_UI_LANGUAGE: 'EL', userprofile: '', retcode: '0', retmsg: '0', rettype: 'I'
-    //    }
-    //    this.http.get('http://192.168.10.104/' + 'zePortalAPI/api/mylakatamia/getpages', this.params, {})
-    //        .then(data => {
-    //            this.dataset = JSON.parse(data);
-    //            console.log(data.status);
-    //            console.log(data.data); // data received by server
-    //            console.log(data.headers);
-
-    //        })
-    //        .catch(error => {
-
-    //            console.log(error.status);
-    //            console.log(error.error); // error message as string
-    //            console.log(error.headers);
-
-    //        });
-    //}
 
 
     ionViewCanEnter() {
-        console.log('ionViewDidLoad LakatamiaPage');
+        //console.log('ionViewDidLoad LakatamiaPage');
         //alert(this.baseUrl);
         //this.getContent();
         

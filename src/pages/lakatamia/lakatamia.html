@@ -6,21 +6,21 @@
 -->
 <ion-header>
     <ion-navbar>
-        <ion-title><div *ngIf="isDataAvailable">
-    {{dataset[0].F420TITLE}}
-</div></ion-title>
+        <ion-title>Λακατάμια</ion-title>
     </ion-navbar>
 </ion-header>
 
 <ion-content padding>
-    <ion-refresher (onrefresh)="doRefresh($event)">
+    <ion-refresher (ionRefresh)="doRefresh($event)">
         <ion-refresher-content>pullingIcon="arrow-dropdown"</ion-refresher-content>
     </ion-refresher>
+    
+    
     <ion-segment [(ngModel)]="mysections">
         <ion-segment-button value="1" (click)="getContent(myrefresher,'1004')">
             Η ΠΟΛΗ
         </ion-segment-button>
-        <ion-segment-button value="2" (click)="getContent(myrefresher,'1005')">
+        <ion-segment-button value="2" (click)="getContent(myrefresher,'1009')">
             Ο ΔΗΜΟΣ
         </ion-segment-button>
     </ion-segment>
@@ -28,14 +28,16 @@
     
     <div [ngSwitch]="mysections">
         <ion-list *ngSwitchCase="'1'">
-            <div *ngIf="isTab1Available">
-                {{dataset[0].F420HTMLS1}}
+                <div *ngIf="isTab1Available" [innerHTML]="dataset[0].F420HTMLTOPIMG | safe: 'html'">
+                    </div>
+            <div *ngIf="isTab1Available" [innerHTML]="dataset[0].F420HTMLL1 | safe: 'html'">
             </div>
         </ion-list>
 
         <ion-list *ngSwitchCase="'2'">
-            <div *ngIf="isTab2Available">
-                {{dataset[0].F420TITLE}}
+                <div *ngIf="isTab2Available" [innerHTML]="dataset[0].F420HTMLTOPIMG | safe: 'html'">
+                    </div>
+            <div *ngIf="isTab2Available" [innerHTML]="dataset[0].F420HTMLL1 | safe: 'html'">
             </div>
         </ion-list>
     </div>
