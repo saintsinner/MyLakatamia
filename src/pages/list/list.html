@@ -3,21 +3,26 @@
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>List</ion-title>
+    <ion-title>Μενού</ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content>
+
   <ion-list>
-    <button ion-item *ngFor="let item of items" (click)="itemTapped($event, item)">
-      <ion-icon [name]="item.icon" item-start></ion-icon>
-      {{item.title}}
-      <div class="item-note" item-end>
-        {{item.note}}
-      </div>
-    </button>
+    <ion-item class="item-icon-left" id="menu-list-item23" (click)="goToHome()" >
+      <i class="icon ion-home"></i>MyLakatamia</ion-item>
+    <ion-item *ngIf="servicesProvider.checkTokens()" class="item-icon-left" id="menu-list-item7" (click)="goToProfile()" >
+      <i class="icon ion-android-person"></i>Προφίλ</ion-item>
+    <ion-item *ngIf="!servicesProvider.checkTokens()" class="item-icon-left" id="menu-list-item8" (click)="goToProfile()" >
+      <i class="icon ion-folder"></i>Εγγραφή</ion-item>
+    <ion-item *ngIf="servicesProvider.checkTokens()" class="item-icon-left" id="menu-list-item8" (click)="goToChangePassword()" >
+      <i class="icon ion-android-lock"></i>Αλλαγή Κωδικού / Μυστικής Ερώτησης</ion-item>
+    <ion-item *ngIf="!servicesProvider.checkTokens()" class="item-icon-left" id="menu-list-item9" (click)="goToLogin()" >
+      <i class="icon ion-log-in"></i>Είσοδος</ion-item>
+    <ion-item *ngIf="servicesProvider.checkTokens()" class="item-icon-left" ng-click="logout()" id="menu-list-item9" >
+      <i class="icon ion-log-out"></i>Έξοδος</ion-item>
+    <ion-item class="item-icon-left" id="menu-list-item24" (click)="goToSettings()" >
+      <i class="icon ion-android-settings"></i>Ρυθμίσεις</ion-item>
   </ion-list>
-  <div *ngIf="selectedItem" padding>
-    You navigated here from <b>{{selectedItem.title}}</b>
-  </div>
 </ion-content>

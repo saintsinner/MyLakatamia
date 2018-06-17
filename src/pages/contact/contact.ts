@@ -14,12 +14,12 @@ import { HttpParams } from '@angular/common/http';
 
 @IonicPage()
 @Component({
-  selector: 'page-contact',
-  templateUrl: 'contact.html',
+    selector: 'page-contact',
+    templateUrl: 'contact.html',
 })
 export class ContactPage {
 
-  params: any;
+    params: any;
     dataset: any;
     isDataAvailable: boolean = false;
     isTab1Available: boolean = false;
@@ -46,7 +46,7 @@ export class ContactPage {
 
     getContent(refresher, pageId) {
         this.params = new HttpParams()
-            .set('INSTID', '1044')
+            .set('INSTID', this.servicesProvider.instId.toString())
             .set('ID', pageId)
             .set('TITLE', '')
             .set('SECTIONS', '0')
@@ -80,26 +80,26 @@ export class ContactPage {
             .set('htmll9', '')
             .set('htmls10', '')
             .set('htmll10', '')
-            .set('lang', 'EL')
+            .set('lang', this.servicesProvider.language)
             .set('sortby', 'F420ID')
             .set('sortorder', 'ASC')
             .set('currentpage', '1')
             .set('pagesize', '10')
             .set('count', '0')
             .set('runoption', 'I')
-            .set('USER_UI_LANGUAGE', 'EL')
+            .set('USER_UI_LANGUAGE', this.servicesProvider.language)
             .set('userprofile', '')
             .set('retcode', '0')
             .set('retmsg', '0')
             .set('rettype', 'I');
-        this.servicesProvider.getPage(this.params)
+        this.servicesProvider.getContent("GetPages", this.params)
             .then(data => {
                 //alert('');
                 this.dataset = JSON.parse(data.toString());
                 //this.dataset = data;
                 //this.filtersLoaded = Promise.resolve(true);
                 this.isDataAvailable = true;
-                
+
                 this.isTab1Available = true;
                 refresher.complete();
                 //alert(data);
@@ -107,23 +107,10 @@ export class ContactPage {
             });
     }
 
-
+    //if we want to use cache use ionViewDidLoad instead of ionViewCanEnter
     ionViewCanEnter() {
         //console.log('ionViewDidLoad LakatamiaPage');
-        //alert(this.baseUrl);
-        //this.getContent();
-
-        //this.params = {
-        //    INSTID: '1044', ID: '1004',
-        //    TITLE: '', SECTIONS: '0', desc: '', enablesum: '', keywords: '', pagename: '', masterp: '0', path: '', htmltopimg: '',
-        //    htmltopdesc: '', htmloverview: '', htmlconclusion: '', htmls1: '', htmll1: '', htmls2: '', htmll2: '', htmls3: '',
-        //    htmll3: '', htmls4: '', htmll4: '', htmls5: '', htmll5: '', htmls6: '', htmll6: '', htmls7: '', htmll7: '', htmls8: '',
-        //    htmll8: '', htmls9: '', htmll9: '', htmls10: '', htmll10: '', lang: 'EL', sortby: 'F420ID', sortorder: 'ASC', currentpage: '1',
-        //    pagesize: '10', count: '0', runoption: 'I', USER_UI_LANGUAGE: 'EL', userprofile: '', retcode: '0', retmsg: '0', rettype: 'I'
-        //}
         this.doRefresh(this.myrefresher);
-
     }
-
 }
 

@@ -15,7 +15,9 @@
         <ion-refresher-content>pullingIcon="arrow-dropdown"</ion-refresher-content>
     </ion-refresher>
     
-    
+    <ion-icon name="md-share" style="padding:7px;height:55px;width:55px;margin:auto;color:#488aff; font-size: 20px;"></ion-icon>
+    <ion-icon name="ios-thumbs-up-outline" style="padding:7px;height:55px;width:55px;margin:auto;color:#488aff; font-size: 20px;"></ion-icon>100
+    <ion-icon name="ios-thumbs-down-outline" style="padding:7px;height:55px;width:55px;margin:auto;color:#488aff; font-size: 20px;"></ion-icon>20
     <ion-segment [(ngModel)]="mysections">
         <ion-segment-button value="1" (click)="getContent(myrefresher,'1004')">
             Η ΠΟΛΗ
@@ -28,16 +30,19 @@
     
     <div [ngSwitch]="mysections">
         <ion-list *ngSwitchCase="'1'">
-                <div *ngIf="isTab1Available" [innerHTML]="dataset[0].F420HTMLTOPIMG | safe: 'html'">
-                    </div>
-            <div *ngIf="isTab1Available" [innerHTML]="dataset[0].F420HTMLL1 | safe: 'html'">
+            <div *ngIf="isTab1Available">
+                <div [innerHTML]="dataset[0].F420HTMLTOPIMG | safe: 'html'">
+                </div>
+                <div [innerHTML]="dataset[0].F420HTMLL1 | safe: 'html'">
+                </div>
             </div>
         </ion-list>
-
         <ion-list *ngSwitchCase="'2'">
-                <div *ngIf="isTab2Available" [innerHTML]="dataset[0].F420HTMLTOPIMG | safe: 'html'">
-                    </div>
-            <div *ngIf="isTab2Available" [innerHTML]="dataset[0].F420HTMLL1 | safe: 'html'">
+            <div *ngIf="isTab2Available">
+                <div [innerHTML]="dataset[0].F420HTMLTOPIMG | safe: 'html'">
+                </div>
+                <div [innerHTML]="dataset[0].F420HTMLL1 | safe: 'html'">
+                </div>
             </div>
         </ion-list>
     </div>

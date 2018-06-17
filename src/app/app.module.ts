@@ -7,6 +7,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { SQLite } from '@ionic-native/sqlite';
 
+//import { SocialSharing } from '@ionic-native/social-sharing';
 import { SafePipe } from '../pipes/safe/safe';
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
@@ -101,7 +102,7 @@ import { SqlLiteProvider } from '../providers/sql-lite/sql-lite';
     BrowserModule,
       IonicModule.forRoot(MyApp),
       HttpClientModule,
-      FormsModule,
+	  FormsModule,
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -152,7 +153,7 @@ import { SqlLiteProvider } from '../providers/sql-lite/sql-lite';
 	  Network,
       HttpClientModule,
       FormsModule,
-      SQLite,
+	  SQLite,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     ServicesProvider,
     SqlLiteProvider
