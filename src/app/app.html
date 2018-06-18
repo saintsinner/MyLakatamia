@@ -1,15 +1,35 @@
 <ion-menu [content]="content">
   <ion-header>
     <ion-toolbar>
-      <ion-title>Menu</ion-title>
+      <ion-title>Μενού</ion-title>
     </ion-toolbar>
   </ion-header>
 
   <ion-content>
+
+
     <ion-list>
-      <button menuClose ion-item *ngFor="let p of pages" (click)="openPage(p)">
-        {{p.title}}
-      </button>
+      <ion-item (click)="openPage('HomePage')" menuClose>
+        <ion-icon name="md-home" style="margin:auto;color:#488aff;"></ion-icon>
+        MyLakatamia</ion-item>
+      <ion-item *ngIf="servicesProvider.checkTokens()" (click)="openPage('ProfilePage')" menuClose>
+        <ion-icon name="md-person" style="margin:auto;color:#488aff;"></ion-icon>
+        Προφίλ</ion-item>
+      <ion-item *ngIf="!servicesProvider.checkTokens()" (click)="openPage('ProfilePage')" menuClose>
+        <ion-icon name="md-person" style="margin:auto;color:#488aff;"></ion-icon>
+        Εγγραφή</ion-item>
+      <ion-item *ngIf="servicesProvider.checkTokens()" (click)="openPage('ChangePasswordPage')" menuClose>
+        <ion-icon name="md-lock" style="margin:auto;color:#488aff;"></ion-icon>
+        Αλλαγή Κωδικού / Μυστικής Ερώτησης</ion-item>
+      <ion-item *ngIf="!servicesProvider.checkTokens()" (click)="openPage('LoginPage')" menuClose>
+        <ion-icon name="md-log-in" style="margin:auto;color:#488aff;"></ion-icon>
+        Είσοδος</ion-item>
+      <ion-item *ngIf="servicesProvider.checkTokens()" ng-click="logout()" menuClose>
+        <ion-icon name="md-log-out" style="margin:auto;color:#488aff;"></ion-icon>
+        Έξοδος</ion-item>
+      <ion-item (click)="openPage('SettingsPage')">
+        <ion-icon name="md-settings" style="margin:auto;color:#488aff;" menuClose></ion-icon>
+        Ρυθμίσεις</ion-item>
     </ion-list>
   </ion-content>
 
