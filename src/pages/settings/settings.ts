@@ -1,5 +1,9 @@
-import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { Component, ViewChild } from '@angular/core';
+import { IonicPage, NavController, NavParams, Refresher } from 'ionic-angular';
+//import { HTTP } from '@ionic-native/http';
+import { ServicesProvider } from '../../providers/services/services';
+//import { SqlLiteProvider } from '../../providers/sql-lite/sql-lite';
+import { HttpParams } from '@angular/common/http';
 
 /**
  * Generated class for the SettingsPage page.
@@ -15,7 +19,7 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 })
 export class SettingsPage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider) {
   }
 
   ionViewDidLoad() {

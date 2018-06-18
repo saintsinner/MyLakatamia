@@ -19,33 +19,34 @@ export class ServicesProvider {
     data: any;
     myLoading: any;
     contID: any = null;
-    public online: boolean = true;
+    online: boolean = true;
     disconnectSubscription: any;
+    isApp:any;
     constructor(public http: HttpClient, public alertCtrl: AlertController, private network: Network, public platform: Platform, public loadingCtrl: LoadingController) {
         //console.log('Hello ServicesProvider Provider');
 
         this.platform.ready().then(() => {
             let type = this.network.type;
-
+            this.isApp = !document.URL.startsWith('http');
             //console.log("Connection type: ", this.network.type);
             // Try and find out the current online status of the device
             if (type == "unknown" || type == "none" || type == undefined) {
-                //console.log("The device is not online");
+                console.log("The device is not online");
                 this.online = false;
             } else {
-                //console.log("The device is online!");
+                console.log("The device is online!");
                 this.online = true;
             }
         });
 
         this.network.onDisconnect().subscribe(() => {
             this.online = false;
-            //console.log('network was disconnected :-(');
+            console.log('network was disconnected :-(');
         });
 
         this.network.onConnect().subscribe(() => {
             this.online = true;
-            //console.log('network was connected :-)');
+            console.log('network was connected :-)');
         });
     }
 
@@ -92,36 +93,45 @@ export class ServicesProvider {
    }*/
 
     getContent(myservice: string, params: HttpParams) {
-        this.myLoading = this.loadingCtrl.create({
-            content: 'Παρακαλώ περιμένετε...'
-        });
-        this.myLoading.present();
-        //if (this.data) {
-        //    //alert('ok');
-        //    return Promise.resolve(this.data);
-        //}
+        //alert(this.online);
+        if (this.online || !this.isApp) {
+            this.myLoading = this.loadingCtrl.create({
+                content: 'Παρακαλώ περιμένετε...'
+            });
+            this.myLoading.present();
+            //if (this.data) {
+            //    //alert('ok');
+            //    return Promise.resolve(this.data);
+            //}
 
-        return new Promise(resolve => {
-            this.http.get(this.baseUrl + 'zePortalAPI/api/mylakatamia/' + myservice, { params })
-                .subscribe(
-                    data => {
-                        this.myLoading.dismiss();
-                        //console.log("User Login: " + data.F420HTMLTOPDESC);
-                        this.data = data;
-                        //console.log(this.data.F420HTMLTOPDESC);
-                        resolve(this.data);
-                    },
-                    (err: HttpErrorResponse) => {
-                        console.log(err.message)
-                        //console.log(JSON.parse(params))
-                        const alert = this.alertCtrl.create({
-                            title: 'Πρόβλημα',
-                            subTitle: err.message,
-                            buttons: ['ΕΝΤΑΞΕΙ']
+            return new Promise(resolve => {
+                this.http.get(this.baseUrl + 'zePortalAPI/api/mylakatamia/' + myservice, { params })
+                    .subscribe(
+                        data => {
+                            this.myLoading.dismiss();
+                            //console.log("User Login: " + data.F420HTMLTOPDESC);
+                            this.data = data;
+                            //console.log(this.data.F420HTMLTOPDESC);
+                            resolve(this.data);
+                        },
+                        (err: HttpErrorResponse) => {
+                            console.log(err.message)
+                            //console.log(JSON.parse(params))
+                            const alert = this.alertCtrl.create({
+                                title: 'Πρόβλημα',
+                                subTitle: err.message,
+                                buttons: ['ΕΝΤΑΞΕΙ']
+                            });
+                            this.myLoading.dismiss();
+                            alert.present();
                         });
-                        this.myLoading.dismiss();
-                        alert.present();
-                    });
-        });
+            });
+        }
+        else{
+            if (this.data) {
+                //alert('ok');
+                return Promise.resolve(this.data);
+            }
+        }
     }
 }

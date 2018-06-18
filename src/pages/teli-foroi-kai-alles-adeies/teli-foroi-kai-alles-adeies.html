@@ -7,12 +7,16 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>teliForoiKaiAllesAdeies</ion-title>
+    <ion-title>Τέλη, Φόροι και Άλλες Άδειες</ion-title>
   </ion-navbar>
 
 </ion-header>
 
 
 <ion-content padding>
-
-</ion-content>
+    <ion-refresher (ionRefresh)="doRefresh($event)">
+      <ion-refresher-content>pullingIcon="arrow-dropdown"</ion-refresher-content>
+  </ion-refresher>
+  <div *ngIf="isDataAvailable" [innerHTML]="dataset[0].F420HTMLL1 | safe: 'html'">  
+  </div>
+  </ion-content>

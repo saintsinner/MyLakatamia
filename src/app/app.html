@@ -20,15 +20,15 @@
         Εγγραφή</ion-item>
       <ion-item *ngIf="servicesProvider.checkTokens()" (click)="openPage('ChangePasswordPage')" menuClose>
         <ion-icon name="md-lock" style="margin:auto;color:#488aff;"></ion-icon>
-        Αλλαγή Κωδικού / Μυστικής Ερώτησης</ion-item>
+        Αλλαγή Κωδικού</ion-item>
       <ion-item *ngIf="!servicesProvider.checkTokens()" (click)="openPage('LoginPage')" menuClose>
         <ion-icon name="md-log-in" style="margin:auto;color:#488aff;"></ion-icon>
         Είσοδος</ion-item>
       <ion-item *ngIf="servicesProvider.checkTokens()" ng-click="logout()" menuClose>
         <ion-icon name="md-log-out" style="margin:auto;color:#488aff;"></ion-icon>
         Έξοδος</ion-item>
-      <ion-item (click)="openPage('SettingsPage')">
-        <ion-icon name="md-settings" style="margin:auto;color:#488aff;" menuClose></ion-icon>
+      <ion-item (click)="openPage('SettingsPage')" menuClose>
+        <ion-icon name="md-settings" style="margin:auto;color:#488aff;"></ion-icon>
         Ρυθμίσεις</ion-item>
     </ion-list>
   </ion-content>
