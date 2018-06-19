@@ -31,9 +31,9 @@
           <ion-list>
             <ion-item *ngFor="let item of dataset" data-tap-disabled="true" (click)="goToNew(item.F401ID)">
                 <ion-thumbnail item-start>
-              <img src="{{servicesProvider.baseUrl}}zeportalapi/PreviewImage.ashx?refItemId={{item.F401ID}}&amp;refTableId=401&amp;imageSize=S&amp;imgHeight=100&amp;imgWidth=100&amp;language=EL">
+                    <ion-badge item-start style="padding:10px;font-size:50px;">Αν</ion-badge>
             </ion-thumbnail>
-            <h2>{{item.F401TITLE}}</h2>
+            <h2 style="white-space: normal;">{{item.F401TITLE}}</h2>
             <p>{{item.F401PUBDATE | date: 'dd/MM/yyyy'}}</p>
             </ion-item>
           </ion-list>
@@ -47,9 +47,9 @@
             <ion-list>
                 <ion-item *ngFor="let item of datasetOld" data-tap-disabled="true" (click)="goToNew(item.F401ID)">
                     <ion-thumbnail item-start>
-                  <img src="{{servicesProvider.baseUrl}}zeportalapi/PreviewImage.ashx?refItemId={{item.F401ID}}&amp;refTableId=401&amp;imageSize=S&amp;imgHeight=100&amp;imgWidth=100&amp;language=EL">
+                        <ion-badge item-start style="padding:10px;font-size:50px;">Αν</ion-badge>
                 </ion-thumbnail>
-                <h2>{{item.F401TITLE}}</h2>
+                <h2 style="white-space: normal;">{{item.F401TITLE}}</h2>
                 <p>{{item.F401PUBDATE | date: 'dd/MM/yyyy'}}</p>
                 </ion-item>
               </ion-list>

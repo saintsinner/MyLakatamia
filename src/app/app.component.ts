@@ -68,7 +68,5 @@ export class MyApp {
       default:
       this.nav.setRoot(HomePage);
     }
-
-
   }
 }

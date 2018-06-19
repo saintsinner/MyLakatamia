@@ -108,7 +108,7 @@ export class ContactPage {
     }
 
     //if we want to use cache use ionViewDidLoad instead of ionViewCanEnter
-    ionViewCanEnter() {
+    ionViewDidLoad() {
         //console.log('ionViewDidLoad LakatamiaPage');
         this.doRefresh(this.myrefresher);
     }

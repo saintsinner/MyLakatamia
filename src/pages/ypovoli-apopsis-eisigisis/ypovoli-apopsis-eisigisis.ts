@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import {Validators, FormBuilder, FormGroup } from '@angular/forms';
 
 /**
  * Generated class for the YpovoliApopsisEisigisisPage page.
@@ -14,8 +15,16 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
   templateUrl: 'ypovoli-apopsis-eisigisis.html',
 })
 export class YpovoliApopsisEisigisisPage {
+  private todo : FormGroup;
+  constructor(public navCtrl: NavController, public navParams: NavParams,private formBuilder: FormBuilder) {
+    this.todo = this.formBuilder.group({
+      title: ['', Validators.required],
+      description: [''],
+    });
+  }
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  logForm(){
+    console.log(this.todo.value)
   }
 
   ionViewDidLoad() {

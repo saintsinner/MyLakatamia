@@ -30,11 +30,11 @@
       <div *ngIf="isTab1Available">
         <ion-list>
           <ion-item *ngFor="let item of dataset" data-tap-disabled="true" (click)="goToEvent(item.F426ID)">
-              <ion-thumbnail item-start>
-            <img src="{{servicesProvider.baseUrl}}zeportalapi/PreviewImage.ashx?refItemId={{item.F426ID}}&amp;refTableId=426&amp;imageSize=S&amp;imgHeight=100&amp;imgWidth=100&amp;language=EL">
-          </ion-thumbnail>
-          <h2>{{item.F426TITLE}}</h2>
-          <p>{{item.F426DATEFROM | date: 'dd/MM/yyyy'}}</p>
+            <ion-thumbnail item-start>
+              <ion-badge item-start style="padding:10px;font-size:50px;">Εκ</ion-badge>
+            </ion-thumbnail>
+            <h2 style="white-space: normal;">{{item.F426TITLE}}</h2>
+            <p>{{item.F426DATEFROM | date: 'dd/MM/yyyy'}}</p>
           </ion-item>
         </ion-list>
       </div>
@@ -44,21 +44,21 @@
     <ion-list *ngSwitchCase="'2'">
 
       <div *ngIf="isTab2Available">
-          <ion-list>
-              <ion-item *ngFor="let item of datasetOld" data-tap-disabled="true" (click)="goToEvent(item.F426ID)">
-                  <ion-thumbnail item-start>
-                <img src="{{servicesProvider.baseUrl}}zeportalapi/PreviewImage.ashx?refItemId={{item.F426ID}}&amp;refTableId=426&amp;imageSize=S&amp;imgHeight=100&amp;imgWidth=100&amp;language=EL">
-              </ion-thumbnail>
-              <h2>{{item.F426TITLE}}</h2>
-              <p>{{item.F426DATEFROM | date: 'dd/MM/yyyy'}}</p>
-              </ion-item>
-            </ion-list>
+        <ion-list>
+          <ion-item *ngFor="let item of datasetOld" data-tap-disabled="true" (click)="goToEvent(item.F426ID)">
+            <ion-thumbnail item-start>
+              <ion-badge item-start style="padding:10px;font-size:50px;">Εκ</ion-badge>
+            </ion-thumbnail>
+            <h2 style="white-space: normal;">{{item.F426TITLE}}</h2>
+            <p>{{item.F426DATEFROM | date: 'dd/MM/yyyy'}}</p>
+          </ion-item>
+        </ion-list>
       </div>
     </ion-list>
   </div>
   <div overflow-scroll="true" padding="true" class="has-header">
-      <ion-infinite-scroll (ionInfinite)="doInfinite($event)" distance="1%">
-        <ion-infinite-scroll-content></ion-infinite-scroll-content>
-      </ion-infinite-scroll>
-    </div>
+    <ion-infinite-scroll (ionInfinite)="doInfinite($event)" distance="1%">
+      <ion-infinite-scroll-content></ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+  </div>
 </ion-content>

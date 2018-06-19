@@ -7,12 +7,29 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>odigosEksypiretisis</ion-title>
+    <ion-title>
+      <div *ngIf="isDataAvailable">{{dataset[0].F420TITLE}}</div>
+    </ion-title>
   </ion-navbar>
 
 </ion-header>
 
 
-<ion-content padding>
-
+<ion-content>
+  <ion-refresher (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content>pullingIcon="arrow-dropdown"</ion-refresher-content>
+  </ion-refresher>
+  <div *ngIf="isTab1Available" padding>
+    <ion-list *ngFor="let s of sections">
+      <ion-item (click)="openPage(s.pageId)" *ngIf="s.title.trim()!=''" style="border-bottom: 1px solid #cccccc;">
+        <ion-icon name="ios-arrow-forward" style="margin:auto;color:#488aff;" item-end></ion-icon>
+        {{s.title}}
+      </ion-item>
+    </ion-list>
+  </div>
+  <div *ngIf="isTab2Available">
+    <img src="../../assets/imgs/pezogefira.jpg" style="width: 100%;">
+  </div>
+  <div *ngIf="isTab2Available" [innerHTML]="dataset[0].F420HTMLL1 | safe: 'html'" padding>
+  </div>
 </ion-content>

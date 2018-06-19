@@ -14,7 +14,7 @@
     <ion-refresher (ionRefresh)="doRefresh($event)">
         <ion-refresher-content>pullingIcon="arrow-dropdown"</ion-refresher-content>
     </ion-refresher>
-    
+
     <ion-segment [(ngModel)]="mysections">
         <ion-segment-button value="1" (click)="getContent(myrefresher,'1004')">
             Η ΠΟΛΗ
@@ -24,24 +24,24 @@
         </ion-segment-button>
     </ion-segment>
     <div class="spacer" style="height: 10px;"></div>
-    
+
     <div [ngSwitch]="mysections">
         <ion-list *ngSwitchCase="'1'">
             <div *ngIf="isTab1Available">
-                <div [innerHTML]="dataset[0].F420HTMLTOPIMG | safe: 'html'">
-                </div>
+                <img src="../../assets/imgs/lakatamia.jpg" style="width: 100%;">
+
                 <div [innerHTML]="dataset[0].F420HTMLL1 | safe: 'html'">
                 </div>
             </div>
         </ion-list>
         <ion-list *ngSwitchCase="'2'">
             <div *ngIf="isTab2Available">
-                <div [innerHTML]="dataset[0].F420HTMLTOPIMG | safe: 'html'">
-                </div>
+                <img src="../../assets/imgs/municipality.jpg" style="width: 100%;">
+
                 <div [innerHTML]="dataset[0].F420HTMLL1 | safe: 'html'">
                 </div>
             </div>
         </ion-list>
     </div>
-    
+
 </ion-content>

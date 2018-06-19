@@ -30,9 +30,9 @@
     <ion-list *ngSwitchCase="'1'">
       <div *ngIf="isTab1Available">
         <ion-list>
-          <ion-item *ngFor="let item of dataset" data-tap-disabled="true" (click)="goToEvent(item.F488ID)">
-            <ion-thumbnail item-start style="line-height: 300%;">
-              <ion-icon name="md-document" style="margin:auto;color:#488aff; font-size: 50px;"></ion-icon>
+          <ion-item *ngFor="let item of dataset" data-tap-disabled="true" (click)="goToSubmission(item.F488ID)">
+            <ion-thumbnail item-start>
+              <ion-badge item-start style="padding:10px;font-size:50px;">Ει</ion-badge>
             </ion-thumbnail>
             <h2 style="white-space: normal;">{{item.F488TITLE}}</h2>
             <p>{{item.F488CRTDATE | date: 'dd/MM/yyyy'}}</p>
@@ -48,9 +48,9 @@
     <ion-list *ngSwitchCase="'2'">
       <div *ngIf="isTab2Available">
         <ion-list>
-          <ion-item *ngFor="let item of datasetOld" data-tap-disabled="true" (click)="goToEvent(item.F488ID)">
-            <ion-thumbnail item-start style="line-height: 300%;">
-              <ion-icon name="md-document" style="margin:auto;color:#488aff; font-size: 50px;"></ion-icon>
+          <ion-item *ngFor="let item of datasetOld" data-tap-disabled="true" (click)="goToSubmission(item.F488ID)">
+            <ion-thumbnail item-start>
+              <ion-badge item-start style="padding:10px;font-size:50px;">Ει</ion-badge>
             </ion-thumbnail>
             <h2 style="white-space: normal;">{{item.F488TITLE}}</h2>
             <p>{{item.F488CRTDATE | date: 'dd/MM/yyyy'}}</p>
@@ -67,6 +67,6 @@
 </ion-content>
 <ion-footer no-shadow *ngIf="servicesProvider.checkTokens()">
   <ion-toolbar position="bottom" padding style="text-align: right;">
-    <button ion-button outline>Νεα Καταχωρηση</button>
+    <button ion-button outline (click)="goToSubmission(null)">Νεα Καταχωρηση</button>
   </ion-toolbar>
 </ion-footer>

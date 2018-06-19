@@ -15,10 +15,13 @@
 </ion-header>
 
 
-<ion-content padding>
+<ion-content>
   <ion-refresher (ionRefresh)="doRefresh($event)">
     <ion-refresher-content>pullingIcon="arrow-dropdown"</ion-refresher-content>
-</ion-refresher>
-<div *ngIf="isDataAvailable" [innerHTML]="dataset[0].F420HTMLL1 | safe: 'html'">  
-</div>
+  </ion-refresher>
+  <div *ngIf="isDataAvailable">
+    <img src="../../assets/imgs/pezogefira.jpg" style="width: 100%;">
+  </div>
+  <div *ngIf="isDataAvailable" [innerHTML]="dataset[0].F420HTMLL1 | safe: 'html'" padding>
+  </div>
 </ion-content>

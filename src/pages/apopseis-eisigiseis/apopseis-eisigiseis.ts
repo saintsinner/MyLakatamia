@@ -4,7 +4,7 @@ import { IonicPage, NavController, NavParams, Refresher, InfiniteScroll } from '
 import { ServicesProvider } from '../../providers/services/services';
 //import { SqlLiteProvider } from '../../providers/sql-lite/sql-lite';
 import { HttpParams } from '@angular/common/http';
-//import { EventPage } from '../event/event';
+import { YpovoliApopsisEisigisisPage } from '../ypovoli-apopsis-eisigisis/ypovoli-apopsis-eisigisis';
 
 /**
  * Generated class for the ApopseisEisigiseisPage page.
@@ -170,8 +170,9 @@ export class ApopseisEisigiseisPage {
     }
   }
 
-  goToEvent(id) {
-    //this.navCtrl.push(EventPage,{ id: id });
+  goToSubmission(id)
+  {
+    this.navCtrl.push(YpovoliApopsisEisigisisPage,{ id: id });
   }
 
 }
