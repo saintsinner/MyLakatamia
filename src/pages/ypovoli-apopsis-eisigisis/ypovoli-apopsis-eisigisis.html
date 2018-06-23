@@ -7,24 +7,33 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>ypovoliApopsisEisigisis</ion-title>
+    <ion-title>Απόψεις / Εισηγήσεις</ion-title>
   </ion-navbar>
 
 </ion-header>
 
 
 <ion-content padding>
-  <form [formGroup]="todo" (ngSubmit)="logForm()">
+    <ion-refresher (ionRefresh)="doRefresh($event)">
+        <ion-refresher-content>pullingIcon="arrow-dropdown"</ion-refresher-content>
+      </ion-refresher>
 
-    <ion-label>Todo</ion-label>
+  <form [formGroup]="myFormGroup" (ngSubmit)="submitForm()">
     <ion-item>
+      <ion-label floating>Είδος Άποψης / Εισήγησης<span style="color:#ff0000!important;"> *</span></ion-label>
+      <ion-select formControlName="category" multiple="false" *ngIf="isDataAvailable">
+          <ion-option  *ngFor="let item of dataset" [value]="item.F487ID">{{item.F487TITLE}}</ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label floating>Θέμα<span style="color:#ff0000!important;"> * ({{titleLength.toString()}} χαρακτήρες)</span></ion-label>
       <ion-input type="text" formControlName="title"></ion-input>
     </ion-item>
-
-    <ion-label>Description</ion-label>
     <ion-item>
+      <ion-label floating>Περιγραφή<span style="color:#ff0000!important;"> * ({{descriptionLength.toString()}} χαρακτήρες)</span></ion-label>
       <ion-textarea formControlName="description"></ion-textarea>
     </ion-item>
-    <button ion-button type="submit" [disabled]="!todo.valid">Submit</button>
+    <button ion-button type="submit">Υποβολη</button>
+    
   </form>
 </ion-content>

@@ -2,9 +2,9 @@ import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { NewsPage } from '../news/news';
 import { EventsPage } from '../events/events';
-import { ProblemsPage } from '../problems/problems';
-import { ComplaintsPage } from '../complaints/complaints';
-import { ApopseisEisigiseisPage } from '../apopseis-eisigiseis/apopseis-eisigiseis';
+import { SubmitProblemPage } from '../submit-problem/submit-problem';
+import { SubmitComplaintPage } from '../submit-complaint/submit-complaint';
+import { YpovoliApopsisEisigisisPage } from '../ypovoli-apopsis-eisigisis/ypovoli-apopsis-eisigisis';
 import { EksoflisiLogariasmonPage } from '../eksoflisi-logariasmon/eksoflisi-logariasmon';
 import { OdigosEksypiretisisPage } from '../odigos-eksypiretisis/odigos-eksypiretisis';
 import { LakatamiaPage } from '../lakatamia/lakatamia';
@@ -27,13 +27,13 @@ export class HomePage {
     this.navCtrl.push(EventsPage);
   }
   goToProblems(){
-    this.navCtrl.push(ProblemsPage);
+    this.navCtrl.push(SubmitProblemPage);
   }
   goToComplaints(){
-    this.navCtrl.push(ComplaintsPage);
+    this.navCtrl.push(SubmitComplaintPage);
   }
   goToApopseisEisigiseis(){
-    this.navCtrl.push(ApopseisEisigiseisPage);
+    this.navCtrl.push(YpovoliApopsisEisigisisPage);
   }
   goToEksoflisiLogariasmon(){
     this.navCtrl.push(EksoflisiLogariasmonPage);

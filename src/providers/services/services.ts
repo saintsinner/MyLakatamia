@@ -21,7 +21,7 @@ export class ServicesProvider {
     contID: any = null;
     online: boolean = true;
     disconnectSubscription: any;
-    isApp:any;
+    isApp: any;
     constructor(public http: HttpClient, public alertCtrl: AlertController, private network: Network, public platform: Platform, public loadingCtrl: LoadingController) {
         //console.log('Hello ServicesProvider Provider');
 
@@ -127,11 +127,80 @@ export class ServicesProvider {
                         });
             });
         }
-        else{
+        else {
             if (this.data) {
                 //alert('ok');
                 return Promise.resolve(this.data);
             }
         }
     }
+
+    addSubmission(formData) {
+        //alert(this.online);
+        if (this.online || !this.isApp) {
+            this.myLoading = this.loadingCtrl.create({
+                content: 'Παρακαλώ περιμένετε...'
+            });
+            this.myLoading.present();
+            //if (this.data) {
+            //    //alert('ok');
+            //    return Promise.resolve(this.data);
+            //}
+
+            // let myheaders = new HttpHeaders();
+            // myheaders.set('Content-Type', 'application/json');
+
+            // let options = {
+            //     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+            //   };
+            return new Promise(resolve => {
+                this.http.post(this.baseUrl + 'zePortalAPI/api/mylakatamia/PostAddSubmission', JSON.stringify(formData), { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) })
+                    .subscribe(
+                        (result) => {
+                            console.log("success!");
+                            this.myLoading.dismiss();
+                            resolve(result);
+                        },
+                        (err: HttpErrorResponse) => {
+                            console.log(err.message)
+                            //console.log(JSON.parse(params))
+                            const alert = this.alertCtrl.create({
+                                title: 'Πρόβλημα',
+                                subTitle: err.message,
+                                buttons: ['ΕΝΤΑΞΕΙ']
+                            });
+                            this.myLoading.dismiss();
+                            alert.present();
+                        });
+
+            });
+        }
+        else {
+            // if (this.data) {
+            //     //alert('ok');
+            //     return Promise.resolve(this.data);
+            // }
+        }
+    }
+
+    // postFile(token:string, file:Blob){
+
+    //     let url = WebService.API_POST_FILE + "?token="+token;
+    //     let httpOptions = {
+    //         headers: new HttpHeaders({
+    //             'enctype': 'multipart/form-data; boundary=----WebKitFormBoundaryuL67FWkv1CA'
+    //         })
+    //     };
+
+    //     let formData = new FormData();
+    //     formData.append('file', file, 'test.jpg');
+
+    //     console.log("post photo to URL at "+url);
+    //     return this.http
+    //         .post<SimpleResponse>(
+    //             url,
+    //             formData,
+    //             httpOptions
+    //     );
+    // }
 }
