@@ -30,6 +30,10 @@ export class YpovoliApopsisEisigisisPage {
   titleLength = 30;
   descriptionLength = 300;
   constructor(public navCtrl: NavController, public navParams: NavParams, private formBuilder: FormBuilder, public servicesProvider: ServicesProvider, public alertCtrl: AlertController) {
+    //TEMP - REMOVE IN PRODUCTION
+    localStorage.setItem("Token", "10000001");
+    localStorage.setItem("EncodedToken", btoa("10000001"));
+
     this.myFormGroup = this.formBuilder.group({
       category: ['', Validators.compose([Validators.required])],
       title: ['sdfs', Validators.compose([Validators.maxLength(this.titleLength), Validators.required])],

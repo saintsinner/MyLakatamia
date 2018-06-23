@@ -37,8 +37,8 @@ export class ApopseisEisigiseisPage {
   constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider) {
     console.log('Constructor ApopseisEisigiseisPage');
 
-    localStorage.setItem("Token", "1001");
-    localStorage.setItem("EncodedToken", btoa("1001"));
+    localStorage.setItem("Token", "10000001");
+    localStorage.setItem("EncodedToken", btoa("10000001"));
     //sqlLiteProvider.addDanceMove('tango');
     //sqlLiteProvider.getDanceMoves();
   }
