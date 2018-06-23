@@ -51,17 +51,25 @@ export class ServicesProvider {
     }
 
     checkTokens() {
-        // Encode the String
-        var encodedString = btoa(localStorage.getItem("Token"));
-        //alert(encodedString); // Outputs: "SGVsbG8gV29ybGQh"
-        if (encodedString == localStorage.getItem("EncodedToken")) {
-            this.contID = localStorage.getItem("Token");
-            return true;
+        this.contID = localStorage.getItem("Token");
+        if (this.contID != null) {
+            // Encode the String
+            let encodedString = btoa(localStorage.getItem("Token"));
+            //alert(encodedString); // Outputs: "SGVsbG8gV29ybGQh"
+            if (encodedString == localStorage.getItem("EncodedToken")) {
+                this.contID = localStorage.getItem("Token");
+                return true;
+            }
+            else {
+                this.contID = null;
+                return false;
+            }
         }
         else {
             this.contID = null;
             return false;
         }
+
         // Decode the String
         // var decodedString = atob(encodedString);
         //alert(decodedString);
@@ -117,13 +125,13 @@ export class ServicesProvider {
                         (err: HttpErrorResponse) => {
                             console.log(err.message)
                             //console.log(JSON.parse(params))
-                            const alert = this.alertCtrl.create({
+                            const popup = this.alertCtrl.create({
                                 title: 'Πρόβλημα',
                                 subTitle: err.message,
                                 buttons: ['ΕΝΤΑΞΕΙ']
                             });
                             this.myLoading.dismiss();
-                            alert.present();
+                            popup.present();
                         });
             });
         }
@@ -164,13 +172,13 @@ export class ServicesProvider {
                         (err: HttpErrorResponse) => {
                             console.log(err.message)
                             //console.log(JSON.parse(params))
-                            const alert = this.alertCtrl.create({
+                            const popup = this.alertCtrl.create({
                                 title: 'Πρόβλημα',
                                 subTitle: err.message,
                                 buttons: ['ΕΝΤΑΞΕΙ']
                             });
                             this.myLoading.dismiss();
-                            alert.present();
+                            popup.present();
                         });
 
             });

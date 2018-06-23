@@ -27,13 +27,9 @@ export class YpovoliApopsisEisigisisPage {
   @ViewChild(Refresher) myrefresher: Refresher;
   currentpage = 0;
   private myFormGroup: FormGroup;
-  titleLength = 30;
-  descriptionLength = 300;
+  titleLength = 100;
+  descriptionLength = 500;
   constructor(public navCtrl: NavController, public navParams: NavParams, private formBuilder: FormBuilder, public servicesProvider: ServicesProvider, public alertCtrl: AlertController) {
-    //TEMP - REMOVE IN PRODUCTION
-    localStorage.setItem("Token", "10000001");
-    localStorage.setItem("EncodedToken", btoa("10000001"));
-
     this.myFormGroup = this.formBuilder.group({
       category: ['', Validators.compose([Validators.required])],
       title: ['sdfs', Validators.compose([Validators.maxLength(this.titleLength), Validators.required])],
@@ -124,7 +120,7 @@ export class YpovoliApopsisEisigisisPage {
         });
       //this.servicesProvider.addSubmission(data);
     } else {
-      var errorMessage = "Παρακαλώ συμπληρώστα τα πεδία με έγκυρα δεδομένα";
+      var errorMessage = "Παρακαλώ συμπληρώστε τα πεδία με έγκυρα δεδομένα";
       // //this.myFormGroup.errors returns null which is wrong so the following does not work
       // for (let error in this.myFormGroup.errors) {
       //   errorMessage = errorMessage + error.toString();

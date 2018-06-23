@@ -21,17 +21,17 @@
   <form [formGroup]="myFormGroup" (ngSubmit)="submitForm()">
     <ion-item>
       <ion-label floating>Είδος Άποψης / Εισήγησης<span style="color:#ff0000!important;"> *</span></ion-label>
-      <ion-select formControlName="category" multiple="false" *ngIf="isDataAvailable">
+      <ion-select formControlName="category" okText="ΕΠΙΛΟΓΗ" cancelText="ΑΚΥΡΟ" multiple="false" *ngIf="isDataAvailable">
           <ion-option  *ngFor="let item of dataset" [value]="item.F487ID">{{item.F487TITLE}}</ion-option>
       </ion-select>
     </ion-item>
     <ion-item>
       <ion-label floating>Θέμα<span style="color:#ff0000!important;"> * ({{titleLength.toString()}} χαρακτήρες)</span></ion-label>
-      <ion-input type="text" formControlName="title"></ion-input>
+      <ion-input type="text" formControlName="title" maxlength="{{titleLength.toString()}}"></ion-input>
     </ion-item>
     <ion-item>
       <ion-label floating>Περιγραφή<span style="color:#ff0000!important;"> * ({{descriptionLength.toString()}} χαρακτήρες)</span></ion-label>
-      <ion-textarea formControlName="description"></ion-textarea>
+      <ion-textarea formControlName="description" maxlength="{{descriptionLength.toString()}}"></ion-textarea>
     </ion-item>
     <button ion-button type="submit">Υποβολη</button>
     
