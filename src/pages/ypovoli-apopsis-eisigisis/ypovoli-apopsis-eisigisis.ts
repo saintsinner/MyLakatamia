@@ -4,6 +4,7 @@ import { IonicPage, NavController, NavParams, Refresher, AlertController } from 
 import { ServicesProvider } from '../../providers/services/services';
 //import { SqlLiteProvider } from '../../providers/sql-lite/sql-lite';
 import { HttpParams } from '@angular/common/http';
+import { Storage } from '@ionic/storage';
 import { Validators, FormBuilder, FormGroup, ValidationErrors } from '@angular/forms';
 import { HomePage } from '../home/home';
 
@@ -20,6 +21,8 @@ import { HomePage } from '../home/home';
   templateUrl: 'ypovoli-apopsis-eisigisis.html',
 })
 export class YpovoliApopsisEisigisisPage {
+  storageId: any;
+  pageId: any;
   params: any;
   dataset: any;
   datasetOld: any;
@@ -29,7 +32,8 @@ export class YpovoliApopsisEisigisisPage {
   private myFormGroup: FormGroup;
   titleLength = 100;
   descriptionLength = 500;
-  constructor(public navCtrl: NavController, public navParams: NavParams, private formBuilder: FormBuilder, public servicesProvider: ServicesProvider, public alertCtrl: AlertController) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, private formBuilder: FormBuilder, public servicesProvider: ServicesProvider,
+    public alertCtrl: AlertController, public storage: Storage) {
     this.myFormGroup = this.formBuilder.group({
       category: ['', Validators.compose([Validators.required])],
       title: ['sdfs', Validators.compose([Validators.maxLength(this.titleLength), Validators.required])],
@@ -80,50 +84,90 @@ export class YpovoliApopsisEisigisisPage {
       .then(data => {
         //alert(JSON.parse(data.toString()).length);
         this.dataset = JSON.parse(data.toString());
-        this.isDataAvailable = true;
+        this.storage.set(this.storageId.toString(), this.dataset);
+        this.setData();
         refresher.complete();
         //alert(data);
         //console.log("User Login: " + JSON.parse(this.dataset)[0].F420TITLE);
       });
   }
 
+  setData() {
+    this.isDataAvailable = true;
+  }
+
   submitForm() {
+    this.servicesProvider.online = false;
+    this.servicesProvider.isApp = true;
     console.log(this.myFormGroup.value)
     if (this.myFormGroup.valid) {
       //alert(this.myFormGroup.value['title']);
       console.log('form submitted');
-      let data = {
+      let postdata = {
         category: this.myFormGroup.value['category'],
         title: this.myFormGroup.value['title'],
         description: this.myFormGroup.value['description'],
         contId: this.servicesProvider.contID
       };
 
+      let submissions: any;
+      //if (this.storage.get("YpovoliApopsisEisigisisPage") != null) {
+      this.storage.get("YpovoliApopsisEisigisisPage")
+        .then(
+          (data) => {
+            submissions = data;
+            if (submissions == null) {
+              submissions = [];
+            }
+            submissions.push(postdata);
+            this.storage.set("YpovoliApopsisEisigisisPage", submissions);
+            if (this.servicesProvider.online || !this.servicesProvider.isApp) {
+              this.servicesProvider.addSubmission(postdata)
+                .then(data => {
+                  this.storage.remove("YpovoliApopsisEisigisisPage");
+                  //alert(JSON.parse(data.toString()).length);
+                  let message = JSON.parse(data.toString());
+                  //console.log(result.toString());
+                  //console.log(message[0]["@RETMSG"]);
+                  let alertTitle = "Μήνυμα";
+                  if (message[0]["@RETTYPE"] == 'E') {
+                    alertTitle = "Πρόβλημα"
+                  }
+                  const alert = this.alertCtrl.create({
+                    title: alertTitle,
+                    subTitle: message[0]["@RETMSG"],
+                    buttons: ['ΕΝΤΑΞΕΙ']
+                  });
+                  alert.present();
+                  if (message[0]["@RETTYPE"] == 'I') {
+                    this.navCtrl.push(HomePage);
+                  }
+                });
+              //this.servicesProvider.addSubmission(data);
+            }
+            else {
+              let alertTitle = "Μήνυμα";
+
+              const alert = this.alertCtrl.create({
+                title: alertTitle,
+                subTitle: "Η καταχώρησή σας θα υποβληθεί μόλις ενωθείτε με το διαδίκτυο",
+                buttons: ['ΕΝΤΑΞΕΙ']
+              });
+              alert.present();
+              this.navCtrl.push(HomePage);
+            }
+          }
+        );
+      // }
+      // else {
+      //   submissions.push(postdata);
+      //   this.storage.set("YpovoliApopsisEisigisisPage", submissions);
+      //}
       // let aaa=[];
       // aaa.push(data);
       // localStorage.setItem("submission")
 
-      this.servicesProvider.addSubmission(data)
-        .then(data => {
-          //alert(JSON.parse(data.toString()).length);
-          let message = JSON.parse(data.toString());
-          //console.log(result.toString());
-          //console.log(message[0]["@RETMSG"]);
-          let alertTitle = "Μήνυμα";
-          if (message[0]["@RETTYPE"] == 'E') {
-            alertTitle = "Πρόβλημα"
-          }
-          const alert = this.alertCtrl.create({
-            title: alertTitle,
-            subTitle: message[0]["@RETMSG"],
-            buttons: ['ΕΝΤΑΞΕΙ']
-          });
-          alert.present();
-          if (message[0]["@RETTYPE"] == 'I') {
-            this.navCtrl.push(HomePage);
-          }
-        });
-      //this.servicesProvider.addSubmission(data);
+
     } else {
       var errorMessage = "Παρακαλώ συμπληρώστε τα πεδία με έγκυρα δεδομένα";
       // //this.myFormGroup.errors returns null which is wrong so the following does not work
@@ -142,7 +186,20 @@ export class YpovoliApopsisEisigisisPage {
   ionViewDidLoad() {
     console.log('ionViewDidLoad YpovoliApopsisEisigisisPage');
 
-    this.doRefresh(this.myrefresher);
+    this.storageId = 'YpovoliApopsisEisigisisPageCategories';
+    if (this.servicesProvider.online || !this.servicesProvider.isApp) {
+      this.doRefresh(this.myrefresher);
+    }
+    else {
+      this.storage.get(this.storageId)
+        .then(
+          (data) => {
+            this.dataset = data;
+            this.setData();
+            this.myrefresher.complete();
+          }
+        );
+    }
 
 
   }

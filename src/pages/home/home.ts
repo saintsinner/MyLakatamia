@@ -21,38 +21,57 @@ import { ServicesProvider } from '../../providers/services/services';
 export class HomePage {
 
   constructor(public navCtrl: NavController, public servicesProvider: ServicesProvider, public alertCtrl: AlertController, public storage: Storage) {
-    this.storage.get("YpovoliApopsisEisigisisPage")
-      .then(
-        (data) => {
-          let submissions = [];
-          submissions = data;
-          if (submissions != null) {
-            for (let submission of submissions) {
-              this.servicesProvider.addSubmission(submission)
-                .then(data => {
-                  //alert(JSON.parse(data.toString()).length);
-                  //let message = JSON.parse(data.toString());
-                  // //console.log(result.toString());
-                  // //console.log(message[0]["@RETMSG"]);
-                  // let alertTitle = "Μήνυμα";
-                  // if (message[0]["@RETTYPE"] == 'E') {
-                  //   alertTitle = "Πρόβλημα"
-                  // }
-                  // const alert = this.alertCtrl.create({
-                  //   title: alertTitle,
-                  //   subTitle: message[0]["@RETMSG"],
-                  //   buttons: ['ΕΝΤΑΞΕΙ']
-                  // });
-                  // alert.present();
-                  // if (message[0]["@RETTYPE"] == 'I') {
-                  //   this.storage.remove("YpovoliApopsisEisigisisPage");
-                  // }
-                });
+
+  }
+
+  ionViewCanEnter() {
+    //alert('');
+    if (this.servicesProvider.online || !this.servicesProvider.isApp) {
+      //alert(this.storage.get("YpovoliApopsisEisigisisPage"))
+      this.storage.get("YpovoliApopsisEisigisisPage")
+        .then(
+          (data) => {
+            //alert(data[0].title);
+            let submissions = [];
+            submissions = data;
+            if (submissions != null) {
+              let ok = true;
+              for (let submission of submissions) {
+                //alert(submission.title);
+                try {
+                  this.servicesProvider.addSubmission(submission)
+                    .then(data => {
+                      //alert(JSON.parse(data.toString()).length);
+                      //let message = JSON.parse(data.toString());
+                      // //console.log(result.toString());
+                      // //console.log(message[0]["@RETMSG"]);
+                      // let alertTitle = "Μήνυμα";
+                      // if (message[0]["@RETTYPE"] == 'E') {
+                      //   alertTitle = "Πρόβλημα"
+                      // }
+                      // const alert = this.alertCtrl.create({
+                      //   title: alertTitle,
+                      //   subTitle: message[0]["@RETMSG"],
+                      //   buttons: ['ΕΝΤΑΞΕΙ']
+                      // });
+                      // alert.present();
+                      // if (message[0]["@RETTYPE"] == 'I') {
+                      //   this.storage.remove("YpovoliApopsisEisigisisPage");
+                      // }
+                    });
+                } catch (error) {
+                  //alert(error.message);
+                  ok = false;
+                }
+
+              }
+              if (ok) {
+                this.storage.remove("YpovoliApopsisEisigisisPage");
+              }
             }
-            this.storage.remove("YpovoliApopsisEisigisisPage");
           }
-        }
-      );
+        );
+    }
   }
 
   goToNews() {

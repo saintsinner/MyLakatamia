@@ -144,7 +144,7 @@ export class EventsPage {
       this.doRefresh(this.myrefresher);
     }
     else {
-      alert(this.storageId);
+      //alert(this.storageId);
       this.theEnd = true;
       this.storage.get(this.storageId)
         .then(
@@ -160,7 +160,7 @@ export class EventsPage {
   changeSection() {
     this.currentpage = 0;
     this.theEnd = false;
-    this.storageId = "ApopseisEisigiseisPage" + this.mysections;
+    this.storageId = "EventsPage" + this.mysections;
 
     if (this.mysections == '1') {
       this.dataset = [];

@@ -30,7 +30,7 @@ export class MyApp {
       this.servicesProvider.isApp = !document.URL.startsWith('http');
       //console.log("Connection type: ", this.network.type);
       // Try and find out the current online status of the device
-      if (type == "unknown" || type == "none" || type == undefined) {
+      if ((type == "unknown" || type == "none" || type == undefined) && this.isApp) {
           console.log("The device is not online");
           this.servicesProvider.online = false;
       } else {

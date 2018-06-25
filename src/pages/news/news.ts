@@ -149,7 +149,7 @@ export class NewsPage {
       this.doRefresh(this.myrefresher);
     }
     else {
-      alert(this.storageId);
+      //alert(this.storageId);
       this.theEnd = true;
       this.storage.get(this.storageId)
         .then(
