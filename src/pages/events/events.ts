@@ -4,6 +4,7 @@ import { IonicPage, NavController, NavParams, Refresher, InfiniteScroll } from '
 import { ServicesProvider } from '../../providers/services/services';
 //import { SqlLiteProvider } from '../../providers/sql-lite/sql-lite';
 import { HttpParams } from '@angular/common/http';
+import { Storage } from '@ionic/storage';
 import { EventPage } from '../event/event';
 
 /**
@@ -19,6 +20,7 @@ import { EventPage } from '../event/event';
   templateUrl: 'events.html',
 })
 export class EventsPage {
+  storageId: any;
   params: any;
   dataset: any;
   datasetOld: any;
@@ -35,7 +37,7 @@ export class EventsPage {
   currentpage = 0;
   theEnd = false;
   //constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider, private sqlLiteProvider: SqlLiteProvider) {
-  constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider, public storage: Storage) {
     //console.log('Constructor LakatamiaPage');
     //sqlLiteProvider.addDanceMove('tango');
     //sqlLiteProvider.getDanceMoves();
@@ -89,6 +91,7 @@ export class EventsPage {
           if (JSON.parse(data.toString()).length > 0) {
             for (let item of JSON.parse(data.toString())) {
               this.dataset.push(item);
+              this.storage.set(this.storageId.toString(), this.dataset);
             }
           }
           else {
@@ -100,6 +103,7 @@ export class EventsPage {
           if (JSON.parse(data.toString()).length > 0) {
             for (let item of JSON.parse(data.toString())) {
               this.datasetOld.push(item);
+              this.storage.set(this.storageId.toString(), this.datasetOld);
             }
           }
           else {
@@ -109,15 +113,7 @@ export class EventsPage {
         }
         //alert(this.dataset);
         //this.dataset = data;
-        this.isDataAvailable = true;
-        if (this.mysections == "1") {
-          this.isTab1Available = true;
-          this.isTab2Available = false;
-        }
-        else if (this.mysections == "2") {
-          this.isTab1Available = false;
-          this.isTab2Available = true;
-        }
+        this.setData();
         refresher.complete();
         this.myinfinitescroll.complete();
         //alert(data);
@@ -125,20 +121,67 @@ export class EventsPage {
       });
   }
 
+  setData() {
+    this.isDataAvailable = true;
+    if (this.mysections == "1") {
+      this.isTab1Available = true;
+      this.isTab2Available = false;
+    }
+    else if (this.mysections == "2") {
+      this.isTab1Available = false;
+      this.isTab2Available = true;
+    }
+  }
+
   //if we want to use cache use ionViewDidLoad. To always load data use ionViewCanEnter.
   ionViewCanEnter() {
+    //this.servicesProvider.online=false;
+    //this.servicesProvider.isApp=true;
     //console.log('ionViewDidLoad LakatamiaPage');
-    this.doRefresh(this.myrefresher);
-
+    this.storageId = "EventsPage" + this.mysections;
+    //console.log('ionViewDidLoad LakatamiaPage');
+    if (this.servicesProvider.online || !this.servicesProvider.isApp) {
+      this.doRefresh(this.myrefresher);
+    }
+    else {
+      alert(this.storageId);
+      this.theEnd = true;
+      this.storage.get(this.storageId)
+        .then(
+          (data) => {
+            this.dataset = data;
+            this.setData();
+            this.myrefresher.complete();
+          }
+        );
+    }
   }
 
   changeSection() {
     this.currentpage = 0;
     this.theEnd = false;
+    this.storageId = "ApopseisEisigiseisPage" + this.mysections;
+
     if (this.mysections == '1') {
       this.dataset = [];
       this.datefrom = new Date().toISOString().substr(0, 10);
       this.dateto = "3000-01-01";
+
+      if (this.servicesProvider.online || !this.servicesProvider.isApp) {
+        this.doInfinite(this.myinfinitescroll);
+      }
+      else {
+        this.theEnd = true;
+        this.myinfinitescroll.complete();
+        this.storage.get(this.storageId)
+          .then(
+            (data) => {
+              this.dataset = data;
+              this.setData();
+              this.myrefresher.complete();
+            }
+          );
+      }
     }
     else {
       this.datasetOld = [];
@@ -146,8 +189,23 @@ export class EventsPage {
       var newdate = new Date();
       newdate.setDate(newdate.getDate() - 2);
       this.dateto = newdate.toISOString().substr(0, 10);
+
+      if (this.servicesProvider.online || !this.servicesProvider.isApp) {
+        this.doInfinite(this.myinfinitescroll);
+      }
+      else {
+        this.theEnd = true;
+        this.myinfinitescroll.complete();
+        this.storage.get(this.storageId)
+          .then(
+            (data) => {
+              this.datasetOld = data;
+              this.setData();
+              this.myrefresher.complete();
+            }
+          );
+      }
     }
-    this.doInfinite(this.myinfinitescroll);
   }
 
   doInfinite(infiniteScroll) {

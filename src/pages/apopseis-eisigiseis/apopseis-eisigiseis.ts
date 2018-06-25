@@ -4,6 +4,7 @@ import { IonicPage, NavController, NavParams, Refresher, InfiniteScroll } from '
 import { ServicesProvider } from '../../providers/services/services';
 //import { SqlLiteProvider } from '../../providers/sql-lite/sql-lite';
 import { HttpParams } from '@angular/common/http';
+import { Storage } from '@ionic/storage';
 import { YpovoliApopsisEisigisisPage } from '../ypovoli-apopsis-eisigisis/ypovoli-apopsis-eisigisis';
 
 /**
@@ -19,6 +20,7 @@ import { YpovoliApopsisEisigisisPage } from '../ypovoli-apopsis-eisigisis/ypovol
   templateUrl: 'apopseis-eisigiseis.html',
 })
 export class ApopseisEisigiseisPage {
+  storageId: any;
   params: any;
   dataset: any;
   datasetOld: any;
@@ -27,14 +29,14 @@ export class ApopseisEisigiseisPage {
   isTab2Available: boolean = false;
   @ViewChild(Refresher) myrefresher: Refresher;
   @ViewChild(InfiniteScroll) myinfinitescroll: InfiniteScroll;
-  filterContactId:any;
+  filterContactId: any;
   //// Declaring the Promise, yes! Promise!
   //filtersLoaded: Promise<boolean>;
   mysections: string = '1';
   currentpage = 0;
   theEnd = false;
   //constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider, private sqlLiteProvider: SqlLiteProvider) {
-  constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider, public storage: Storage) {
     console.log('Constructor ApopseisEisigiseisPage');
 
     localStorage.setItem("Token", "10000001");
@@ -47,7 +49,7 @@ export class ApopseisEisigiseisPage {
     //console.log('Begin async operation', refresher);
     //this.getContent(http)
     this.mysections = '1';
-    this.filterContactId=null;
+    this.filterContactId = null;
     this.dataset = [];
     this.datasetOld = [];
     this.currentpage = 1;
@@ -63,7 +65,7 @@ export class ApopseisEisigiseisPage {
   getContent(refresher) {
     //alert(this.mysections);
     this.params = new HttpParams()
-      .set('crtdate', '')  
+      .set('crtdate', '')
       .set('INSTID', this.servicesProvider.instId.toString())
       .set('id', '')
       .set('catid', '')
@@ -102,6 +104,7 @@ export class ApopseisEisigiseisPage {
           if (JSON.parse(data.toString()).length > 0) {
             for (let item of JSON.parse(data.toString())) {
               this.dataset.push(item);
+              this.storage.set(this.storageId.toString(), this.dataset);
             }
           }
           else {
@@ -113,6 +116,7 @@ export class ApopseisEisigiseisPage {
           if (JSON.parse(data.toString()).length > 0) {
             for (let item of JSON.parse(data.toString())) {
               this.datasetOld.push(item);
+              this.storage.set(this.storageId.toString(), this.dataset);
             }
           }
           else {
@@ -122,15 +126,7 @@ export class ApopseisEisigiseisPage {
         }
         //alert(this.dataset);
         //this.dataset = data;
-        this.isDataAvailable = true;
-        if (this.mysections == "1") {
-          this.isTab1Available = true;
-          this.isTab2Available = false;
-        }
-        else if (this.mysections == "2") {
-          this.isTab1Available = false;
-          this.isTab2Available = true;
-        }
+        this.setData();
         refresher.complete();
         this.myinfinitescroll.complete();
         //alert(data);
@@ -138,25 +134,85 @@ export class ApopseisEisigiseisPage {
       });
   }
 
+  setData() {
+    this.isDataAvailable = true;
+    if (this.mysections == "1") {
+      this.isTab1Available = true;
+      this.isTab2Available = false;
+    }
+    else if (this.mysections == "2") {
+      this.isTab1Available = false;
+      this.isTab2Available = true;
+    }
+  }
+
   //if we want to use cache use ionViewDidLoad. To always load data use ionViewCanEnter.
   ionViewCanEnter() {
+    this.storageId = "ApopseisEisigiseisPage" + this.mysections;
     //console.log('ionViewDidLoad LakatamiaPage');
-    this.doRefresh(this.myrefresher);
+    if (this.servicesProvider.online || !this.servicesProvider.isApp) {
+      this.doRefresh(this.myrefresher);
+    }
+    else {
+      this.theEnd = true;
+      this.storage.get(this.storageId)
+        .then(
+          (data) => {
+            this.dataset = data;
+            this.setData();
+            this.myrefresher.complete();
+          }
+        );
+    }
 
   }
 
   changeSection() {
     this.currentpage = 0;
     this.theEnd = false;
+    this.storageId = "ApopseisEisigiseisPage" + this.mysections;
+
     if (this.mysections == '1') {
       this.dataset = [];
-      this.filterContactId=null;
+      this.filterContactId = null;
+
+      if (this.servicesProvider.online || !this.servicesProvider.isApp) {
+        this.doInfinite(this.myinfinitescroll);
+      }
+      else {
+        this.theEnd = true;
+        this.myinfinitescroll.complete();
+        this.storage.get(this.storageId)
+          .then(
+            (data) => {
+              this.dataset = data;
+              this.setData();
+              this.myrefresher.complete();
+            }
+          );
+      }
     }
     else {
       this.datasetOld = [];
-      this.filterContactId=this.servicesProvider.contID;
+      this.filterContactId = this.servicesProvider.contID;
+
+      if (this.servicesProvider.online || !this.servicesProvider.isApp) {
+        this.doInfinite(this.myinfinitescroll);
+      }
+      else {
+        this.theEnd = true;
+        this.myinfinitescroll.complete();
+        this.storage.get(this.storageId)
+          .then(
+            (data) => {
+              this.datasetOld = data;
+              this.setData();
+              this.myrefresher.complete();
+            }
+          );
+      }
     }
-    this.doInfinite(this.myinfinitescroll);
+
   }
 
   doInfinite(infiniteScroll) {
@@ -170,9 +226,8 @@ export class ApopseisEisigiseisPage {
     }
   }
 
-  goToSubmission(id)
-  {
-    this.navCtrl.push(YpovoliApopsisEisigisisPage,{ id: id });
+  goToSubmission(id) {
+    this.navCtrl.push(YpovoliApopsisEisigisisPage, { id: id });
   }
 
 }

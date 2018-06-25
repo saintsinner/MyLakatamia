@@ -98,6 +98,11 @@ export class YpovoliApopsisEisigisisPage {
         description: this.myFormGroup.value['description'],
         contId: this.servicesProvider.contID
       };
+
+      // let aaa=[];
+      // aaa.push(data);
+      // localStorage.setItem("submission")
+
       this.servicesProvider.addSubmission(data)
         .then(data => {
           //alert(JSON.parse(data.toString()).length);

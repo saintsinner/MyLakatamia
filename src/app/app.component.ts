@@ -2,6 +2,8 @@ import { Component, ViewChild } from '@angular/core';
 import { Nav, Platform } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
+import { Network } from '@ionic-native/network';
+
 import { ServicesProvider } from '../providers/services/services';
 
 import { HomePage } from '../pages/home/home';
@@ -20,9 +22,33 @@ export class MyApp {
 
   //pages: Array<{title: string, component: any}>;
 
-  constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen, public servicesProvider: ServicesProvider) {
+  constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen, private network: Network, public servicesProvider: ServicesProvider) {
     this.initializeApp();
 
+    this.platform.ready().then(() => {
+      let type = this.network.type;
+      this.servicesProvider.isApp = !document.URL.startsWith('http');
+      //console.log("Connection type: ", this.network.type);
+      // Try and find out the current online status of the device
+      if (type == "unknown" || type == "none" || type == undefined) {
+          console.log("The device is not online");
+          this.servicesProvider.online = false;
+      } else {
+          console.log("The device is online!");
+          this.servicesProvider.online = true;
+      }
+  });
+
+  this.network.onDisconnect().subscribe(() => {
+      this.servicesProvider.online = false;
+      console.log('network was disconnected :-(');
+  });
+
+  this.network.onConnect().subscribe(() => {
+      this.servicesProvider.online = true;
+      console.log('network was connected :-)');
+      this.nav.setRoot(HomePage);
+  });
     /*// used for an example of ngFor and navigation
     this.pages = [
       { title: 'Home', component: HomePage },

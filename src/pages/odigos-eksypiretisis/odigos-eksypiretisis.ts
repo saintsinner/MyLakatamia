@@ -4,6 +4,7 @@ import { IonicPage, NavController, NavParams, Refresher, InfiniteScroll } from '
 import { ServicesProvider } from '../../providers/services/services';
 //import { SqlLiteProvider } from '../../providers/sql-lite/sql-lite';
 import { HttpParams } from '@angular/common/http';
+import { Storage } from '@ionic/storage';
 //import { EventPage } from '../event/event';
 
 /**
@@ -19,6 +20,8 @@ import { HttpParams } from '@angular/common/http';
   templateUrl: 'odigos-eksypiretisis.html',
 })
 export class OdigosEksypiretisisPage {
+  storageId: any;
+  pageId: any;
   params: any;
   dataset: any;
   isDataAvailable: boolean = false;
@@ -27,7 +30,7 @@ export class OdigosEksypiretisisPage {
   sections: Array<{ title: string, pageId: string }>;
   @ViewChild(Refresher) myrefresher: Refresher;
   //constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider, private sqlLiteProvider: SqlLiteProvider) {
-  constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider, public storage: Storage) {
     //console.log('Constructor LakatamiaPage');
     //sqlLiteProvider.addDanceMove('tango');
     //sqlLiteProvider.getDanceMoves();
@@ -37,12 +40,7 @@ export class OdigosEksypiretisisPage {
     //console.log('Begin async operation', refresher);
     //this.getContent(http)
     //this.mysections = '1';
-    if (this.navParams.get('id') != null) {
-      this.getContent(refresher, this.navParams.get('id'));
-    }
-    else {
-      this.getContent(refresher, '1011');
-    }
+    this.getContent(refresher);
 
 
     //setTimeout(() => {
@@ -51,11 +49,10 @@ export class OdigosEksypiretisisPage {
     //}, 10000);
   }
 
-  getContent(refresher, pageId) {
-    this.sections = [];
+  getContent(refresher) {
     this.params = new HttpParams()
       .set('INSTID', this.servicesProvider.instId.toString())
-      .set('ID', pageId)
+      .set('ID', this.pageId)
       .set('TITLE', '')
       .set('SECTIONS', '0')
       .set('desc', '')
@@ -104,39 +101,68 @@ export class OdigosEksypiretisisPage {
       .then(data => {
         //alert('');
         this.dataset = JSON.parse(data.toString());
-
+        this.storage.set(this.storageId.toString(), this.dataset);
         //this.sections=this.dataset[0].F420HTMLS1.split(";");
 
         //this.dataset = data;
         //this.filtersLoaded = Promise.resolve(true);
 
-        if (pageId == '1011') {
-          var pages = this.dataset[0].F420HTMLS1.split(";");
-          var pageIds = this.dataset[0].F420HTMLS2.split(";");
-          let count = 0;
-          for (let entry of pages) {
-            this.sections.push({ title: entry, pageId: pageIds[count] })
-            count = count + 1;
-          }
-          this.isTab1Available = true;
-          this.isTab2Available = false;
-        }
-        else {
-          this.isTab1Available = false;
-          this.isTab2Available = true;
-        }
-
-        this.isDataAvailable = true;
+        this.setData();
         refresher.complete();
         //alert(data);
         //console.log("User Login: " + JSON.parse(this.dataset)[0].F420TITLE);
       });
   }
 
+  setData() {
+    if (this.dataset!=null) {
+      this.sections = [];
+      if (this.pageId == '1011') {
+        var pages = this.dataset[0].F420HTMLS1.split(";");
+        var pageIds = this.dataset[0].F420HTMLS2.split(";");
+        let count = 0;
+        for (let entry of pages) {
+          this.sections.push({ title: entry, pageId: pageIds[count] })
+          count = count + 1;
+        }
+        this.isTab1Available = true;
+        this.isTab2Available = false;
+      }
+      else {
+        this.isTab1Available = false;
+        this.isTab2Available = true;
+      }
+      this.isDataAvailable = true;
+    }
+  }
+
   //if we want to use cache use ionViewDidLoad instead of ionViewCanEnter
-  ionViewDidLoad() {
+  ionViewCanEnter() {
+    //this.servicesProvider.online = false;
+    //this.servicesProvider.isApp = true;
+    if (this.navParams.get('id') != null) {
+      this.pageId = this.navParams.get('id');
+    }
+    else {
+      this.pageId = '1011';
+    }
+    this.storageId = 'OdigosEksypiretisisPage' + this.pageId;
+
+    if (this.servicesProvider.online || !this.servicesProvider.isApp) {
+      this.doRefresh(this.myrefresher);
+    }
+    else {
+      this.storage.get(this.storageId)
+        .then(
+          (data) => {
+            this.dataset = data;
+            this.setData();
+            this.myrefresher.complete();
+          }
+        );
+    }
     //console.log('ionViewDidLoad LakatamiaPage');
-    this.doRefresh(this.myrefresher);
+
   }
 
   openPage(pageId) {

@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, AlertController } from 'ionic-angular';
+import { Storage } from '@ionic/storage';
+
 import { NewsPage } from '../news/news';
 import { EventsPage } from '../events/events';
 import { SubmitProblemPage } from '../submit-problem/submit-problem';
@@ -18,8 +20,39 @@ import { ServicesProvider } from '../../providers/services/services';
 })
 export class HomePage {
 
-  constructor(public navCtrl: NavController, public servicesProvider: ServicesProvider, public alertCtrl: AlertController) {
-
+  constructor(public navCtrl: NavController, public servicesProvider: ServicesProvider, public alertCtrl: AlertController, public storage: Storage) {
+    this.storage.get("YpovoliApopsisEisigisisPage")
+      .then(
+        (data) => {
+          let submissions = [];
+          submissions = data;
+          if (submissions != null) {
+            for (let submission of submissions) {
+              this.servicesProvider.addSubmission(submission)
+                .then(data => {
+                  //alert(JSON.parse(data.toString()).length);
+                  //let message = JSON.parse(data.toString());
+                  // //console.log(result.toString());
+                  // //console.log(message[0]["@RETMSG"]);
+                  // let alertTitle = "Μήνυμα";
+                  // if (message[0]["@RETTYPE"] == 'E') {
+                  //   alertTitle = "Πρόβλημα"
+                  // }
+                  // const alert = this.alertCtrl.create({
+                  //   title: alertTitle,
+                  //   subTitle: message[0]["@RETMSG"],
+                  //   buttons: ['ΕΝΤΑΞΕΙ']
+                  // });
+                  // alert.present();
+                  // if (message[0]["@RETTYPE"] == 'I') {
+                  //   this.storage.remove("YpovoliApopsisEisigisisPage");
+                  // }
+                });
+            }
+            this.storage.remove("YpovoliApopsisEisigisisPage");
+          }
+        }
+      );
   }
 
   goToNews() {
@@ -36,8 +69,7 @@ export class HomePage {
     if (this.servicesProvider.checkTokens()) {
       this.navCtrl.push(SubmitProblemPage);
     }
-    else
-    {
+    else {
       const popup = this.alertCtrl.create({
         title: "Μήνυμα",
         subTitle: "Πρέπει να κάνετε είσοδο στην εφαρμογή για να μπορέσετε να υποβάλετε Πρόβλημα.",
@@ -57,8 +89,7 @@ export class HomePage {
     if (this.servicesProvider.checkTokens()) {
       this.navCtrl.push(YpovoliApopsisEisigisisPage);
     }
-    else
-    {
+    else {
       const popup = this.alertCtrl.create({
         title: "Μήνυμα",
         subTitle: "Πρέπει να κάνετε είσοδο στην εφαρμογή για να μπορέσετε να υποβάλετε Εισήγηση.",

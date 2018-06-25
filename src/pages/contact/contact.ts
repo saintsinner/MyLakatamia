@@ -1,9 +1,11 @@
 import { Component, ViewChild } from '@angular/core';
-import { IonicPage, NavController, NavParams, Refresher } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Refresher, Platform } from 'ionic-angular';
 //import { HTTP } from '@ionic-native/http';
 import { ServicesProvider } from '../../providers/services/services';
 //import { SqlLiteProvider } from '../../providers/sql-lite/sql-lite';
 import { HttpParams } from '@angular/common/http';
+import { Storage } from '@ionic/storage';
+import { GoogleMaps, GoogleMap, GoogleMapsEvent, GoogleMapOptions, LatLng, CameraPosition, MarkerOptions, Marker } from '@ionic-native/google-maps';
 
 /**
  * Generated class for the ContactPage page.
@@ -18,25 +20,32 @@ import { HttpParams } from '@angular/common/http';
     templateUrl: 'contact.html',
 })
 export class ContactPage {
-
+    storageId: any;
+    pageId:any;
     params: any;
     dataset: any;
     isDataAvailable: boolean = false;
     isTab1Available: boolean = false;
     isTab2Available: boolean = false;
     @ViewChild(Refresher) myrefresher: Refresher;
+    map: GoogleMap;
     //constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider, private sqlLiteProvider: SqlLiteProvider) {
-    constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider) {
+    constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider,
+        private googleMaps: GoogleMaps, public platform: Platform, public storage: Storage) {
         //console.log('Constructor LakatamiaPage');
         //sqlLiteProvider.addDanceMove('tango');
         //sqlLiteProvider.getDanceMoves();
+
+        platform.ready().then(() => {
+            this.loadMap();
+        });
     }
 
     doRefresh(refresher) {
         //console.log('Begin async operation', refresher);
         //this.getContent(http)
         //this.mysections = '1';
-        this.getContent(refresher, '1007');
+        this.getContent(refresher);
 
         //setTimeout(() => {
         //    console.log('Async operation has ended');
@@ -44,10 +53,10 @@ export class ContactPage {
         //}, 10000);
     }
 
-    getContent(refresher, pageId) {
+    getContent(refresher) {
         this.params = new HttpParams()
             .set('INSTID', this.servicesProvider.instId.toString())
-            .set('ID', pageId)
+            .set('ID', this.pageId)
             .set('TITLE', '')
             .set('SECTIONS', '0')
             .set('desc', '')
@@ -96,21 +105,66 @@ export class ContactPage {
             .then(data => {
                 //alert('');
                 this.dataset = JSON.parse(data.toString());
-                //this.dataset = data;
-                //this.filtersLoaded = Promise.resolve(true);
-                this.isDataAvailable = true;
-
-                this.isTab1Available = true;
+                this.storage.set(this.storageId.toString(), this.dataset);
+                this.setData();
                 refresher.complete();
                 //alert(data);
                 //console.log("User Login: " + JSON.parse(this.dataset)[0].F420TITLE);
             });
     }
 
+    setData() {
+        this.isDataAvailable = true;
+        this.isTab1Available = true;
+    }
+
+    loadMap() {
+        let mapOptions: GoogleMapOptions = {
+            camera: {
+                target: {
+                    lat: 43.0741904,
+                    lng: -89.3809802
+                },
+                zoom: 18,
+                tilt: 30
+            }
+        };
+
+        this.map = GoogleMaps.create('map_canvas', mapOptions);
+
+        let marker: Marker = this.map.addMarkerSync({
+            title: 'Ionic',
+            icon: 'blue',
+            animation: 'DROP',
+            position: {
+                lat: 43.0741904,
+                lng: -89.3809802
+            }
+        });
+        //   marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(() => {
+        //     alert('clicked');
+        //   });
+    }
+
     //if we want to use cache use ionViewDidLoad instead of ionViewCanEnter
-    ionViewDidLoad() {
+    ionViewCanEnter() {
+        this.pageId='1007';
+        this.storageId = 'ContactPage';
+        if (this.servicesProvider.online || !this.servicesProvider.isApp) {
+            this.doRefresh(this.myrefresher);
+        }
+        else {
+            this.storage.get(this.storageId)
+                .then(
+                    (data) => {
+                        this.dataset = data;
+                        this.setData();
+                        this.myrefresher.complete();
+                    }
+                );
+        }
         //console.log('ionViewDidLoad LakatamiaPage');
-        this.doRefresh(this.myrefresher);
+
     }
 }
 

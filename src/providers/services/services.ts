@@ -1,7 +1,6 @@
 ﻿import { HttpClient, HttpErrorResponse, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AlertController, Platform, LoadingController } from 'ionic-angular';
-import { Network } from '@ionic-native/network';
 
 /*
   Generated class for the ServicesProvider provider.
@@ -22,32 +21,10 @@ export class ServicesProvider {
     online: boolean = true;
     disconnectSubscription: any;
     isApp: any;
-    constructor(public http: HttpClient, public alertCtrl: AlertController, private network: Network, public platform: Platform, public loadingCtrl: LoadingController) {
+    constructor(public http: HttpClient, public alertCtrl: AlertController, public platform: Platform, public loadingCtrl: LoadingController) {
         //console.log('Hello ServicesProvider Provider');
 
-        this.platform.ready().then(() => {
-            let type = this.network.type;
-            this.isApp = !document.URL.startsWith('http');
-            //console.log("Connection type: ", this.network.type);
-            // Try and find out the current online status of the device
-            if (type == "unknown" || type == "none" || type == undefined) {
-                console.log("The device is not online");
-                this.online = false;
-            } else {
-                console.log("The device is online!");
-                this.online = true;
-            }
-        });
-
-        this.network.onDisconnect().subscribe(() => {
-            this.online = false;
-            console.log('network was disconnected :-(');
-        });
-
-        this.network.onConnect().subscribe(() => {
-            this.online = true;
-            console.log('network was connected :-)');
-        });
+       
     }
 
     checkTokens() {

@@ -6,6 +6,9 @@ import { Network } from '@ionic-native/network';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { SQLite } from '@ionic-native/sqlite';
+import { Geolocation } from '@ionic-native/geolocation';
+import { GoogleMaps } from '@ionic-native/google-maps';
+import { IonicStorageModule } from '@ionic/storage';
 
 //import { SocialSharing } from '@ionic-native/social-sharing';
 import { SafePipe } from '../pipes/safe/safe';
@@ -103,6 +106,7 @@ import { SqlLiteProvider } from '../providers/sql-lite/sql-lite';
       IonicModule.forRoot(MyApp),
       HttpClientModule,
 	  FormsModule,
+	  IonicStorageModule.forRoot()
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -156,7 +160,9 @@ import { SqlLiteProvider } from '../providers/sql-lite/sql-lite';
 	  SQLite,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     ServicesProvider,
-    SqlLiteProvider
+	SqlLiteProvider,
+	Geolocation,
+	GoogleMaps
   ]
 })
 export class AppModule {}
