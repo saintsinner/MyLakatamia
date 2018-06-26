@@ -28,7 +28,7 @@
     <div [ngSwitch]="mysections">
         <ion-list *ngSwitchCase="'1'">
             <div *ngIf="isTab1Available">
-                <img src="../../assets/imgs/lakatamia.jpg" style="width: 100%;">
+                <img src="assets/imgs/lakatamia.jpg" style="width: 100%;">
 
                 <div [innerHTML]="dataset[0].F420HTMLL1 | safe: 'html'">
                 </div>
@@ -36,7 +36,7 @@
         </ion-list>
         <ion-list *ngSwitchCase="'2'">
             <div *ngIf="isTab2Available">
-                <img src="../../assets/imgs/municipality.jpg" style="width: 100%;">
+                <img src="assets/imgs/municipality.jpg" style="width: 100%;">
 
                 <div [innerHTML]="dataset[0].F420HTMLL1 | safe: 'html'">
                 </div>

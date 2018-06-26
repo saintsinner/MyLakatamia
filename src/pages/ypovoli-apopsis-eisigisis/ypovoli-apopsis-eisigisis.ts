@@ -36,8 +36,8 @@ export class YpovoliApopsisEisigisisPage {
     public alertCtrl: AlertController, public storage: Storage) {
     this.myFormGroup = this.formBuilder.group({
       category: ['', Validators.compose([Validators.required])],
-      title: ['sdfs', Validators.compose([Validators.maxLength(this.titleLength), Validators.required])],
-      description: ['3245234r234r', Validators.compose([Validators.maxLength(this.descriptionLength), Validators.required])]
+      title: ['', Validators.compose([Validators.maxLength(this.titleLength), Validators.required])],
+      description: ['', Validators.compose([Validators.maxLength(this.descriptionLength), Validators.required])]
     });
   }
 
@@ -97,8 +97,8 @@ export class YpovoliApopsisEisigisisPage {
   }
 
   submitForm() {
-    this.servicesProvider.online = false;
-    this.servicesProvider.isApp = true;
+    //this.servicesProvider.online = false;
+    //this.servicesProvider.isApp = true;
     console.log(this.myFormGroup.value)
     if (this.myFormGroup.valid) {
       //alert(this.myFormGroup.value['title']);
@@ -140,7 +140,7 @@ export class YpovoliApopsisEisigisisPage {
                   });
                   alert.present();
                   if (message[0]["@RETTYPE"] == 'I') {
-                    this.navCtrl.push(HomePage);
+                    this.navCtrl.setRoot(HomePage);
                   }
                 });
               //this.servicesProvider.addSubmission(data);

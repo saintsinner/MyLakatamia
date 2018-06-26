@@ -25,6 +25,7 @@ export class HomePage {
   }
 
   ionViewCanEnter() {
+    this.servicesProvider.checkNetwork();
     //alert('');
     if (this.servicesProvider.online || !this.servicesProvider.isApp) {
       //alert(this.storage.get("YpovoliApopsisEisigisisPage"))

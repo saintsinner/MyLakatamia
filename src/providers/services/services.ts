@@ -1,7 +1,8 @@
 ﻿import { HttpClient, HttpErrorResponse, HttpParams, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, ApplicationRef } from '@angular/core';
 import { AlertController, Platform, LoadingController } from 'ionic-angular';
 import { Network } from '@ionic-native/network';
+import { HomePage } from '../../pages/home/home';
 
 /*
   Generated class for the ServicesProvider provider.
@@ -22,7 +23,8 @@ export class ServicesProvider {
     online: boolean = true;
     disconnectSubscription: any;
     isApp: any;
-    constructor(public http: HttpClient, public alertCtrl: AlertController, private network: Network, public platform: Platform, public loadingCtrl: LoadingController) {
+    constructor(public http: HttpClient, public alertCtrl: AlertController, private network: Network, public platform: Platform, 
+        public loadingCtrl: LoadingController, private appReference: ApplicationRef) {
         //console.log('Hello ServicesProvider Provider');
 
         this.platform.ready().then(() => {
@@ -43,12 +45,32 @@ export class ServicesProvider {
         this.network.onDisconnect().subscribe(() => {
             this.online = false;
             console.log('network was disconnected :-(');
+            alert(this.online);
+            this.appReference.tick();
         });
 
         this.network.onConnect().subscribe(() => {
             this.online = true;
+            //this.navCtrl.setRoot(HomePage);
             console.log('network was connected :-)');
+            alert(this.online);
+            this.appReference.tick();
         });
+    }
+
+    checkForNetwork = () => {
+        // let type = this.network.type;
+        // this.network.onDisconnect().subscribe(() => {
+        //     this.online = false;
+        //     this.appReference.tick();
+        // });
+        // this.network.onConnect().subscribe(() => {
+        //     this.online = true;
+        //     setTimeout(() => {
+        //         this.online = true;
+        //             this.appReference.tick();
+        //     }, 3000);
+        // });
     }
 
     checkTokens() {
@@ -169,7 +191,7 @@ export class ServicesProvider {
                         (result) => {
                             console.log("success!");
 
-                            this.myLoading.dismiss().catch();
+                            this.myLoading.dismiss();
 
                             resolve(result);
                         },
@@ -182,7 +204,7 @@ export class ServicesProvider {
                                 buttons: ['ΕΝΤΑΞΕΙ']
                             });
 
-                            this.myLoading.dismiss().catch();
+                            this.myLoading.dismiss();
 
                             popup.present();
                         });

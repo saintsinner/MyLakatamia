@@ -25,30 +25,7 @@ export class MyApp {
   constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen, private network: Network, public servicesProvider: ServicesProvider) {
     this.initializeApp();
 
-    this.platform.ready().then(() => {
-      let type = this.network.type;
-      this.servicesProvider.isApp = !document.URL.startsWith('http');
-      //console.log("Connection type: ", this.network.type);
-      // Try and find out the current online status of the device
-      if ((type == "unknown" || type == "none" || type == undefined) && this.isApp) {
-          console.log("The device is not online");
-          this.servicesProvider.online = false;
-      } else {
-          console.log("The device is online!");
-          this.servicesProvider.online = true;
-      }
-  });
 
-  this.network.onDisconnect().subscribe(() => {
-      this.servicesProvider.online = false;
-      console.log('network was disconnected :-(');
-  });
-
-  this.network.onConnect().subscribe(() => {
-      this.servicesProvider.online = true;
-      console.log('network was connected :-)');
-      this.nav.setRoot(HomePage);
-  });
     /*// used for an example of ngFor and navigation
     this.pages = [
       { title: 'Home', component: HomePage },
@@ -63,6 +40,18 @@ export class MyApp {
       // Here you can do any higher level native things you might need.
       this.statusBar.styleDefault();
       this.splashScreen.hide();
+
+      let type = this.network.type;
+      this.servicesProvider.isApp = !document.URL.startsWith('http');
+      //console.log("Connection type: ", this.network.type);
+      // Try and find out the current online status of the device
+      if ((type == "unknown" || type == "none" || type == undefined) && this.servicesProvider.isApp) {
+        console.log("The device is not online");
+        this.servicesProvider.online = false;
+      } else {
+        console.log("The device is online!");
+        this.servicesProvider.online = true;
+      }
     });
   }
 
@@ -82,17 +71,17 @@ export class MyApp {
       case 'ProfilePage':
         this.nav.setRoot(ProfilePage);
         break;
-        case 'ChangePasswordPage':
+      case 'ChangePasswordPage':
         this.nav.setRoot(ChangePasswordPage);
         break;
-        case 'LoginPage':
+      case 'LoginPage':
         this.nav.setRoot(LoginPage);
         break;
-        case 'SettingsPage':
+      case 'SettingsPage':
         this.nav.setRoot(SettingsPage);
         break;
       default:
-      this.nav.setRoot(HomePage);
+        this.nav.setRoot(HomePage);
     }
   }
 }

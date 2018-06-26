@@ -148,6 +148,8 @@ export class ContactPage {
 
     //if we want to use cache use ionViewDidLoad instead of ionViewCanEnter
     ionViewCanEnter() {
+        this.servicesProvider.checkNetwork();
+        
         this.pageId='1007';
         this.storageId = 'ContactPage';
         if (this.servicesProvider.online || !this.servicesProvider.isApp) {
