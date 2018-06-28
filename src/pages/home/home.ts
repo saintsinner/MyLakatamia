@@ -25,7 +25,7 @@ export class HomePage {
   }
 
   ionViewCanEnter() {
-    this.servicesProvider.checkNetwork();
+    //this.servicesProvider.checkNetwork();
     //alert('');
     if (this.servicesProvider.online || !this.servicesProvider.isApp) {
       //alert(this.storage.get("YpovoliApopsisEisigisisPage"))
@@ -82,21 +82,7 @@ export class HomePage {
     this.navCtrl.push(EventsPage);
   }
   goToProblems() {
-    //TEMP - REMOVE IN PRODUCTION
-    localStorage.removeItem("Token");
-    localStorage.removeItem("EncodedToken");
-
-    if (this.servicesProvider.checkTokens()) {
-      this.navCtrl.push(SubmitProblemPage);
-    }
-    else {
-      const popup = this.alertCtrl.create({
-        title: "Μήνυμα",
-        subTitle: "Πρέπει να κάνετε είσοδο στην εφαρμογή για να μπορέσετε να υποβάλετε Πρόβλημα.",
-        buttons: ['ΕΝΤΑΞΕΙ']
-      });
-      popup.present();
-    }
+    this.navCtrl.push(SubmitProblemPage);
   }
   goToComplaints() {
     this.navCtrl.push(SubmitComplaintPage);

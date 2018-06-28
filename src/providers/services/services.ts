@@ -1,8 +1,8 @@
 ﻿import { HttpClient, HttpErrorResponse, HttpParams, HttpHeaders } from '@angular/common/http';
-import { Injectable, ApplicationRef } from '@angular/core';
+import { Injectable, } from '@angular/core';
 import { AlertController, Platform, LoadingController } from 'ionic-angular';
 import { Network } from '@ionic-native/network';
-import { HomePage } from '../../pages/home/home';
+import { Storage } from '@ionic/storage';
 
 /*
   Generated class for the ServicesProvider provider.
@@ -23,54 +23,25 @@ export class ServicesProvider {
     online: boolean = true;
     disconnectSubscription: any;
     isApp: any;
-    constructor(public http: HttpClient, public alertCtrl: AlertController, private network: Network, public platform: Platform, 
-        public loadingCtrl: LoadingController, private appReference: ApplicationRef) {
+    deviceId: any;
+    categoryColors = [];
+    constructor(public http: HttpClient, public alertCtrl: AlertController, private network: Network, public platform: Platform,
+        public loadingCtrl: LoadingController, public storage: Storage) {
         //console.log('Hello ServicesProvider Provider');
 
         this.platform.ready().then(() => {
-            let type = this.network.type;
-            //alert(type);
             this.isApp = !document.URL.startsWith('http');
-            //console.log("Connection type: ", this.network.type);
-            // Try and find out the current online status of the device
-            if ((type == "unknown" || type == "none" || type == undefined) && this.isApp) {
-                console.log("The device is not online");
-                this.online = false;
-            } else {
-                console.log("The device is online!");
-                this.online = true;
-            }
-        });
+            // this.storage.get("categoryColors")
+            //     .then(
+            //         (data) => {
+            //             this.categoryColors = data;
+            //             if (this.categoryColors == null) {
+            //                 this.setCategoryColors();
+            //                 this.storage.set('categoryColors', this.categoryColors);
+            //             }
+            //         });
 
-        this.network.onDisconnect().subscribe(() => {
-            this.online = false;
-            console.log('network was disconnected :-(');
-            alert(this.online);
-            this.appReference.tick();
         });
-
-        this.network.onConnect().subscribe(() => {
-            this.online = true;
-            //this.navCtrl.setRoot(HomePage);
-            console.log('network was connected :-)');
-            alert(this.online);
-            this.appReference.tick();
-        });
-    }
-
-    checkForNetwork = () => {
-        // let type = this.network.type;
-        // this.network.onDisconnect().subscribe(() => {
-        //     this.online = false;
-        //     this.appReference.tick();
-        // });
-        // this.network.onConnect().subscribe(() => {
-        //     this.online = true;
-        //     setTimeout(() => {
-        //         this.online = true;
-        //             this.appReference.tick();
-        //     }, 3000);
-        // });
     }
 
     checkTokens() {
@@ -123,8 +94,20 @@ export class ServicesProvider {
        }      
    }*/
 
+    setCategoryColors() {
+        for (var c = 1000; c < 1200; c++) {
+            var letters = '0123456789ABCDEF';
+            var color = '#';
+            for (var i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            this.categoryColors.push(color);
+        }
+    }
+
     getContent(myservice: string, params: HttpParams) {
-        //alert(this.online);
+        alert(this.online);
+        alert(this.isApp);
         if (this.online || !this.isApp) {
             this.myLoading = this.loadingCtrl.create({
                 content: 'Παρακαλώ περιμένετε...'

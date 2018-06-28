@@ -8,7 +8,7 @@
 
   <ion-navbar>
     <ion-title>
-      <div *ngIf="isDataAvailable">{{dataset[0].F420TITLE}}</div>
+      Οδηγός Εξυπηρέτησης
     </ion-title>
   </ion-navbar>
 
@@ -29,6 +29,7 @@
   </div>
   <div *ngIf="isTab2Available">
     <img src="assets/imgs/pezogefira.jpg" style="width: 100%;">
+    <h2>{{dataset[0].F420TITLE}}</h2>
   </div>
   <div *ngIf="isTab2Available" [innerHTML]="dataset[0].F420HTMLL1 | safe: 'html'" padding>
   </div>

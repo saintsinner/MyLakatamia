@@ -9,6 +9,7 @@ import { SQLite } from '@ionic-native/sqlite';
 import { Geolocation } from '@ionic-native/geolocation';
 import { GoogleMaps } from '@ionic-native/google-maps';
 import { IonicStorageModule } from '@ionic/storage';
+import { Device } from '@ionic-native/device';
 
 //import { SocialSharing } from '@ionic-native/social-sharing';
 import { SafePipe } from '../pipes/safe/safe';
@@ -162,7 +163,8 @@ import { SqlLiteProvider } from '../providers/sql-lite/sql-lite';
     ServicesProvider,
 	SqlLiteProvider,
 	Geolocation,
-	GoogleMaps
+	GoogleMaps,
+	Device
   ]
 })
 export class AppModule {}

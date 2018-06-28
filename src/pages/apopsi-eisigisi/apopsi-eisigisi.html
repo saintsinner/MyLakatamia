@@ -1,0 +1,40 @@
+<!--
+  Generated template for the ApopsiEisigisiPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>ApopsiEisigisi</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <ion-item>
+    <ion-label floating>Είδος Άποψης / Εισήγησης
+    </ion-label>
+    <span>{{dataset[0].F488CATEGORY}}</span>
+    <ion-badge item-end color="servicesProvider.categoryColors[dataset[0].F488CATEGORY]">
+        
+      </ion-badge>
+  </ion-item>
+  <ion-item>
+    <ion-label floating>Θέμα      
+    </ion-label>
+    <h3>{{dataset[0].F488TITLE}}</h3>
+  </ion-item>
+  <ion-item>
+    <ion-label floating>Περιγραφή
+    </ion-label>
+    <span>{{dataset[0].F488DESC}}</span>
+  </ion-item>
+  <ion-item>
+      <ion-label floating>Απάντηση
+      </ion-label>
+      <span>{{dataset[0].F488ANSWER}}</span>
+    </ion-item>
+</ion-content>

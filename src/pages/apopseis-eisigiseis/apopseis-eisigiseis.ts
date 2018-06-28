@@ -6,6 +6,7 @@ import { ServicesProvider } from '../../providers/services/services';
 import { HttpParams } from '@angular/common/http';
 import { Storage } from '@ionic/storage';
 import { YpovoliApopsisEisigisisPage } from '../ypovoli-apopsis-eisigisis/ypovoli-apopsis-eisigisis';
+import { ApopsiEisigisiPage } from '../apopsi-eisigisi/apopsi-eisigisi';
 
 /**
  * Generated class for the ApopseisEisigiseisPage page.
@@ -82,7 +83,7 @@ export class ApopseisEisigiseisPage {
       .set('addressno', '')
       .set('latitude', '')
       .set('longitude', '')
-      .set('visible', '')
+      .set('visible', 'True')
       .set('answer', '')
       .set('lang', this.servicesProvider.language)
       .set('sortby', 'F488CRTDATE')
@@ -227,7 +228,11 @@ export class ApopseisEisigiseisPage {
   }
 
   goToSubmission(id) {
-    this.navCtrl.push(YpovoliApopsisEisigisisPage, { id: id });
+    this.navCtrl.push(ApopsiEisigisiPage, { id: id });
+  }
+
+  goToCreateSubmission() {
+    this.navCtrl.push(YpovoliApopsisEisigisisPage);
   }
 
 }

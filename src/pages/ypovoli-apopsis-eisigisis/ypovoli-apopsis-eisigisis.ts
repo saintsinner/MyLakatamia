@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { IonicPage, NavController, NavParams, Refresher, AlertController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Refresher, AlertController, Events } from 'ionic-angular';
 //import { HTTP } from '@ionic-native/http';
 import { ServicesProvider } from '../../providers/services/services';
 //import { SqlLiteProvider } from '../../providers/sql-lite/sql-lite';
@@ -32,13 +32,15 @@ export class YpovoliApopsisEisigisisPage {
   private myFormGroup: FormGroup;
   titleLength = 100;
   descriptionLength = 500;
-  constructor(public navCtrl: NavController, public navParams: NavParams, private formBuilder: FormBuilder, public servicesProvider: ServicesProvider,
+  constructor(public navCtrl: NavController, public navParams: NavParams, private formBuilder: FormBuilder, public servicesProvider: ServicesProvider, public events: Events,
     public alertCtrl: AlertController, public storage: Storage) {
     this.myFormGroup = this.formBuilder.group({
       category: ['', Validators.compose([Validators.required])],
       title: ['', Validators.compose([Validators.maxLength(this.titleLength), Validators.required])],
       description: ['', Validators.compose([Validators.maxLength(this.descriptionLength), Validators.required])]
     });
+
+    this.events.publish('user:login');
   }
 
   doRefresh(refresher) {
@@ -72,7 +74,7 @@ export class YpovoliApopsisEisigisisPage {
       .set('sortby', 'F487TITLE')
       .set('sortorder', 'ASC')
       .set('currentpage', this.currentpage.toString())
-      .set('pagesize', '10')
+      .set('pagesize', '100')
       .set('count', '0')
       .set('runoption', 'I')
       .set('USER_UI_LANGUAGE', this.servicesProvider.language)

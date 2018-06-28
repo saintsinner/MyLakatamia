@@ -119,28 +119,29 @@ export class ContactPage {
     }
 
     loadMap() {
+        console.log('loadMap');
         let mapOptions: GoogleMapOptions = {
             camera: {
                 target: {
-                    lat: 43.0741904,
-                    lng: -89.3809802
+                    lat: 35.1103776939127,
+                    lng: 33.300821106221065
                 },
-                zoom: 18,
-                tilt: 30
+                zoom: 17,
+                tilt: 20
             }
         };
 
-        this.map = GoogleMaps.create('map_canvas', mapOptions);
+        this.map = GoogleMaps.create('map', mapOptions);
 
-        let marker: Marker = this.map.addMarkerSync({
-            title: 'Ionic',
-            icon: 'blue',
-            animation: 'DROP',
-            position: {
-                lat: 43.0741904,
-                lng: -89.3809802
-            }
-        });
+        // let marker: Marker = this.map.addMarkerSync({
+        //     title: 'Ionic',
+        //     icon: 'blue',
+        //     animation: 'DROP',
+        //     position: {
+        //         lat: 35.1103776939127,
+        //         lng: 33.300821106221065
+        //     }
+        // });
         //   marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(() => {
         //     alert('clicked');
         //   });
@@ -148,8 +149,8 @@ export class ContactPage {
 
     //if we want to use cache use ionViewDidLoad instead of ionViewCanEnter
     ionViewCanEnter() {
-        this.servicesProvider.checkNetwork();
-        
+        //this.servicesProvider.checkNetwork();
+
         this.pageId='1007';
         this.storageId = 'ContactPage';
         if (this.servicesProvider.online || !this.servicesProvider.isApp) {

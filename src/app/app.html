@@ -1,4 +1,4 @@
-<ion-menu [content]="content">
+<ion-menu id="loggedOutMenu" [content]="content">
   <ion-header>
     <ion-toolbar>
       <ion-title>Μενού</ion-title>
@@ -6,29 +6,34 @@
   </ion-header>
 
   <ion-content>
-    
+
     <ion-list>
-      <ion-item (click)="openPage('HomePage')" menuClose>
-        <ion-icon name="md-home" style="margin:auto;color:#488aff;"></ion-icon>
-        MyLakatamia</ion-item>
-      <ion-item *ngIf="servicesProvider.checkTokens()" (click)="openPage('ProfilePage')" menuClose>
-        <ion-icon name="md-person" style="margin:auto;color:#488aff;"></ion-icon>
-        Προφίλ</ion-item>
-      <ion-item *ngIf="!servicesProvider.checkTokens()" (click)="openPage('ProfilePage')" menuClose>
-        <ion-icon name="md-person" style="margin:auto;color:#488aff;"></ion-icon>
-        Εγγραφή</ion-item>
-      <ion-item *ngIf="servicesProvider.checkTokens()" (click)="openPage('ChangePasswordPage')" menuClose>
-        <ion-icon name="md-lock" style="margin:auto;color:#488aff;"></ion-icon>
-        Αλλαγή Κωδικού</ion-item>
-      <ion-item *ngIf="!servicesProvider.checkTokens()" (click)="openPage('LoginPage')" menuClose>
-        <ion-icon name="md-log-in" style="margin:auto;color:#488aff;"></ion-icon>
-        Είσοδος</ion-item>
-      <ion-item *ngIf="servicesProvider.checkTokens()" ng-click="logout()" menuClose>
-        <ion-icon name="md-log-out" style="margin:auto;color:#488aff;"></ion-icon>
-        Έξοδος</ion-item>
-      <ion-item (click)="openPage('SettingsPage')" menuClose>
-        <ion-icon name="md-settings" style="margin:auto;color:#488aff;"></ion-icon>
-        Ρυθμίσεις</ion-item>
+      <button ion-item menuClose *ngFor="let p of loggedOutPages" (click)="openPage(p)">
+        <ion-icon item-start [name]="p.icon" style="margin:auto;color:#488aff;"></ion-icon>
+        {{p.title}}
+      </button>
+
+    </ion-list>
+
+  </ion-content>
+
+</ion-menu>
+
+<ion-menu id="loggedInMenu" [content]="content">
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>Μενού</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-content>
+
+    <ion-list>
+      <button ion-item menuClose *ngFor="let p of loggedInPages" (click)="openPage(p)">
+        <ion-icon item-start [name]="p.icon" style="margin:auto;color:#488aff;"></ion-icon>
+        {{p.title}}
+      </button>
+
     </ion-list>
 
   </ion-content>

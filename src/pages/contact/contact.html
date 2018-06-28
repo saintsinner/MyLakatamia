@@ -20,9 +20,7 @@
   <ion-refresher (ionRefresh)="doRefresh($event)">
     <ion-refresher-content>pullingIcon="arrow-dropdown"</ion-refresher-content>
   </ion-refresher>
-  <div>
-      <div #map id="map"></div>
-  </div>
+  <div id="map"></div>
   <div *ngIf="isDataAvailable" [innerHTML]="dataset[0].F420HTMLL1 | safe: 'html'" padding>
   </div>
 </ion-content>
