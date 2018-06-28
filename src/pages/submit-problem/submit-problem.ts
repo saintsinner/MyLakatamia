@@ -17,7 +17,7 @@ import { GoogleMaps, GoogleMap, GoogleMapsEvent, GoogleMapOptions, LatLng, Camer
 })
 export class SubmitProblemPage {
   map: GoogleMap;
-  constructor(public navCtrl: NavController, public navParams: NavParams, public geolocation: Geolocation) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public geolocation: Geolocation, private googleMaps: GoogleMaps) {
   }
 
   ionViewDidLoad() {
@@ -28,26 +28,26 @@ export class SubmitProblemPage {
 
       let mapOptions: GoogleMapOptions = {
         camera: {
-            target: {
-                lat: res.coords.latitude,
-                lng: res.coords.longitude
-            },
-            zoom: 17,
-            tilt: 20
+          target: {
+            lat: res.coords.latitude,
+            lng: res.coords.longitude
+          },
+          zoom: 17,
+          tilt: 20
         }
-    };
+      };
 
-    this.map = GoogleMaps.create('map', mapOptions);
+      this.map = GoogleMaps.create('map', mapOptions);
 
-    let marker: Marker = this.map.addMarkerSync({
-            title: 'Βρίσκεσε εδώ',
-            icon: 'blue',
-            animation: 'DROP',
-            position: {
-              lat: res.coords.latitude,
-              lng: res.coords.longitude
-            }
-        });
+      let marker: Marker = this.map.addMarkerSync({
+        title: 'Βρίσκεσε εδώ',
+        icon: 'blue',
+        animation: 'DROP',
+        position: {
+          lat: res.coords.latitude,
+          lng: res.coords.longitude
+        }
+      });
 
     }).catch((error) => {
       console.log('Error getting location', error);

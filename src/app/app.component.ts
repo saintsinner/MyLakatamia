@@ -19,9 +19,6 @@ export interface PageInterface {
   component: any;
   icon: string;
   logsOut?: boolean;
-  index?: number;
-  tabName?: string;
-  tabComponent?: any;
 }
 
 @Component({
@@ -66,18 +63,21 @@ export class MyApp {
 
   initializeApp() {
     this.platform.ready().then(() => {
-      this.network.onDisconnect().subscribe(() => {
-        this.servicesProvider.online = false;
-        console.log('offline-->publish');
-        this.events.publish('network:offline');
-      });
-      this.network.onConnect().subscribe(() => {
-        this.servicesProvider.online = true;
-        console.log('online--publish');
-        this.events.publish('network:online');
-      });
       
-      this.listenToNetworkEvents();
+      // this.network.onDisconnect().subscribe(data => console.log(data), error => console.log(error));
+      // // {
+      // //   this.servicesProvider.online = false;
+      // //   console.log('offline-->publish');
+      // //   this.events.publish('network:offline');
+      // // });
+      // this.network.onConnect().subscribe(data => {console.log(data); this.nav.setRoot(HomePage)}, error => console.log(error));
+      // // this.network.onConnect().subscribe(() => {
+      // //   this.servicesProvider.online = true;
+      // //   console.log('online--publish');
+      // //   this.events.publish('network:online');
+      // // });
+      
+      //this.listenToNetworkEvents();
       
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
@@ -92,7 +92,10 @@ export class MyApp {
 
       //add listeners for login/logout and online/offline
       this.listenToLoginEvents();
-
+      this.network.onDisconnect()
+      .subscribe(() => {
+        alert('');
+      });
     });
   }
 
@@ -106,19 +109,19 @@ export class MyApp {
     });
   }
 
-  listenToNetworkEvents() {
-    // Offline event
-    this.events.subscribe('network:offline', () => {
-      this.servicesProvider.online = false;
-      console.log('offline');
-    });
+  // listenToNetworkEvents() {
+  //   // Offline event
+  //   this.events.subscribe('network:offline', () => {
+  //     this.servicesProvider.online = false;
+  //     console.log('offline');
+  //   });
 
-    // Online event
-    this.events.subscribe('network:online', () => {
-      this.servicesProvider.online = true;
-      console.log('online');
-    });
-  }
+  //   // Online event
+  //   this.events.subscribe('network:online', () => {
+  //     this.servicesProvider.online = true;
+  //     console.log('online');
+  //   });
+  // }
 
   enableMenu(loggedIn: boolean) {
     this.menu.enable(loggedIn, 'loggedInMenu');

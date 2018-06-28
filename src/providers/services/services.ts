@@ -106,8 +106,8 @@ export class ServicesProvider {
     }
 
     getContent(myservice: string, params: HttpParams) {
-        alert(this.online);
-        alert(this.isApp);
+        //alert(this.online);
+        //alert(this.isApp);
         if (this.online || !this.isApp) {
             this.myLoading = this.loadingCtrl.create({
                 content: 'Παρακαλώ περιμένετε...'
