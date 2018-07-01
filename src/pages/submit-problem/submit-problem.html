@@ -7,12 +7,114 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>submitProblem</ion-title>
+    <ion-title>Προβλήματα</ion-title>
   </ion-navbar>
 
 </ion-header>
 
 
 <ion-content padding>
-<div id="map"></div>
+  <ion-refresher (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content>pullingIcon="arrow-dropdown"</ion-refresher-content>
+  </ion-refresher>
+
+  <form [formGroup]="myFormGroup" (ngSubmit)="submitForm()">
+    <div *ngIf="servicesProvider.contID==null">
+      <ion-item>
+        <ion-label floating>Όνομα
+          <span style="color:#ff0000!important;"> * ({{firstNameLength.toString()}} χαρακτήρες)</span>
+        </ion-label>
+        <ion-input type="text" formControlName="firstName" maxlength="{{firstNameLength.toString()}}"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label floating>Επίθετο
+          <span style="color:#ff0000!important;"> * ({{lastNameLength.toString()}} χαρακτήρες)</span>
+        </ion-label>
+        <ion-input type="text" formControlName="lastName" maxlength="{{lastNameLength.toString()}}"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label floating>Email
+          <span style="color:#ff0000!important;"> * ({{emailLength.toString()}} χαρακτήρες)</span>
+        </ion-label>
+        <ion-input type="text" formControlName="email" maxlength="{{emailLength.toString()}}"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label floating>Τηλέφωνο
+          <span style="color:#ff0000!important;"> * ({{phoneLength.toString()}} αριθμούς)</span>
+        </ion-label>
+        <ion-input type="text" formControlName="phone" maxlength="{{phoneLength.toString()}}"></ion-input>
+      </ion-item>
+    </div>
+    <ion-item>
+      <ion-label floating>Είδος Προβλήματος
+        <span style="color:#ff0000!important;"> *</span>
+      </ion-label>
+      <ion-select formControlName="category" okText="ΕΠΙΛΟΓΗ" cancelText="ΑΚΥΡΟ" multiple="false" *ngIf="isDataAvailable">
+        <ion-option *ngFor="let item of dataset" [value]="item.F487ID">{{item.F487TITLE}}</ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label floating>Θέμα
+        <span style="color:#ff0000!important;"> * ({{titleLength.toString()}} χαρακτήρες)</span>
+      </ion-label>
+      <ion-input type="text" formControlName="title" maxlength="{{titleLength.toString()}}"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label floating>Περιγραφή
+        <span style="color:#ff0000!important;"> * ({{descriptionLength.toString()}} χαρακτήρες)</span>
+      </ion-label>
+      <ion-textarea formControlName="description" maxlength="{{descriptionLength.toString()}}"></ion-textarea>
+    </ion-item>
+    <ion-item>
+        <ion-label floating>Οδός
+          <span style="color:#ff0000!important;"> *</span>
+        </ion-label>
+        <ion-select formControlName="address" okText="ΕΠΙΛΟΓΗ" cancelText="ΑΚΥΡΟ" multiple="false" *ngIf="isDataAvailable">
+          <ion-option *ngFor="let item of addresses" [value]="item.F083ID">{{item.F083ADDRESS}}</ion-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+          <ion-label floating>Αριθμός
+            <span style="color:#ff0000!important;"> * ({{houseNumberLength.toString()}} χαρακτήρες)</span>
+          </ion-label>
+          <ion-input type="text" formControlName="houseNumber" maxlength="{{houseNumberLength.toString()}}"></ion-input>
+        </ion-item>
+    <ion-item>
+      <ion-label floating>Τοποθεσία
+      </ion-label>
+      <ion-input formControlName="latitude"></ion-input>
+      <ion-input formControlName="longitude"></ion-input>
+    </ion-item>
+    <div id="map"></div>
+    <br>
+    <div style="text-align: center;">
+      <ion-badge ion-button block outline (click)="presentActionSheet()">
+        <div>
+          <ion-icon name="md-camera"></ion-icon>
+          <label>ΕΠΙΛΕΞΤΕ ΑΡΧΕΙΑ</label>
+        </div>
+      </ion-badge>
+      <ion-grid>
+        <ion-row>
+          <ion-col col-4 *ngFor="let photo of photos; let id = index" style="overflow:hidden; height:100px;">
+            <ion-card class="block">
+              <ion-icon name="trash" style="font-size:30px;" (click)="deletePhoto(id)"></ion-icon>
+              <img [src]="photo.base64Path" *ngIf="photo" />
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
+      <ion-list>
+        <ion-item *ngFor="let item of myfiles" data-tap-disabled="true">
+          <p>{{item.name}}</p>
+          <ion-icon name="trash" item-end (click)="removeFile(item.name)"></ion-icon>
+        </ion-item>
+      </ion-list>
+    </div>
+
+    <button ion-button type="submit" full>Υποβολη</button>
+
+  </form>
+
 </ion-content>

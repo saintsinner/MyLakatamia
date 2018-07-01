@@ -140,7 +140,7 @@ export class EventsPage {
     //console.log('ionViewDidLoad LakatamiaPage');
     this.storageId = "EventsPage" + this.mysections;
     //console.log('ionViewDidLoad LakatamiaPage');
-    if (this.servicesProvider.online || !this.servicesProvider.isApp) {
+    if (this.servicesProvider.online) {
       this.doRefresh(this.myrefresher);
     }
     else {
@@ -167,7 +167,7 @@ export class EventsPage {
       this.datefrom = new Date().toISOString().substr(0, 10);
       this.dateto = "3000-01-01";
 
-      if (this.servicesProvider.online || !this.servicesProvider.isApp) {
+      if (this.servicesProvider.online) {
         this.doInfinite(this.myinfinitescroll);
       }
       else {
@@ -190,7 +190,7 @@ export class EventsPage {
       newdate.setDate(newdate.getDate() - 2);
       this.dateto = newdate.toISOString().substr(0, 10);
 
-      if (this.servicesProvider.online || !this.servicesProvider.isApp) {
+      if (this.servicesProvider.online) {
         this.doInfinite(this.myinfinitescroll);
       }
       else {

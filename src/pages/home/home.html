@@ -1,9 +1,19 @@
 <ion-header>
   <ion-navbar>
-    <button ion-button menuToggle>
-      <ion-icon name="menu"></ion-icon>
-    </button>
+      <button ion-button menuToggle>
+          <ion-icon name="menu"></ion-icon>
+        </button>
+
     <ion-title>MyLakatamia</ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only (click)="goToNotifications()" id="notification-button" clear *ngIf="servicesProvider.notificationsOn">
+        <ion-icon name="notifications"><ion-badge id="notifications-badge" color="danger" *ngIf="notifications>0">{{notifications}}</ion-badge></ion-icon>        
+      </button>
+      <button ion-button icon-only clear *ngIf="!servicesProvider.notificationsOn">
+          <ion-icon name="notifications-off"></ion-icon>        
+        </button>
+    </ion-buttons>
+
   </ion-navbar>
 </ion-header>
 
@@ -15,7 +25,7 @@
   <div>
     <img src="assets/imgs/logo.png" style="display:block;width:17%;height:auto;position: absolute;top: 100px;">
   </div>
-  <div class="button-bar" >
+  <div class="button-bar">
     <div class="btn-group" style="width:30%;text-align:center; display:inline-block; vertical-align: top;" (click)="goToNews()">
       <ion-icon name="md-alarm" style="padding:7px;height:55px;width:55px;margin:auto;color:darkblue;background-color: #CCCCCC;border-radius:50%; font-size: 40px;"></ion-icon>
       <div style="margin:0px;border:none;background-color: #FFFFFF;color:darkblue;">Ανακοινώσεις</div>
@@ -30,7 +40,7 @@
     </div>
   </div>
   <div class="spacer" style="height: 18px;"></div>
-  <div class="button-bar" >
+  <div class="button-bar">
     <div class="btn-group" style="width:30%;text-align:center; display:inline-block; vertical-align: top;" (click)="goToComplaints()">
       <ion-icon name="md-alert" style="padding:7px;height:55px;width:55px;margin:auto;color:darkblue;background-color: #CCCCCC;border-radius:50%; font-size: 40px;"></ion-icon>
       <div style="color:darkblue;">Υποβολή Παραπόνου</div>
@@ -45,7 +55,7 @@
     </div>
   </div>
   <div class="spacer" style="height: 18px;"></div>
-  <div class="button-bar" >
+  <div class="button-bar">
     <div class="btn-group" style="width:30%;text-align:center; display:inline-block; vertical-align: top;" (click)="goToOdigosEksypiretisis()">
       <ion-icon name="md-book" style="padding:7px;height:55px;width:55px;margin:auto;color:darkblue;background-color: #CCCCCC;border-radius:50%; font-size: 40px;"></ion-icon>
       <div style="color:darkblue;">Οδηγός Εξυπηρέτησης</div>

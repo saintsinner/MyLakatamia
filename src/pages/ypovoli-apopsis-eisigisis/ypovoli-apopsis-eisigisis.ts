@@ -39,8 +39,6 @@ export class YpovoliApopsisEisigisisPage {
       title: ['', Validators.compose([Validators.maxLength(this.titleLength), Validators.required])],
       description: ['', Validators.compose([Validators.maxLength(this.descriptionLength), Validators.required])]
     });
-
-    this.events.publish('user:login');
   }
 
   doRefresh(refresher) {
@@ -106,6 +104,7 @@ export class YpovoliApopsisEisigisisPage {
       //alert(this.myFormGroup.value['title']);
       console.log('form submitted');
       let postdata = {
+        instId: this.servicesProvider.instId,
         category: this.myFormGroup.value['category'],
         title: this.myFormGroup.value['title'],
         description: this.myFormGroup.value['description'],
@@ -123,8 +122,8 @@ export class YpovoliApopsisEisigisisPage {
             }
             submissions.push(postdata);
             this.storage.set("YpovoliApopsisEisigisisPage", submissions);
-            if (this.servicesProvider.online || !this.servicesProvider.isApp) {
-              this.servicesProvider.addSubmission(postdata)
+            if (this.servicesProvider.online) {
+              this.servicesProvider.addApopsisEisigisis(postdata)
                 .then(data => {
                   this.storage.remove("YpovoliApopsisEisigisisPage");
                   //alert(JSON.parse(data.toString()).length);
@@ -158,17 +157,7 @@ export class YpovoliApopsisEisigisisPage {
               alert.present();
               this.navCtrl.push(HomePage);
             }
-          }
-        );
-      // }
-      // else {
-      //   submissions.push(postdata);
-      //   this.storage.set("YpovoliApopsisEisigisisPage", submissions);
-      //}
-      // let aaa=[];
-      // aaa.push(data);
-      // localStorage.setItem("submission")
-
+          });
 
     } else {
       var errorMessage = "Παρακαλώ συμπληρώστε τα πεδία με έγκυρα δεδομένα";
@@ -189,7 +178,7 @@ export class YpovoliApopsisEisigisisPage {
     console.log('ionViewDidLoad YpovoliApopsisEisigisisPage');
 
     this.storageId = 'YpovoliApopsisEisigisisPageCategories';
-    if (this.servicesProvider.online || !this.servicesProvider.isApp) {
+    if (this.servicesProvider.online) {
       this.doRefresh(this.myrefresher);
     }
     else {

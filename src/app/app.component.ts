@@ -4,6 +4,7 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { Network } from '@ionic-native/network';
 import { Device } from '@ionic-native/device';
+import { Storage } from '@ionic/storage';
 
 import { ServicesProvider } from '../providers/services/services';
 
@@ -28,6 +29,7 @@ export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
   rootPage: any = HomePage;
+  onDevice: boolean;
 
   // List of pages that can be navigated to from the left menu
   // the left menu only works after login
@@ -47,7 +49,7 @@ export class MyApp {
   ];
 
   constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen, private network: Network, public events: Events,
-    public menu: MenuController, public alertCtrl: AlertController, public device: Device, public servicesProvider: ServicesProvider) {
+    public menu: MenuController, public alertCtrl: AlertController, public device: Device, public servicesProvider: ServicesProvider, public storage: Storage) {
     this.initializeApp();
 
 
@@ -63,22 +65,6 @@ export class MyApp {
 
   initializeApp() {
     this.platform.ready().then(() => {
-      
-      // this.network.onDisconnect().subscribe(data => console.log(data), error => console.log(error));
-      // // {
-      // //   this.servicesProvider.online = false;
-      // //   console.log('offline-->publish');
-      // //   this.events.publish('network:offline');
-      // // });
-      // this.network.onConnect().subscribe(data => {console.log(data); this.nav.setRoot(HomePage)}, error => console.log(error));
-      // // this.network.onConnect().subscribe(() => {
-      // //   this.servicesProvider.online = true;
-      // //   console.log('online--publish');
-      // //   this.events.publish('network:online');
-      // // });
-      
-      //this.listenToNetworkEvents();
-      
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
       this.statusBar.styleDefault();
@@ -88,15 +74,72 @@ export class MyApp {
       this.servicesProvider.deviceId = this.device.uuid;
 
       //enable menu for login/logout
-      this.enableMenu(this.servicesProvider.checkTokens());
+      this.servicesProvider.checkTokens()
+        .then(
+          (data) => {
+            this.enableMenu(data);
+          });
+
+      this.storage.get("notificationsOn")
+        .then(
+          (data) => {
+            this.servicesProvider.notificationsOn = (data == null ? true : data);
+            this.servicesProvider.startNotificationEvents(this.servicesProvider.notificationsOn);
+          }
+        );
+      this.servicesProvider.listenToNotificationEvents();
+
+      let cn  = setInterval( () => {
+        this.checkForNetwork();
+      }, 3000);
+
+      this.servicesProvider.listenToNetworkEvents();
 
       //add listeners for login/logout and online/offline
       this.listenToLoginEvents();
-      this.network.onDisconnect()
-      .subscribe(() => {
-        alert('');
-      });
+
+      //this.listenToNetworkEvents();
+
+
+      // let disconnectSubscription = this.network.onDisconnect().subscribe(() => {
+      //   console.log('network was disconnected :-(');
+      //   let alert = this.alertCtrl.create({
+      //     title: 'Network was disconnected :-(',
+      //     subTitle: 'Please check your connection. And try again',
+      //     buttons: ['OK']
+      //   });
+      //   alert.present();
+      // });
+
+      // disconnectSubscription.unsubscribe();
+
+      // // watch network for a connection
+      // let connectSubscription = this.network.onConnect().subscribe(() => {
+      //   console.log('network connected!');
+      //   let alert = this.alertCtrl.create({
+      //     title: 'Network connected!',
+      //     subTitle: 'Hurrah!',
+      //     buttons: ['OK']
+      //   });
+      //   alert.present();
+      //   // We just got a connection but we need to wait briefly
+      //   // before we determine the connection type.  Might need to wait
+      //   // prior to doing any api requests as well.
+
+      // });
+      // connectSubscription.unsubscribe();
+
     });
+  }
+
+  checkForNetwork(){
+    this.servicesProvider.checkNetwork("CheckNetwork")
+          .then(
+            (data) => {
+              this.servicesProvider.online = data;
+              this.servicesProvider.startNetworkEvents(this.servicesProvider.online);
+            }
+          );
   }
 
   listenToLoginEvents() {
@@ -109,19 +152,7 @@ export class MyApp {
     });
   }
 
-  // listenToNetworkEvents() {
-  //   // Offline event
-  //   this.events.subscribe('network:offline', () => {
-  //     this.servicesProvider.online = false;
-  //     console.log('offline');
-  //   });
 
-  //   // Online event
-  //   this.events.subscribe('network:online', () => {
-  //     this.servicesProvider.online = true;
-  //     console.log('online');
-  //   });
-  // }
 
   enableMenu(loggedIn: boolean) {
     this.menu.enable(loggedIn, 'loggedInMenu');
@@ -129,13 +160,12 @@ export class MyApp {
   }
 
   openPage(page: PageInterface) {
-    // Reset the content nav to have just this page
-    // we wouldn't want the back button to show in this scenario
+
 
     if (page.logsOut === true) {
-      // Give the menu time to close before changing to logged out
-      localStorage.removeItem("Token");
-      localStorage.removeItem("EncodedToken");
+
+      this.storage.remove("Token");
+      this.storage.remove("EncodedToken");
       this.events.publish('user:logout');
 
       const popup = this.alertCtrl.create({
@@ -144,6 +174,7 @@ export class MyApp {
         buttons: ['ΕΝΤΑΞΕΙ']
       });
       popup.present();
+      this.nav.setRoot(HomePage);
     }
     else {
       this.nav.setRoot(page.component);

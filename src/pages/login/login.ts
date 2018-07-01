@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Events } from 'ionic-angular';
+import { Storage } from '@ionic/storage';
 
 /**
  * Generated class for the LoginPage page.
@@ -15,11 +16,15 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 })
 export class LoginPage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage, public events: Events) {
+
   }
 
-  ionViewDidLoad() {
+  ionViewCanEnter() {
     console.log('ionViewDidLoad LoginPage');
+    this.storage.set("Token", "10000001");
+    this.storage.set("EncodedToken", btoa("10000001"));
+    this.events.publish('user:login');
   }
 
 }

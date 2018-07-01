@@ -10,6 +10,15 @@ import { Geolocation } from '@ionic-native/geolocation';
 import { GoogleMaps } from '@ionic-native/google-maps';
 import { IonicStorageModule } from '@ionic/storage';
 import { Device } from '@ionic-native/device';
+import { ActionSheet } from '@ionic-native/action-sheet';
+import { FileChooser } from '@ionic-native/file-chooser';
+import { IOSFilePicker } from '@ionic-native/file-picker';
+import { FileTransfer } from '@ionic-native/file-transfer';
+import { FilePath } from '@ionic-native/file-path';
+import { File } from '@ionic-native/file';
+import { Camera } from '@ionic-native/camera';
+import { ImagePicker } from '@ionic-native/image-picker';
+import { Base64 } from '@ionic-native/base64';
 
 //import { SocialSharing } from '@ionic-native/social-sharing';
 import { SafePipe } from '../pipes/safe/safe';
@@ -18,6 +27,7 @@ import { HomePage } from '../pages/home/home';
 import { ListPage } from '../pages/list/list';
 import { AdeiesOikodomeisDiaxorismonPage } from '../pages/adeies-oikodomeis-diaxorismon/adeies-oikodomeis-diaxorismon';
 import { ApopseisEisigiseisPage } from '../pages/apopseis-eisigiseis/apopseis-eisigiseis';
+import { ApopsiEisigisiPage } from '../pages/apopsi-eisigisi/apopsi-eisigisi';
 import { ChangePasswordPage } from '../pages/change-password/change-password';
 import { ComplaintPage } from '../pages/complaint/complaint';
 import { ComplaintsPage } from '../pages/complaints/complaints';
@@ -37,6 +47,7 @@ import { LoginPage } from '../pages/login/login';
 import { NewPage } from '../pages/new/new';
 import { NewsPage } from '../pages/news/news';
 import { NotificationsPage } from '../pages/notifications/notifications';
+import { NotificationPage } from '../pages/notification/notification';
 import { OdigosEksypiretisisPage } from '../pages/odigos-eksypiretisis/odigos-eksypiretisis';
 import { PolitikoiGamoiPage } from '../pages/politikoi-gamoi/politikoi-gamoi';
 import { PrasinoSimeioPage } from '../pages/prasino-simeio/prasino-simeio';
@@ -66,6 +77,7 @@ import { SqlLiteProvider } from '../providers/sql-lite/sql-lite';
     ListPage,
 	AdeiesOikodomeisDiaxorismonPage,
 	ApopseisEisigiseisPage,
+	ApopsiEisigisiPage,
 	ChangePasswordPage,
 	ComplaintPage,
 	ComplaintsPage,	
@@ -85,6 +97,7 @@ import { SqlLiteProvider } from '../providers/sql-lite/sql-lite';
 	NewPage,
 	NewsPage,
 	NotificationsPage,
+	NotificationPage,
 	OdigosEksypiretisisPage,
 	PolitikoiGamoiPage,
 	PrasinoSimeioPage,
@@ -116,6 +129,7 @@ import { SqlLiteProvider } from '../providers/sql-lite/sql-lite';
     ListPage,
 	AdeiesOikodomeisDiaxorismonPage,
 	ApopseisEisigiseisPage,
+	ApopsiEisigisiPage,
 	ChangePasswordPage,
 	ComplaintPage,
 	ComplaintsPage,	
@@ -135,6 +149,7 @@ import { SqlLiteProvider } from '../providers/sql-lite/sql-lite';
 	NewPage,
 	NewsPage,
 	NotificationsPage,
+	NotificationPage,
 	OdigosEksypiretisisPage,
 	PolitikoiGamoiPage,
 	PrasinoSimeioPage,
@@ -164,7 +179,16 @@ import { SqlLiteProvider } from '../providers/sql-lite/sql-lite';
 	SqlLiteProvider,
 	Geolocation,
 	GoogleMaps,
-	Device
+	Device,
+	ActionSheet,
+	FileChooser,
+	IOSFilePicker,
+	FileTransfer,
+	FilePath,
+	File,
+	Camera,
+	ImagePicker,
+	Base64
   ]
 })
 export class AppModule {}

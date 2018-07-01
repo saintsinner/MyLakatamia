@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { IonicPage, NavController, NavParams, Refresher, InfiniteScroll } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Refresher, InfiniteScroll, AlertController } from 'ionic-angular';
 //import { HTTP } from '@ionic-native/http';
 import { ServicesProvider } from '../../providers/services/services';
 //import { SqlLiteProvider } from '../../providers/sql-lite/sql-lite';
@@ -36,20 +36,18 @@ export class ApopseisEisigiseisPage {
   mysections: string = '1';
   currentpage = 0;
   theEnd = false;
+  showVisible = "True";
   //constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider, private sqlLiteProvider: SqlLiteProvider) {
-  constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider, public storage: Storage) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider, public storage: Storage, public alertCtrl: AlertController) {
     console.log('Constructor ApopseisEisigiseisPage');
 
-    localStorage.setItem("Token", "10000001");
-    localStorage.setItem("EncodedToken", btoa("10000001"));
-    //sqlLiteProvider.addDanceMove('tango');
-    //sqlLiteProvider.getDanceMoves();
   }
 
   doRefresh(refresher) {
     //console.log('Begin async operation', refresher);
     //this.getContent(http)
     this.mysections = '1';
+    this.showVisible = "True";
     this.filterContactId = null;
     this.dataset = [];
     this.datasetOld = [];
@@ -69,12 +67,11 @@ export class ApopseisEisigiseisPage {
       .set('crtdate', '')
       .set('INSTID', this.servicesProvider.instId.toString())
       .set('id', '')
-      .set('catid', '')
       .set('TITLE', '')
-      .set('contactid', this.filterContactId)//(this.servicesProvider.checkTokens)?this.servicesProvider.contID.toString():''
+      .set('contactid', (this.filterContactId == null ? '' : this.filterContactId))//(this.servicesProvider.checkTokens)?this.servicesProvider.contID.toString():''
       .set('fname', '')
       .set('lname', '')
-      .set('category', '1001')
+      .set('category', '1003') //Parent Category
       .set('status', '')
       .set('email', '')
       .set('phone', '')
@@ -83,7 +80,7 @@ export class ApopseisEisigiseisPage {
       .set('addressno', '')
       .set('latitude', '')
       .set('longitude', '')
-      .set('visible', 'True')
+      .set('visible', this.showVisible)
       .set('answer', '')
       .set('lang', this.servicesProvider.language)
       .set('sortby', 'F488CRTDATE')
@@ -97,7 +94,7 @@ export class ApopseisEisigiseisPage {
       .set('retcode', '0')
       .set('retmsg', '0')
       .set('rettype', 'I');
-    this.servicesProvider.getContent("Getsubmissions2", this.params)
+    this.servicesProvider.getContent("GetSubmissions", this.params)
       .then(data => {
         //alert(JSON.parse(data.toString()).length);
         //this.dataset = JSON.parse(data.toString());
@@ -149,9 +146,9 @@ export class ApopseisEisigiseisPage {
 
   //if we want to use cache use ionViewDidLoad. To always load data use ionViewCanEnter.
   ionViewCanEnter() {
+    //console.log('ionViewDidLoad ApopseisEisigiseisPage');
     this.storageId = "ApopseisEisigiseisPage" + this.mysections;
-    //console.log('ionViewDidLoad LakatamiaPage');
-    if (this.servicesProvider.online || !this.servicesProvider.isApp) {
+    if (this.servicesProvider.online) {
       this.doRefresh(this.myrefresher);
     }
     else {
@@ -176,8 +173,9 @@ export class ApopseisEisigiseisPage {
     if (this.mysections == '1') {
       this.dataset = [];
       this.filterContactId = null;
+      this.showVisible = "True";
 
-      if (this.servicesProvider.online || !this.servicesProvider.isApp) {
+      if (this.servicesProvider.online) {
         this.doInfinite(this.myinfinitescroll);
       }
       else {
@@ -196,8 +194,9 @@ export class ApopseisEisigiseisPage {
     else {
       this.datasetOld = [];
       this.filterContactId = this.servicesProvider.contID;
+      this.showVisible = "False";
 
-      if (this.servicesProvider.online || !this.servicesProvider.isApp) {
+      if (this.servicesProvider.online) {
         this.doInfinite(this.myinfinitescroll);
       }
       else {
@@ -232,7 +231,21 @@ export class ApopseisEisigiseisPage {
   }
 
   goToCreateSubmission() {
-    this.navCtrl.push(YpovoliApopsisEisigisisPage);
+    this.servicesProvider.checkTokens()
+      .then(
+        (data) => {
+          if (data == true) {
+            this.navCtrl.push(YpovoliApopsisEisigisisPage);
+          }
+          else {
+            const popup = this.alertCtrl.create({
+              title: "Μήνυμα",
+              subTitle: "Πρέπει να κάνετε είσοδο στην εφαρμογή για να μπορέσετε να υποβάλετε Εισήγηση.",
+              buttons: ['ΕΝΤΑΞΕΙ']
+            });
+            popup.present();
+          }
+        });    
   }
 
 }

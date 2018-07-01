@@ -131,10 +131,39 @@ export class LakatamiaPage {
     //if we want to use cache use ionViewDidLoad. To always load data use ionViewCanEnter.
     ionViewCanEnter() {
         //console.log('ionViewDidLoad LakatamiaPage');
+        this.mysections = '1';
         this.pageId = '1004';
-        this.storageId = 'LakatamiaPage';
-        if (this.servicesProvider.online || !this.servicesProvider.isApp) {
+        this.storageId = "LakatamiaPage" + this.mysections;
+        if (this.servicesProvider.online) {
             this.doRefresh(this.myrefresher);
+        }
+        else {
+            this.storage.get(this.storageId)
+                .then(
+                    (data) => {
+                        this.dataset = data;
+                        this.setData();
+                        this.myrefresher.complete();
+                    }
+                );
+        }
+    }
+
+    changeSection() {
+        this.isTab1Available = false;
+        this.isTab2Available = false;
+        this.dataset = [];
+        this.storageId = "LakatamiaPage" + this.mysections;
+
+        if (this.mysections == '1') {
+            this.pageId = '1004';
+        }
+        else {
+            this.pageId = '1009';
+        }
+
+        if (this.servicesProvider.online) {
+            this.getContent(this.myrefresher);
         }
         else {
             this.storage.get(this.storageId)

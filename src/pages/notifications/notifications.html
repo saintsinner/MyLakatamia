@@ -7,12 +7,24 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>notifications</ion-title>
+    <ion-title>Εδοποιήσεις</ion-title>
   </ion-navbar>
 
 </ion-header>
 
 
 <ion-content padding>
-
+  <ion-refresher (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content>pullingIcon="arrow-dropdown"</ion-refresher-content>
+  </ion-refresher>
+  <ion-list>
+    <ion-item *ngFor="let item of dataset" data-tap-disabled="true" (click)="goToNotification(item.F491ID, item.F491NOTIFICATIONID)">
+      <!-- <ion-thumbnail item-start>
+        <ion-badge item-start style="padding:10px;font-size:50px;">Αν</ion-badge>
+      </ion-thumbnail> -->
+      <h2 style="white-space: normal; font-weight: bold;" *ngIf="!item.F491READ">{{item.F490TITLE}}</h2>
+      <h2 style="white-space: normal; font-weight: normal;" *ngIf="item.F491READ">{{item.F490TITLE}}</h2>
+      <p>{{item.F490SENDDATE | date: 'dd/MM/yyyy'}}</p>
+    </ion-item>
+  </ion-list>
 </ion-content>

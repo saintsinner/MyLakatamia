@@ -16,10 +16,10 @@
     </ion-refresher>
 
     <ion-segment [(ngModel)]="mysections">
-        <ion-segment-button value="1" (click)="getContent(myrefresher,'1004')">
+        <ion-segment-button value="1" (click)="changeSection()">
             Η ΠΟΛΗ
         </ion-segment-button>
-        <ion-segment-button value="2" (click)="getContent(myrefresher,'1009')">
+        <ion-segment-button value="2" (click)="changeSection()">
             Ο ΔΗΜΟΣ
         </ion-segment-button>
     </ion-segment>

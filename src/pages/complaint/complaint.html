@@ -7,12 +7,23 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>complaint</ion-title>
+    <ion-title>Παράπονα</ion-title>
   </ion-navbar>
 
 </ion-header>
 
 
 <ion-content padding>
-
+  <ion-refresher (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content>pullingIcon="arrow-dropdown"</ion-refresher-content>
+  </ion-refresher>
+  <div *ngIf="isDataAvailable">
+    <span style="font-size:8pt; color:#488aff">{{dataset[0].F487TITLE}}</span>
+    <br>
+    <ion-badge>{{dataset[0].F055TITLE}}</ion-badge>
+    <h2 style="white-space: normal;">{{dataset[0].F488TITLE}}</h2>
+    <p>{{dataset[0].F488CRTDATE | date: 'dd/MM/yyyy'}}</p>
+    <p>{{dataset[0].F488DESC}}</p>
+    <p style="color:#488aff">{{dataset[0].F488ANSWER}}</p>
+  </div>
 </ion-content>

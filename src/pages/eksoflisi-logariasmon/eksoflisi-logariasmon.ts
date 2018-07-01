@@ -111,16 +111,15 @@ export class EksoflisiLogariasmonPage {
     //if we want to use cache use ionViewDidLoad instead of ionViewCanEnter
     setData() {
         this.isDataAvailable = true;
-
-                this.isTab1Available = true;
+        this.isTab1Available = true;
     }
 
     //if we want to use cache use ionViewDidLoad. To always load data use ionViewCanEnter.
     ionViewCanEnter() {
         //console.log('ionViewDidLoad LakatamiaPage');
         this.pageId = '1006';
-        this.storageId = 'LakatamiaPage';
-        if (this.servicesProvider.online || !this.servicesProvider.isApp) {
+        this.storageId = 'EksoflisiLogariasmonPage';
+        if (this.servicesProvider.online) {
             this.doRefresh(this.myrefresher);
         }
         else {

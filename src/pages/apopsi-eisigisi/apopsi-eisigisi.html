@@ -7,34 +7,23 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>ApopsiEisigisi</ion-title>
+    <ion-title>Απόψεις / Εισηγήσεις</ion-title>
   </ion-navbar>
 
 </ion-header>
 
 
 <ion-content padding>
-  <ion-item>
-    <ion-label floating>Είδος Άποψης / Εισήγησης
-    </ion-label>
-    <span>{{dataset[0].F488CATEGORY}}</span>
-    <ion-badge item-end color="servicesProvider.categoryColors[dataset[0].F488CATEGORY]">
-        
-      </ion-badge>
-  </ion-item>
-  <ion-item>
-    <ion-label floating>Θέμα      
-    </ion-label>
-    <h3>{{dataset[0].F488TITLE}}</h3>
-  </ion-item>
-  <ion-item>
-    <ion-label floating>Περιγραφή
-    </ion-label>
-    <span>{{dataset[0].F488DESC}}</span>
-  </ion-item>
-  <ion-item>
-      <ion-label floating>Απάντηση
-      </ion-label>
-      <span>{{dataset[0].F488ANSWER}}</span>
-    </ion-item>
+  <ion-refresher (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content>pullingIcon="arrow-dropdown"</ion-refresher-content>
+  </ion-refresher>
+  <div *ngIf="isDataAvailable">
+    <span style="font-size:8pt; color:#488aff">{{dataset[0].F487TITLE}}</span>
+    <br>
+    <ion-badge>{{dataset[0].F055TITLE}}</ion-badge>
+    <h2 style="white-space: normal;">{{dataset[0].F488TITLE}}</h2>
+    <p>{{dataset[0].F488CRTDATE | date: 'dd/MM/yyyy'}}</p>
+    <p>{{dataset[0].F488DESC}}</p>
+    <p style="color:#488aff">{{dataset[0].F488ANSWER}}</p>
+  </div>
 </ion-content>

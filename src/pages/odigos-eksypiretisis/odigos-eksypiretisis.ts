@@ -148,7 +148,7 @@ export class OdigosEksypiretisisPage {
     }
     this.storageId = 'OdigosEksypiretisisPage' + this.pageId;
 
-    if (this.servicesProvider.online || !this.servicesProvider.isApp) {
+    if (this.servicesProvider.online) {
       this.doRefresh(this.myrefresher);
     }
     else {

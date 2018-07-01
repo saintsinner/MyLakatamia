@@ -20,7 +20,7 @@
     <ion-segment-button value="1" (click)="changeSection()">
       ΚΑΤΑΛΟΓΟΣ
     </ion-segment-button>
-    <ion-segment-button value="2" (click)="changeSection()" *ngIf="servicesProvider.checkTokens()">
+    <ion-segment-button value="2" (click)="changeSection()" *ngIf="servicesProvider.contID!=null">
       ΟΙ ΚΑΤΑΧΩΡΗΣΕΙΣ ΜΟΥ
     </ion-segment-button>
   </ion-segment>
@@ -34,6 +34,9 @@
             <ion-thumbnail item-start>
               <ion-badge item-start style="padding:10px;font-size:50px;">Ει</ion-badge>
             </ion-thumbnail>
+            <span style="font-size:8pt; color:#488aff">{{item.F487TITLE}}</span>
+            <br>
+            <ion-badge>{{item.F055TITLE}}</ion-badge>
             <h2 style="white-space: normal;">{{item.F488TITLE}}</h2>
             <p>{{item.F488CRTDATE | date: 'dd/MM/yyyy'}}</p>
             <ion-badge item-end *ngIf="item.F488CONTACTID==servicesProvider.contID">
@@ -50,8 +53,11 @@
         <ion-list>
           <ion-item *ngFor="let item of datasetOld" data-tap-disabled="true" (click)="goToSubmission(item.F488ID)">
             <ion-thumbnail item-start>
-              <ion-badge item-start style="padding:10px;font-size:50px;">Ει</ion-badge>
+              <ion-badge item-start style="padding:10px;font-size:50px;"><ion-icon name="md-person"></ion-icon></ion-badge>
             </ion-thumbnail>
+            <span style="font-size:8pt; color:#488aff">{{item.F487TITLE}}</span>
+            <br>
+            <ion-badge>{{item.F055TITLE}}</ion-badge>
             <h2 style="white-space: normal;">{{item.F488TITLE}}</h2>
             <p>{{item.F488CRTDATE | date: 'dd/MM/yyyy'}}</p>
           </ion-item>
@@ -65,7 +71,7 @@
     </ion-infinite-scroll>
   </div>
 </ion-content>
-<ion-footer no-shadow *ngIf="servicesProvider.checkTokens()">
+<ion-footer no-shadow *ngIf="servicesProvider.contID!=null">
   <ion-toolbar position="bottom" padding style="text-align: right;">
     <button ion-button outline (click)="goToCreateSubmission()">Νεα Καταχωρηση</button>
   </ion-toolbar>

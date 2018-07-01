@@ -1,16 +1,21 @@
 import { Component } from '@angular/core';
-import { NavController, AlertController } from 'ionic-angular';
+import { NavController, AlertController, Events, Platform } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
+import { HttpParams } from '@angular/common/http';
 
 import { NewsPage } from '../news/news';
 import { EventsPage } from '../events/events';
 import { SubmitProblemPage } from '../submit-problem/submit-problem';
 import { SubmitComplaintPage } from '../submit-complaint/submit-complaint';
 import { YpovoliApopsisEisigisisPage } from '../ypovoli-apopsis-eisigisis/ypovoli-apopsis-eisigisis';
+import { ProblemsPage } from '../problems/problems';
+import { ComplaintsPage } from '../complaints/complaints';
+import { ApopseisEisigiseisPage } from '../apopseis-eisigiseis/apopseis-eisigiseis';
 import { EksoflisiLogariasmonPage } from '../eksoflisi-logariasmon/eksoflisi-logariasmon';
 import { OdigosEksypiretisisPage } from '../odigos-eksypiretisis/odigos-eksypiretisis';
 import { LakatamiaPage } from '../lakatamia/lakatamia';
 import { ContactPage } from '../contact/contact';
+import { NotificationsPage } from '../notifications/notifications';
 
 import { ServicesProvider } from '../../providers/services/services';
 
@@ -19,15 +24,74 @@ import { ServicesProvider } from '../../providers/services/services';
   templateUrl: 'home.html'
 })
 export class HomePage {
-
-  constructor(public navCtrl: NavController, public servicesProvider: ServicesProvider, public alertCtrl: AlertController, public storage: Storage) {
+  notifications = 0;
+  params: any;
+  constructor(public navCtrl: NavController, public servicesProvider: ServicesProvider, public alertCtrl: AlertController, public storage: Storage, public events: Events,
+    public platform: Platform) {
 
   }
 
   ionViewCanEnter() {
-    //this.servicesProvider.checkNetwork();
-    //alert('');
-    if (this.servicesProvider.online || !this.servicesProvider.isApp) {
+    this.platform.ready().then(() => {
+      //this.servicesProvider.checkNetwork();
+      //alert('');
+      this.processYpovoliApopsisEisigisis();
+
+      this.storage.get("notificationsOn")
+        .then(
+          (data) => {
+            this.servicesProvider.notificationsOn = (data == null ? true : data);
+            if (this.servicesProvider.notificationsOn)
+              this.getNotifications();
+          }
+        );
+    });
+  }
+
+  public getNotifications() {
+    this.params = new HttpParams()
+      .set('INSTID', this.servicesProvider.instId.toString())
+      .set('ID', '')
+      .set('contId', (this.servicesProvider.contID == null ? "" : this.servicesProvider.contID))
+      .set('deviceId', (this.servicesProvider.deviceId == null ? "" : this.servicesProvider.deviceId))
+      .set('notificationId', '')
+      .set('category', '1001')
+      .set('lang', this.servicesProvider.language)
+      .set('sortby', 'F491CRTDATE')
+      .set('sortorder', 'DESC')
+      .set('currentpage', '1')
+      .set('pagesize', '10')
+      .set('count', '0')
+      .set('runoption', 'I')
+      .set('USER_UI_LANGUAGE', this.servicesProvider.language)
+      .set('userprofile', '')
+      .set('retcode', '0')
+      .set('retmsg', '0')
+      .set('rettype', 'I');
+    this.servicesProvider.getContent("GetUserNotifications", this.params)
+      .then(data => {
+        //alert('');
+        let dataset = JSON.parse(data.toString());
+        let datasetUnread = [];
+        for (let d of dataset) {
+          if (d.F491READ.toString().toLowerCase().trim() == 'true') {
+            d.F491READ = true;
+          }
+          else {
+            d.F491READ = false;
+            datasetUnread.push(d);
+          }
+        }
+        this.storage.set("NotificationsPage", dataset);
+        //this.dataset = data;
+        //this.filtersLoaded = Promise.resolve(true);
+        this.notifications = datasetUnread.length;
+        //alert(data);
+        //console.log("User Login: " + JSON.parse(this.dataset)[0].F420TITLE);
+      });
+  }
+  processYpovoliApopsisEisigisis() {
+    if (this.servicesProvider.online) {
       //alert(this.storage.get("YpovoliApopsisEisigisisPage"))
       this.storage.get("YpovoliApopsisEisigisisPage")
         .then(
@@ -40,7 +104,7 @@ export class HomePage {
               for (let submission of submissions) {
                 //alert(submission.title);
                 try {
-                  this.servicesProvider.addSubmission(submission)
+                  this.servicesProvider.addApopsisEisigisis(submission)
                     .then(data => {
                       //alert(JSON.parse(data.toString()).length);
                       //let message = JSON.parse(data.toString());
@@ -75,6 +139,7 @@ export class HomePage {
     }
   }
 
+
   goToNews() {
     this.navCtrl.push(NewsPage);
   }
@@ -82,27 +147,14 @@ export class HomePage {
     this.navCtrl.push(EventsPage);
   }
   goToProblems() {
-    this.navCtrl.push(SubmitProblemPage);
+    this.navCtrl.push(ProblemsPage);
   }
   goToComplaints() {
-    this.navCtrl.push(SubmitComplaintPage);
+    this.navCtrl.push(ComplaintsPage);    
   }
-  goToApopseisEisigiseis() {
-    //TEMP - REMOVE IN PRODUCTION
-    localStorage.setItem("Token", "10000001");
-    localStorage.setItem("EncodedToken", btoa("10000001"));
 
-    if (this.servicesProvider.checkTokens()) {
-      this.navCtrl.push(YpovoliApopsisEisigisisPage);
-    }
-    else {
-      const popup = this.alertCtrl.create({
-        title: "Μήνυμα",
-        subTitle: "Πρέπει να κάνετε είσοδο στην εφαρμογή για να μπορέσετε να υποβάλετε Εισήγηση.",
-        buttons: ['ΕΝΤΑΞΕΙ']
-      });
-      popup.present();
-    }
+  goToApopseisEisigiseis() {
+    this.navCtrl.push(ApopseisEisigiseisPage);
   }
   goToEksoflisiLogariasmon() {
     this.navCtrl.push(EksoflisiLogariasmonPage);
@@ -115,6 +167,10 @@ export class HomePage {
   }
   goToContact() {
     this.navCtrl.push(ContactPage);
+  }
+
+  goToNotifications() {
+    this.navCtrl.push(NotificationsPage);
   }
 
 }

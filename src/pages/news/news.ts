@@ -119,11 +119,11 @@ export class NewsPage {
         //alert(data);
         //console.log("User Login: " + JSON.parse(this.dataset)[0].F420TITLE);
       })
-      .catch( error => {
+      .catch(error => {
         //some error here
         refresher.complete();
         this.myinfinitescroll.complete();
-    });
+      });
   }
 
   setData() {
@@ -145,7 +145,7 @@ export class NewsPage {
     //console.log('ionViewDidLoad LakatamiaPage');
     this.storageId = "NewsPage" + this.mysections;
     //console.log('ionViewDidLoad LakatamiaPage');
-    if (this.servicesProvider.online || !this.servicesProvider.isApp) {
+    if (this.servicesProvider.online) {
       this.doRefresh(this.myrefresher);
     }
     else {
@@ -172,7 +172,7 @@ export class NewsPage {
       this.datefrom = new Date().toISOString().substr(0, 10);
       this.dateto = "3000-01-01";
 
-      if (this.servicesProvider.online || !this.servicesProvider.isApp) {
+      if (this.servicesProvider.online) {
         this.doInfinite(this.myinfinitescroll);
       }
       else {
@@ -195,7 +195,7 @@ export class NewsPage {
       newdate.setDate(newdate.getDate() - 2);
       this.dateto = newdate.toISOString().substr(0, 10);
 
-      if (this.servicesProvider.online || !this.servicesProvider.isApp) {
+      if (this.servicesProvider.online) {
         this.doInfinite(this.myinfinitescroll);
       }
       else {
@@ -225,7 +225,7 @@ export class NewsPage {
   }
 
   goToNew(id) {
-    this.navCtrl.push(NewPage,{ id: id });
+    this.navCtrl.push(NewPage, { id: id });
   }
 
 }

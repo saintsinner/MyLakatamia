@@ -153,7 +153,7 @@ export class ContactPage {
 
         this.pageId='1007';
         this.storageId = 'ContactPage';
-        if (this.servicesProvider.online || !this.servicesProvider.isApp) {
+        if (this.servicesProvider.online) {
             this.doRefresh(this.myrefresher);
         }
         else {
