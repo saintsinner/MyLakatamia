@@ -19,27 +19,23 @@ import { File } from '@ionic-native/file';
 import { Camera } from '@ionic-native/camera';
 import { ImagePicker } from '@ionic-native/image-picker';
 import { Base64 } from '@ionic-native/base64';
+import { ServicesProvider } from '../providers/services/services';
+import { SqlLiteProvider } from '../providers/sql-lite/sql-lite';
 
 //import { SocialSharing } from '@ionic-native/social-sharing';
 import { SafePipe } from '../pipes/safe/safe';
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import { ListPage } from '../pages/list/list';
-import { AdeiesOikodomeisDiaxorismonPage } from '../pages/adeies-oikodomeis-diaxorismon/adeies-oikodomeis-diaxorismon';
 import { ApopseisEisigiseisPage } from '../pages/apopseis-eisigiseis/apopseis-eisigiseis';
 import { ApopsiEisigisiPage } from '../pages/apopsi-eisigisi/apopsi-eisigisi';
 import { ChangePasswordPage } from '../pages/change-password/change-password';
 import { ComplaintPage } from '../pages/complaint/complaint';
 import { ComplaintsPage } from '../pages/complaints/complaints';
 import { ContactPage } from '../pages/contact/contact';
-import { DiafimistikesPinakidesPage } from '../pages/diafimistikes-pinakides/diafimistikes-pinakides';
-import { DiatirisiKaiFrontidaSkyloyPage } from '../pages/diatirisi-kai-frontida-skyloy/diatirisi-kai-frontida-skyloy';
 import { EksoflisiLogariasmonPage } from '../pages/eksoflisi-logariasmon/eksoflisi-logariasmon';
-import { ElegxosPosimouNerouKaiTrofimonPage } from '../pages/elegxos-posimou-nerou-kai-trofimon/elegxos-posimou-nerou-kai-trofimon';
 import { EventPage } from '../pages/event/event';
 import { EventsPage } from '../pages/events/events';
-import { GrafeioEksypiretisisDimotonPage } from '../pages/grafeio-eksypiretisis-dimoton/grafeio-eksypiretisis-dimoton';
-import { KathariotitaKaiYgeiiniPage } from '../pages/kathariotita-kai-ygeiini/kathariotita-kai-ygeiini';
 import { KoimitiriaPage } from '../pages/koimitiria/koimitiria';
 import { LakatamiaPage } from '../pages/lakatamia/lakatamia';
 import { LoadingPage } from '../pages/loading/loading';
@@ -49,8 +45,6 @@ import { NewsPage } from '../pages/news/news';
 import { NotificationsPage } from '../pages/notifications/notifications';
 import { NotificationPage } from '../pages/notification/notification';
 import { OdigosEksypiretisisPage } from '../pages/odigos-eksypiretisis/odigos-eksypiretisis';
-import { PolitikoiGamoiPage } from '../pages/politikoi-gamoi/politikoi-gamoi';
-import { PrasinoSimeioPage } from '../pages/prasino-simeio/prasino-simeio';
 import { ProblemPage } from '../pages/problem/problem';
 import { ProblemsPage } from '../pages/problems/problems';
 import { ProfilePage } from '../pages/profile/profile';
@@ -60,14 +54,10 @@ import { RestorePasswordConfirmPage } from '../pages/restore-password-confirm/re
 import { SettingsPage } from '../pages/settings/settings';
 import { SubmitComplaintPage } from '../pages/submit-complaint/submit-complaint';
 import { SubmitProblemPage } from '../pages/submit-problem/submit-problem';
-import { TeliForoiKaiAllesAdeiesPage } from '../pages/teli-foroi-kai-alles-adeies/teli-foroi-kai-alles-adeies';
-import { YdatopromitheiaPage } from '../pages/ydatopromitheia/ydatopromitheia';
 import { YpovoliApopsisEisigisisPage } from '../pages/ypovoli-apopsis-eisigisis/ypovoli-apopsis-eisigisis';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
-import { ServicesProvider } from '../providers/services/services';
-import { SqlLiteProvider } from '../providers/sql-lite/sql-lite';
 
 
 @NgModule({
@@ -75,21 +65,15 @@ import { SqlLiteProvider } from '../providers/sql-lite/sql-lite';
     MyApp,
     HomePage,
     ListPage,
-	AdeiesOikodomeisDiaxorismonPage,
 	ApopseisEisigiseisPage,
 	ApopsiEisigisiPage,
 	ChangePasswordPage,
 	ComplaintPage,
 	ComplaintsPage,	
 	ContactPage,
-	DiafimistikesPinakidesPage,
-	DiatirisiKaiFrontidaSkyloyPage,
 	EksoflisiLogariasmonPage,
-	ElegxosPosimouNerouKaiTrofimonPage,
 	EventPage,
 	EventsPage,
-	GrafeioEksypiretisisDimotonPage,
-	KathariotitaKaiYgeiiniPage,
 	KoimitiriaPage,
 	LakatamiaPage,
 	LoadingPage,
@@ -99,8 +83,6 @@ import { SqlLiteProvider } from '../providers/sql-lite/sql-lite';
 	NotificationsPage,
 	NotificationPage,
 	OdigosEksypiretisisPage,
-	PolitikoiGamoiPage,
-	PrasinoSimeioPage,
 	ProblemPage,
 	ProblemsPage,
 	ProfilePage,
@@ -110,10 +92,8 @@ import { SqlLiteProvider } from '../providers/sql-lite/sql-lite';
 	SettingsPage,
 	SubmitComplaintPage,
 	SubmitProblemPage,
-	TeliForoiKaiAllesAdeiesPage,
-	YdatopromitheiaPage,
-	  YpovoliApopsisEisigisisPage,
-	  SafePipe
+	YpovoliApopsisEisigisisPage,
+	SafePipe
   ],
   imports: [
     BrowserModule,
@@ -127,21 +107,15 @@ import { SqlLiteProvider } from '../providers/sql-lite/sql-lite';
     MyApp,
     HomePage,
     ListPage,
-	AdeiesOikodomeisDiaxorismonPage,
 	ApopseisEisigiseisPage,
 	ApopsiEisigisiPage,
 	ChangePasswordPage,
 	ComplaintPage,
 	ComplaintsPage,	
 	ContactPage,
-	DiafimistikesPinakidesPage,
-	DiatirisiKaiFrontidaSkyloyPage,
 	EksoflisiLogariasmonPage,
-	ElegxosPosimouNerouKaiTrofimonPage,
 	EventPage,
 	EventsPage,
-	GrafeioEksypiretisisDimotonPage,
-	KathariotitaKaiYgeiiniPage,
 	KoimitiriaPage,
 	LakatamiaPage,
 	LoadingPage,
@@ -151,8 +125,6 @@ import { SqlLiteProvider } from '../providers/sql-lite/sql-lite';
 	NotificationsPage,
 	NotificationPage,
 	OdigosEksypiretisisPage,
-	PolitikoiGamoiPage,
-	PrasinoSimeioPage,
 	ProblemPage,
 	ProblemsPage,
 	ProfilePage,
@@ -162,9 +134,7 @@ import { SqlLiteProvider } from '../providers/sql-lite/sql-lite';
 	SettingsPage,
 	SubmitComplaintPage,
 	SubmitProblemPage,
-	TeliForoiKaiAllesAdeiesPage,
-	YdatopromitheiaPage,
-      YpovoliApopsisEisigisisPage
+    YpovoliApopsisEisigisisPage
   ],
   providers: [
     StatusBar,
