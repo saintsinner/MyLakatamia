@@ -31,65 +31,100 @@ export class HomePage {
 
   }
 
-  ionViewCanEnter() {
+  ionViewDidEnter() {
     this.platform.ready().then(() => {
       //this.servicesProvider.checkNetwork();
       //alert('');
-      this.processYpovoliApopsisEisigisis();
+      if (this.servicesProvider.online) {
+        this.processYpovoliApopsisEisigisis();
+        this.processSubmitComplaints();
+        this.processSubmitProblems();
+      }
+      else {
+        var submissionsOffline = setInterval(() => {
+          if (this.servicesProvider.online) {
+            clearInterval(submissionsOffline);
+            this.processYpovoliApopsisEisigisis();
+            this.processSubmitComplaints();
+            this.processSubmitProblems();
+          }
+        }, 1000);
+      }
 
       this.storage.get("notificationsOn")
         .then(
           (data) => {
             this.servicesProvider.notificationsOn = (data == null ? true : data);
-            if (this.servicesProvider.notificationsOn)
-              this.getNotifications();
+            if (this.servicesProvider.notificationsOn) {
+              this.servicesProvider.checkNetwork()
+                .then(
+                  (data) => {
+                    this.servicesProvider.online = data;
+                    this.servicesProvider.startNetworkEvents(this.servicesProvider.online);
+                    if (this.servicesProvider.online) {
+                      this.getNotifications();
+                    }
+                    //else {
+                    var nt = setInterval(() => {
+                      if (this.servicesProvider.online) {
+                        //clearInterval(nt);
+                        this.getNotifications();
+                      }
+                    }, 5000);
+                    //}
+                  }
+                );
+            }
           }
         );
     });
   }
 
-  public getNotifications() {
-    this.params = new HttpParams()
-      .set('INSTID', this.servicesProvider.instId.toString())
-      .set('ID', '')
-      .set('contId', (this.servicesProvider.contID == null ? "" : this.servicesProvider.contID))
-      .set('deviceId', (this.servicesProvider.deviceId == null ? "" : this.servicesProvider.deviceId))
-      .set('notificationId', '')
-      .set('category', '1001')
-      .set('lang', this.servicesProvider.language)
-      .set('sortby', 'F491CRTDATE')
-      .set('sortorder', 'DESC')
-      .set('currentpage', '1')
-      .set('pagesize', '10')
-      .set('count', '0')
-      .set('runoption', 'I')
-      .set('USER_UI_LANGUAGE', this.servicesProvider.language)
-      .set('userprofile', '')
-      .set('retcode', '0')
-      .set('retmsg', '0')
-      .set('rettype', 'I');
-    this.servicesProvider.getContent("GetUserNotifications", this.params)
-      .then(data => {
-        //alert('');
-        let dataset = JSON.parse(data.toString());
-        let datasetUnread = [];
-        for (let d of dataset) {
-          if (d.F491READ.toString().toLowerCase().trim() == 'true') {
-            d.F491READ = true;
+  getNotifications() {
+    if (this.servicesProvider.online) {
+      this.params = new HttpParams()
+        .set('INSTID', this.servicesProvider.instId.toString())
+        .set('ID', '')
+        .set('contId', (this.servicesProvider.contID == null ? "" : this.servicesProvider.contID))
+        .set('deviceId', (this.servicesProvider.deviceId == null ? "" : this.servicesProvider.deviceId))
+        .set('notificationId', '')
+        .set('category', '1001')
+        .set('lang', this.servicesProvider.language)
+        .set('sortby', 'F491CRTDATE')
+        .set('sortorder', 'DESC')
+        .set('currentpage', '1')
+        .set('pagesize', '10')
+        .set('count', '0')
+        .set('runoption', 'I')
+        .set('USER_UI_LANGUAGE', this.servicesProvider.language)
+        .set('userprofile', '')
+        .set('retcode', '0')
+        .set('retmsg', '0')
+        .set('rettype', 'I');
+      this.servicesProvider.getContent("GetUserNotifications", this.params, false)
+        .then(data => {
+          //alert('');
+          let dataset = JSON.parse(data.toString());
+          let datasetUnread = [];
+          for (let d of dataset) {
+            if (d.F491READ.toString().toLowerCase().trim() == 'true') {
+              d.F491READ = true;
+            }
+            else {
+              d.F491READ = false;
+              datasetUnread.push(d);
+            }
           }
-          else {
-            d.F491READ = false;
-            datasetUnread.push(d);
-          }
-        }
-        this.storage.set("NotificationsPage", dataset);
-        //this.dataset = data;
-        //this.filtersLoaded = Promise.resolve(true);
-        this.notifications = datasetUnread.length;
-        //alert(data);
-        //console.log("User Login: " + JSON.parse(this.dataset)[0].F420TITLE);
-      });
+          this.storage.set("NotificationsPage", dataset);
+          //this.dataset = data;
+          //this.filtersLoaded = Promise.resolve(true);
+          this.notifications = datasetUnread.length;
+          //alert(data);
+          //console.log("User Login: " + JSON.parse(this.dataset)[0].F420TITLE);
+        });
+    }
   }
+
   processYpovoliApopsisEisigisis() {
     if (this.servicesProvider.online) {
       //alert(this.storage.get("YpovoliApopsisEisigisisPage"))
@@ -104,25 +139,9 @@ export class HomePage {
               for (let submission of submissions) {
                 //alert(submission.title);
                 try {
-                  this.servicesProvider.addApopsisEisigisis(submission)
+                  this.servicesProvider.addSubmission(submission)
                     .then(data => {
-                      //alert(JSON.parse(data.toString()).length);
-                      //let message = JSON.parse(data.toString());
-                      // //console.log(result.toString());
-                      // //console.log(message[0]["@RETMSG"]);
-                      // let alertTitle = "Μήνυμα";
-                      // if (message[0]["@RETTYPE"] == 'E') {
-                      //   alertTitle = "Πρόβλημα"
-                      // }
-                      // const alert = this.alertCtrl.create({
-                      //   title: alertTitle,
-                      //   subTitle: message[0]["@RETMSG"],
-                      //   buttons: ['ΕΝΤΑΞΕΙ']
-                      // });
-                      // alert.present();
-                      // if (message[0]["@RETTYPE"] == 'I') {
-                      //   this.storage.remove("YpovoliApopsisEisigisisPage");
-                      // }
+
                     });
                 } catch (error) {
                   //alert(error.message);
@@ -132,6 +151,110 @@ export class HomePage {
               }
               if (ok) {
                 this.storage.remove("YpovoliApopsisEisigisisPage");
+              }
+            }
+          }
+        );
+    }
+  }
+
+  processSubmitProblems() {
+    if (this.servicesProvider.online) {
+      //alert(this.storage.get("YpovoliApopsisEisigisisPage"))
+      this.storage.get("SubmitProblemPage")
+        .then(
+          (data) => {
+            //alert(data[0].title);
+            let submissions = [];
+            submissions = data;
+            if (submissions != null) {
+              let ok = true;
+              for (let submission of submissions) {
+                //alert(submission.title);
+                try {
+                  this.servicesProvider.addSubmission(submission.submission)
+                    .then(data => {
+                      let message = JSON.parse(data.toString());
+
+                      if (message[0]["@RETTYPE"] == 'I') {
+                        //upload files
+                        //alert(message[0]["@PID"]);
+                        if (submission.photos.length > 0) {
+                          this.servicesProvider.sendData(message[0]["@PID"], submission.photos).then((res) => {
+                            this.servicesProvider.myLoading.dismiss();
+
+                            let alertTitle = "Μήνυμα";
+                            const popup = this.alertCtrl.create({
+                              title: alertTitle,
+                              subTitle: message[0]["@RETMSG"],
+                              buttons: ['ΕΝΤΑΞΕΙ']
+                            });
+                            popup.present();
+                            //this.navCtrl.setRoot(HomePage);
+                          });
+                        }
+                      }
+                    });
+                } catch (error) {
+                  //alert(error.message);
+                  ok = false;
+                }
+
+              }
+              if (ok) {
+                this.storage.remove("SubmitProblemPage");
+              }
+            }
+          }
+        );
+    }
+  }
+
+  processSubmitComplaints() {
+    if (this.servicesProvider.online) {
+      //alert(this.storage.get("YpovoliApopsisEisigisisPage"))
+      this.storage.get("SubmitComplaintPage")
+        .then(
+          (data) => {
+            //alert(data[0].title);
+            let submissions = [];
+            submissions = data;
+            if (submissions != null) {
+              let ok = true;
+              for (let submission of submissions) {
+                //alert(submission.title);
+                try {
+                  this.servicesProvider.addSubmission(submission.submission)
+                    .then(data => {
+                      let message = JSON.parse(data.toString());
+
+                      if (message[0]["@RETTYPE"] == 'I') {
+                        //upload files
+                        //alert(message[0]["@PID"]);
+                        if (submission.photos.length > 0) {
+                          this.servicesProvider.sendData(message[0]["@PID"], submission.photos).then((res) => {
+                            this.servicesProvider.myLoading.dismiss();
+
+                            let alertTitle = "Μήνυμα";
+                            const popup = this.alertCtrl.create({
+                              title: alertTitle,
+                              subTitle: message[0]["@RETMSG"],
+                              buttons: ['ΕΝΤΑΞΕΙ']
+                            });
+                            popup.present();
+                            //this.navCtrl.setRoot(HomePage);
+                          });
+                        }
+                      }
+                    });
+                } catch (error) {
+                  //alert(error.message);
+                  ok = false;
+                }
+
+              }
+              if (ok) {
+                this.storage.remove("SubmitComplaintPage");
               }
             }
           }
@@ -150,7 +273,7 @@ export class HomePage {
     this.navCtrl.push(ProblemsPage);
   }
   goToComplaints() {
-    this.navCtrl.push(ComplaintsPage);    
+    this.navCtrl.push(ComplaintsPage);
   }
 
   goToApopseisEisigiseis() {

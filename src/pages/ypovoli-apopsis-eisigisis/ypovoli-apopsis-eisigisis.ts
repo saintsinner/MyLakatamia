@@ -44,11 +44,23 @@ export class YpovoliApopsisEisigisisPage {
   doRefresh(refresher) {
     //console.log('Begin async operation', refresher);
     //this.getContent(http)
-    this.dataset = [];
-    this.datasetOld = [];
-    this.currentpage = 1;
-    this.myFormGroup.reset();
-    this.getContent(refresher);
+    if (this.servicesProvider.online) {
+      this.dataset = [];
+      this.datasetOld = [];
+      this.currentpage = 1;
+      this.myFormGroup.reset();
+      this.getContent(refresher);
+    }
+    else {
+      this.storage.get(this.storageId)
+        .then(
+          (data) => {
+            this.dataset = data;
+            this.setData();
+            this.myrefresher.complete();
+          }
+        );
+    }
 
     //setTimeout(() => {
     //    console.log('Async operation has ended');
@@ -123,7 +135,7 @@ export class YpovoliApopsisEisigisisPage {
             submissions.push(postdata);
             this.storage.set("YpovoliApopsisEisigisisPage", submissions);
             if (this.servicesProvider.online) {
-              this.servicesProvider.addApopsisEisigisis(postdata)
+              this.servicesProvider.addSubmission(postdata)
                 .then(data => {
                   this.storage.remove("YpovoliApopsisEisigisisPage");
                   //alert(JSON.parse(data.toString()).length);
@@ -178,21 +190,7 @@ export class YpovoliApopsisEisigisisPage {
     console.log('ionViewDidLoad YpovoliApopsisEisigisisPage');
 
     this.storageId = 'YpovoliApopsisEisigisisPageCategories';
-    if (this.servicesProvider.online) {
-      this.doRefresh(this.myrefresher);
-    }
-    else {
-      this.storage.get(this.storageId)
-        .then(
-          (data) => {
-            this.dataset = data;
-            this.setData();
-            this.myrefresher.complete();
-          }
-        );
-    }
-
-
+    this.doRefresh(this.myrefresher);
   }
 
 }

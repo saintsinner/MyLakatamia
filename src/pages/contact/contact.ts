@@ -21,7 +21,7 @@ import { GoogleMaps, GoogleMap, GoogleMapsEvent, GoogleMapOptions, LatLng, Camer
 })
 export class ContactPage {
     storageId: any;
-    pageId:any;
+    pageId: any;
     params: any;
     dataset: any;
     isDataAvailable: boolean = false;
@@ -44,8 +44,20 @@ export class ContactPage {
     doRefresh(refresher) {
         //console.log('Begin async operation', refresher);
         //this.getContent(http)
-        //this.mysections = '1';
-        this.getContent(refresher);
+        if (this.servicesProvider.online) {
+            //this.mysections = '1';
+            this.getContent(refresher);
+        }
+        else {
+            this.storage.get(this.storageId)
+                .then(
+                    (data) => {
+                        this.dataset = data;
+                        this.setData();
+                        this.myrefresher.complete();
+                    }
+                );
+        }
 
         //setTimeout(() => {
         //    console.log('Async operation has ended');
@@ -151,21 +163,10 @@ export class ContactPage {
     ionViewCanEnter() {
         //this.servicesProvider.checkNetwork();
 
-        this.pageId='1007';
+        this.pageId = '1007';
         this.storageId = 'ContactPage';
-        if (this.servicesProvider.online) {
-            this.doRefresh(this.myrefresher);
-        }
-        else {
-            this.storage.get(this.storageId)
-                .then(
-                    (data) => {
-                        this.dataset = data;
-                        this.setData();
-                        this.myrefresher.complete();
-                    }
-                );
-        }
+        this.doRefresh(this.myrefresher);
+
         //console.log('ionViewDidLoad LakatamiaPage');
 
     }

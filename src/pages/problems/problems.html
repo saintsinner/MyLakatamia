@@ -21,7 +21,7 @@
         <ion-thumbnail item-start>
           <ion-badge item-start style="padding:10px;font-size:50px;">Πρ</ion-badge>
         </ion-thumbnail>
-        <span style="font-size:8pt; color:#488aff">{{item.F487TITLE}}</span>
+        <span style="font-size:8pt; color:#488aff">{{item.F487TITLE + (item.F487DESC.trim()!=''? ' - ' + item.F487DESC:'')}}</span>
         <br>
         <ion-badge>{{item.F055TITLE}}</ion-badge>
         <h2 style="white-space: normal;">{{item.F488TITLE}}</h2>
@@ -36,7 +36,7 @@
     </ion-infinite-scroll>
   </div>
 </ion-content>
-<ion-footer no-shadow *ngIf="servicesProvider.contID!=null">
+<ion-footer no-shadow>
   <ion-toolbar position="bottom" padding style="text-align: right;">
     <button ion-button outline (click)="goToCreateSubmission()">Νεα Καταχωρηση</button>
   </ion-toolbar>

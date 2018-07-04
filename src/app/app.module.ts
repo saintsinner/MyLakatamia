@@ -11,13 +11,13 @@ import { GoogleMaps } from '@ionic-native/google-maps';
 import { IonicStorageModule } from '@ionic/storage';
 import { Device } from '@ionic-native/device';
 import { ActionSheet } from '@ionic-native/action-sheet';
-import { FileChooser } from '@ionic-native/file-chooser';
-import { IOSFilePicker } from '@ionic-native/file-picker';
+//import { FileChooser } from '@ionic-native/file-chooser';
+//import { IOSFilePicker } from '@ionic-native/file-picker';
 import { FileTransfer } from '@ionic-native/file-transfer';
-import { FilePath } from '@ionic-native/file-path';
-import { File } from '@ionic-native/file';
+//import { FilePath } from '@ionic-native/file-path';
+//import { File } from '@ionic-native/file';
 import { Camera } from '@ionic-native/camera';
-import { ImagePicker } from '@ionic-native/image-picker';
+//import { ImagePicker } from '@ionic-native/image-picker';
 import { Base64 } from '@ionic-native/base64';
 import { ServicesProvider } from '../providers/services/services';
 import { SqlLiteProvider } from '../providers/sql-lite/sql-lite';
@@ -137,6 +137,7 @@ import { SplashScreen } from '@ionic-native/splash-screen';
     YpovoliApopsisEisigisisPage
   ],
   providers: [
+	ServicesProvider,
     StatusBar,
       SplashScreen,
 	  HTTP,
@@ -145,19 +146,18 @@ import { SplashScreen } from '@ionic-native/splash-screen';
       FormsModule,
 	  SQLite,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
-    ServicesProvider,
 	SqlLiteProvider,
 	Geolocation,
 	GoogleMaps,
 	Device,
 	ActionSheet,
-	FileChooser,
-	IOSFilePicker,
+	//FileChooser,
+	//IOSFilePicker,
 	FileTransfer,
-	FilePath,
-	File,
+	//FilePath,
+	//File,
 	Camera,
-	ImagePicker,
+	//ImagePicker,
 	Base64
   ]
 })

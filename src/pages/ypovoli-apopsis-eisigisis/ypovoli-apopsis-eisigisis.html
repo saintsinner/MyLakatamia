@@ -24,7 +24,7 @@
         <span style="color:#ff0000!important;"> *</span>
       </ion-label>
       <ion-select formControlName="category" okText="ΕΠΙΛΟΓΗ" cancelText="ΑΚΥΡΟ" multiple="false" *ngIf="isDataAvailable">
-        <ion-option *ngFor="let item of dataset" [value]="item.F487ID">{{item.F487TITLE}}</ion-option>
+        <ion-option *ngFor="let item of dataset" [value]="item.F487ID">{{item.F487TITLE + (item.F487DESC.trim()!=''? ' - ' + item.F487DESC:'')}}</ion-option>
       </ion-select>
     </ion-item>
     <ion-item>

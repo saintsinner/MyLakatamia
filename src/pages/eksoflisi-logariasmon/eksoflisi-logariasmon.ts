@@ -37,8 +37,20 @@ export class EksoflisiLogariasmonPage {
     doRefresh(refresher) {
         //console.log('Begin async operation', refresher);
         //this.getContent(http)
-        //this.mysections = '1';
-        this.getContent(refresher);
+        if (this.servicesProvider.online) {
+            //this.mysections = '1';
+            this.getContent(refresher);
+        }
+        else {
+            this.storage.get(this.storageId)
+                .then(
+                    (data) => {
+                        this.dataset = data;
+                        this.setData();
+                        this.myrefresher.complete();
+                    }
+                );
+        }
 
         //setTimeout(() => {
         //    console.log('Async operation has ended');
@@ -119,18 +131,6 @@ export class EksoflisiLogariasmonPage {
         //console.log('ionViewDidLoad LakatamiaPage');
         this.pageId = '1006';
         this.storageId = 'EksoflisiLogariasmonPage';
-        if (this.servicesProvider.online) {
-            this.doRefresh(this.myrefresher);
-        }
-        else {
-            this.storage.get(this.storageId)
-                .then(
-                    (data) => {
-                        this.dataset = data;
-                        this.setData();
-                        this.myrefresher.complete();
-                    }
-                );
-        }
+        this.doRefresh(this.myrefresher);
     }
 }

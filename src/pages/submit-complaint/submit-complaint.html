@@ -24,7 +24,7 @@
         <span style="color:#ff0000!important;"> *</span>
       </ion-label>
       <ion-select formControlName="category" okText="ΕΠΙΛΟΓΗ" cancelText="ΑΚΥΡΟ" multiple="false" *ngIf="isDataAvailable">
-        <ion-option *ngFor="let item of dataset" [value]="item.F487ID">{{item.F487TITLE}}</ion-option>
+        <ion-option *ngFor="let item of dataset" [value]="item.F487ID">{{item.F487TITLE + (item.F487DESC.trim()!=''? ' - ' + item.F487DESC:'')}}</ion-option>
       </ion-select>
     </ion-item>
     <ion-item>
@@ -40,7 +40,7 @@
       <ion-textarea formControlName="description" maxlength="{{descriptionLength.toString()}}"></ion-textarea>
     </ion-item>
 
-    <div style="text-align: center;">
+    <div style="text-align: center; padding-top: 20px;">
       <ion-badge ion-button block outline (click)="presentActionSheet()">
         <div>
           <ion-icon name="md-camera"></ion-icon>

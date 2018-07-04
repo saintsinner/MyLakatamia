@@ -46,14 +46,27 @@ export class ProblemsPage {
   doRefresh(refresher) {
     //console.log('Begin async operation', refresher);
     //this.getContent(http)
-    this.mysections = '1';
-    this.showVisible = "True";
-    this.filterContactId = null;
-    this.dataset = [];
-    this.datasetOld = [];
-    this.currentpage = 1;
-    this.theEnd = false;
-    this.getContent(refresher);
+    if (this.servicesProvider.online) {
+      this.mysections = '1';
+      this.showVisible = "True";
+      this.filterContactId = null;
+      this.dataset = [];
+      this.datasetOld = [];
+      this.currentpage = 1;
+      this.theEnd = false;
+      this.getContent(refresher);
+    }
+    else {
+      this.theEnd = true;
+      this.storage.get(this.storageId)
+        .then(
+          (data) => {
+            this.dataset = data;
+            this.setData();
+            this.myrefresher.complete();
+          }
+        );
+    }
 
     //setTimeout(() => {
     //    console.log('Async operation has ended');
@@ -147,22 +160,8 @@ export class ProblemsPage {
   //if we want to use cache use ionViewDidLoad. To always load data use ionViewCanEnter.
   ionViewCanEnter() {
     this.storageId = "ProblemsPage" + this.mysections;
+    this.doRefresh(this.myrefresher);
     //console.log('ionViewDidLoad LakatamiaPage');
-    if (this.servicesProvider.online) {
-      this.doRefresh(this.myrefresher);
-    }
-    else {
-      this.theEnd = true;
-      this.storage.get(this.storageId)
-        .then(
-          (data) => {
-            this.dataset = data;
-            this.setData();
-            this.myrefresher.complete();
-          }
-        );
-    }
-
   }
 
   doInfinite(infiniteScroll) {

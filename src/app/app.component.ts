@@ -52,7 +52,11 @@ export class MyApp {
     public menu: MenuController, public alertCtrl: AlertController, public device: Device, public servicesProvider: ServicesProvider, public storage: Storage) {
     this.initializeApp();
 
+    var cn  = setInterval( () => {
+      this.checkForNetwork();
+    }, 3000);
 
+    this.servicesProvider.listenToNetworkEvents();
     // // used for an example of ngFor and navigation
     // this.pages = [
     //   { title: 'Home', component: 'HomePage', icon: 'home', role: 5 },
@@ -89,11 +93,7 @@ export class MyApp {
         );
       this.servicesProvider.listenToNotificationEvents();
 
-      let cn  = setInterval( () => {
-        this.checkForNetwork();
-      }, 3000);
-
-      this.servicesProvider.listenToNetworkEvents();
+      
 
       //add listeners for login/logout and online/offline
       this.listenToLoginEvents();
@@ -133,7 +133,7 @@ export class MyApp {
   }
 
   checkForNetwork(){
-    this.servicesProvider.checkNetwork("CheckNetwork")
+    this.servicesProvider.checkNetwork()
           .then(
             (data) => {
               this.servicesProvider.online = data;

@@ -46,14 +46,29 @@ export class EventsPage {
   doRefresh(refresher) {
     //console.log('Begin async operation', refresher);
     //this.getContent(http)
-    this.mysections = '1';
-    this.datefrom = new Date().toISOString().substr(0, 10);
-    this.dateto = "3000-01-01";
-    this.dataset = [];
-    this.datasetOld = [];
-    this.currentpage = 1;
-    this.theEnd = false;
-    this.getContent(refresher);
+    if (this.servicesProvider.online) {
+      this.mysections = '1';
+      this.datefrom = new Date().toISOString().substr(0, 10);
+      this.dateto = "3000-01-01";
+      this.dataset = [];
+      this.datasetOld = [];
+      this.currentpage = 1;
+      this.theEnd = false;
+      this.getContent(refresher);
+    }
+    else {
+      //alert(this.storageId);
+      this.theEnd = true;
+      this.storage.get(this.storageId)
+        .then(
+          (data) => {
+            this.dataset = data;
+            this.setData();
+            this.myrefresher.complete();
+          }
+        );
+    }
+
 
     //setTimeout(() => {
     //    console.log('Async operation has ended');
@@ -139,22 +154,8 @@ export class EventsPage {
     //this.servicesProvider.isApp=true;
     //console.log('ionViewDidLoad LakatamiaPage');
     this.storageId = "EventsPage" + this.mysections;
+    this.doRefresh(this.myrefresher);
     //console.log('ionViewDidLoad LakatamiaPage');
-    if (this.servicesProvider.online) {
-      this.doRefresh(this.myrefresher);
-    }
-    else {
-      //alert(this.storageId);
-      this.theEnd = true;
-      this.storage.get(this.storageId)
-        .then(
-          (data) => {
-            this.dataset = data;
-            this.setData();
-            this.myrefresher.complete();
-          }
-        );
-    }
   }
 
   changeSection() {
@@ -220,7 +221,7 @@ export class EventsPage {
   }
 
   goToEvent(id) {
-    this.navCtrl.push(EventPage,{ id: id });
+    this.navCtrl.push(EventPage, { id: id });
   }
 
 }

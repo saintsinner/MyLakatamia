@@ -39,9 +39,20 @@ export class OdigosEksypiretisisPage {
   doRefresh(refresher) {
     //console.log('Begin async operation', refresher);
     //this.getContent(http)
-    //this.mysections = '1';
+    if (this.servicesProvider.online) {
+          //this.mysections = '1';
     this.getContent(refresher);
-
+    }
+    else {
+      this.storage.get(this.storageId)
+        .then(
+          (data) => {
+            this.dataset = data;
+            this.setData();
+            this.myrefresher.complete();
+          }
+        );
+    }
 
     //setTimeout(() => {
     //    console.log('Async operation has ended');
@@ -147,20 +158,7 @@ export class OdigosEksypiretisisPage {
       this.pageId = '1011';
     }
     this.storageId = 'OdigosEksypiretisisPage' + this.pageId;
-
-    if (this.servicesProvider.online) {
-      this.doRefresh(this.myrefresher);
-    }
-    else {
-      this.storage.get(this.storageId)
-        .then(
-          (data) => {
-            this.dataset = data;
-            this.setData();
-            this.myrefresher.complete();
-          }
-        );
-    }
+    this.doRefresh(this.myrefresher);
     //console.log('ionViewDidLoad LakatamiaPage');
 
   }

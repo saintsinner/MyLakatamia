@@ -8,7 +8,6 @@ import { Storage } from '@ionic/storage';
 import { Validators, FormBuilder, FormGroup, ValidationErrors } from '@angular/forms';
 //import { FileChooser } from '@ionic-native/file-chooser';
 //import { IOSFilePicker } from '@ionic-native/file-picker';
-import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer';
 //import { FilePath } from '@ionic-native/file-path';
 //import { File } from '@ionic-native/file';
 import { Camera } from '@ionic-native/camera';
@@ -21,6 +20,11 @@ declare var cordova: any
 export interface FileInterface {
   base64Path: string;
   uri: string;
+}
+
+export interface SubmissionInterface {
+  submission: any;
+  photos: FileInterface[];
 }
 
 /**
@@ -53,7 +57,7 @@ export class SubmitComplaintPage {
   public photos: FileInterface[] = [];
   public base64Image: string;
   constructor(public navCtrl: NavController, public navParams: NavParams, private formBuilder: FormBuilder, public servicesProvider: ServicesProvider, public events: Events,
-    public alertCtrl: AlertController, public storage: Storage, public platform: Platform, private fileTransfer: FileTransfer, private camera: Camera,
+    public alertCtrl: AlertController, public storage: Storage, public platform: Platform, private camera: Camera,
     private actionSheetCtrl: ActionSheetController, private toastCtrl: ToastController) {
     this.myFormGroup = this.formBuilder.group({
       category: ['', Validators.compose([Validators.required])],
@@ -65,12 +69,24 @@ export class SubmitComplaintPage {
   doRefresh(refresher) {
     //console.log('Begin async operation', refresher);
     //this.getContent(http)
-    this.photos = [];
-    this.dataset = [];
-    this.datasetOld = [];
-    this.currentpage = 1;
-    this.myFormGroup.reset();
-    this.getContent(refresher);
+    if (this.servicesProvider.online) {
+      this.photos = [];
+      this.dataset = [];
+      this.datasetOld = [];
+      this.currentpage = 1;
+      this.myFormGroup.reset();
+      this.getContent(refresher);
+    }
+    else {
+      this.storage.get(this.storageId)
+        .then(
+          (data) => {
+            this.dataset = data;
+            this.setData();
+            this.myrefresher.complete();
+          }
+        );
+    }
 
     //setTimeout(() => {
     //    console.log('Async operation has ended');
@@ -163,7 +179,6 @@ export class SubmitComplaintPage {
       this.camera.getPicture(options).then((imageData) => {
         this.base64Image = "data:image/jpeg;base64," + imageData;
         this.photos.push({ base64Path: this.base64Image, uri: imageData });
-        this.storage.set("SubmitComplaintPagePhotos", this.photos);
         //this.photos.reverse(); // show them in descending order
       }, (err) => {
         this.presentToast('Πρόβλημα με την επιλογή αρχείου.');
@@ -178,47 +193,6 @@ export class SubmitComplaintPage {
       alert.present();
     }
 
-  }
-
-  sendData(submissionId) {
-    this.servicesProvider.myLoading = this.servicesProvider.loadingCtrl.create({
-      content: 'Παρακαλώ περιμένετε...'
-    });
-    this.servicesProvider.myLoading.present();
-
-    return new Promise(resolve => {
-      let count = 0;
-      for (let photo of this.photos) {
-        count = count + 1;
-        let filename = "Image" + count.toString();
-        var options = {
-          fileKey: "file",
-          fileName: filename,
-          chunkedMode: false,
-          mimeType: "image/jpg",
-          params: { 'title': filename, "instId": this.servicesProvider.instId.toString(), "user": this.servicesProvider.user, "refItemId": submissionId.toString() }
-        };
-        const fileTransfer: FileTransferObject = this.fileTransfer.create();
-        fileTransfer.upload(photo.base64Path, this.servicesProvider.baseUrl + 'zePortalAPI/api/mylakatamia/UploadImageSubmissions', options)
-          .then((res) => {
-            if (count = this.photos.length) {
-              resolve(null);
-            }
-          }, (err) => {
-            this.presentToast(err);
-            this.servicesProvider.myLoading.dismiss();
-          });
-      }
-    });
-
-    //     this.servicesProvider.uploadFile(imageData).then(
-    //     result => {
-    //       let responseData = result;
-    //     },
-    //     err => {
-    //     // Error log
-    //   }
-    // );
   }
 
   deletePhoto(index) {
@@ -268,7 +242,7 @@ export class SubmitComplaintPage {
         contId: (this.servicesProvider.contID == null ? '' : this.servicesProvider.contID)
       };
 
-      let submissions: any;
+      let submissions: SubmissionInterface[];
       //if (this.storage.get("SubmitComplaintPage") != null) {
       this.storage.get("SubmitComplaintPage")
         .then(
@@ -277,78 +251,68 @@ export class SubmitComplaintPage {
             if (submissions == null) {
               submissions = [];
             }
-            submissions.push(postdata);
+            submissions.push({ submission: postdata, photos: this.photos });
             this.storage.set("SubmitComplaintPage", submissions);
-            this.storage.get("SubmitComplaintPagePhotos")
-              .then(
-                (data) => {
-                  this.photos = data;
-                  if (this.photos == null) {
-                    this.photos = [];
-                  }
-                  this.storage.set("SubmitComplaintPagePhotos", this.photos);
-                  if (this.servicesProvider.online) {
-                    this.servicesProvider.addApopsisEisigisis(postdata)
-                      .then(data => {
+
+            if (this.servicesProvider.online) {
+              this.servicesProvider.addSubmission(postdata)
+                .then(data => {
+                  //alert(JSON.parse(data.toString()).length);
+                  let message = JSON.parse(data.toString());
+
+                  if (message[0]["@RETTYPE"] == 'I') {
+                    //upload files
+                    //alert(message[0]["@PID"]);
+                    if (this.photos.length > 0) {
+                      this.servicesProvider.sendData(message[0]["@PID"],this.photos).then((res) => {
                         this.storage.remove("SubmitComplaintPage");
-                        //alert(JSON.parse(data.toString()).length);
-                        let message = JSON.parse(data.toString());
 
-                        if (message[0]["@RETTYPE"] == 'I') {
-                          //upload files
-                          //alert(message[0]["@PID"]);
-                          if (this.photos.length > 0) {
-                            this.sendData(message[0]["@PID"]).then((res) => {
-                              this.storage.remove("SubmitComplaintPagePhotos");
+                        this.servicesProvider.myLoading.dismiss();
 
-                              this.servicesProvider.myLoading.dismiss();
-
-                              let alertTitle = "Μήνυμα";
-                              const popup = this.alertCtrl.create({
-                                title: alertTitle,
-                                subTitle: message[0]["@RETMSG"],
-                                buttons: ['ΕΝΤΑΞΕΙ']
-                              });
-                              popup.present();
-                              this.navCtrl.setRoot(HomePage);
-                            });
-                          }
-                          else {
-                            let alertTitle = "Μήνυμα";
-                            const popup = this.alertCtrl.create({
-                              title: alertTitle,
-                              subTitle: message[0]["@RETMSG"],
-                              buttons: ['ΕΝΤΑΞΕΙ']
-                            });
-                            popup.present();
-                            this.navCtrl.setRoot(HomePage);
-                          }
-                        }
-                        else {
-                          let alertTitle = "Πρόβλημα";
-                          const popup = this.alertCtrl.create({
-                            title: alertTitle,
-                            subTitle: message[0]["@RETMSG"],
-                            buttons: ['ΕΝΤΑΞΕΙ']
-                          });
-                          popup.present();
-                        }
+                        let alertTitle = "Μήνυμα";
+                        const popup = this.alertCtrl.create({
+                          title: alertTitle,
+                          subTitle: message[0]["@RETMSG"],
+                          buttons: ['ΕΝΤΑΞΕΙ']
+                        });
+                        popup.present();
+                        this.navCtrl.setRoot(HomePage);
                       });
-                    //this.servicesProvider.addSubmission(data);
+                    }
+                    else {
+                      let alertTitle = "Μήνυμα";
+                      const popup = this.alertCtrl.create({
+                        title: alertTitle,
+                        subTitle: message[0]["@RETMSG"],
+                        buttons: ['ΕΝΤΑΞΕΙ']
+                      });
+                      popup.present();
+                      this.navCtrl.setRoot(HomePage);
+                    }
                   }
                   else {
-                    let alertTitle = "Μήνυμα";
-
+                    let alertTitle = "Πρόβλημα";
                     const popup = this.alertCtrl.create({
                       title: alertTitle,
-                      subTitle: "Η καταχώρησή σας θα υποβληθεί μόλις ενωθείτε με το διαδίκτυο",
+                      subTitle: message[0]["@RETMSG"],
                       buttons: ['ΕΝΤΑΞΕΙ']
                     });
                     popup.present();
-                    this.navCtrl.push(HomePage);
                   }
-
                 });
+              //this.servicesProvider.addSubmission(data);
+            }
+            else {
+              let alertTitle = "Μήνυμα";
+
+              const popup = this.alertCtrl.create({
+                title: alertTitle,
+                subTitle: "Η καταχώρησή σας θα υποβληθεί μόλις ενωθείτε με το διαδίκτυο",
+                buttons: ['ΕΝΤΑΞΕΙ']
+              });
+              popup.present();
+              this.navCtrl.push(HomePage);
+            }
           });
 
     } else {
@@ -366,23 +330,11 @@ export class SubmitComplaintPage {
     }
   }
 
-  ionViewDidLoad() {
+  ionViewCanEnter() {
     console.log('ionViewDidLoad SubmitComplaintPage');
 
     this.storageId = 'SubmitComplaintPageCategories';
-    if (this.servicesProvider.online) {
-      this.doRefresh(this.myrefresher);
-    }
-    else {
-      this.storage.get(this.storageId)
-        .then(
-          (data) => {
-            this.dataset = data;
-            this.setData();
-            this.myrefresher.complete();
-          }
-        );
-    }
+    this.doRefresh(this.myrefresher);
   }
 
   // pickFile() {
