@@ -14,10 +14,6 @@
 
 
 <ion-content padding>
-  <ion-refresher (ionRefresh)="doRefresh($event)">
-    <ion-refresher-content>pullingIcon="arrow-dropdown"</ion-refresher-content>
-  </ion-refresher>
-
   <form [formGroup]="myFormGroup" (ngSubmit)="submitForm()">
     <ion-item>
       <ion-label floating>Είδος Άποψης / Εισήγησης

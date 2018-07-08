@@ -1,11 +1,11 @@
 import { Component, ViewChild } from '@angular/core';
-import { IonicPage, NavController, NavParams, Refresher, Platform } from 'ionic-angular';
+import { NavController, NavParams, Refresher, Platform } from 'ionic-angular';
 //import { HTTP } from '@ionic-native/http';
 import { ServicesProvider } from '../../providers/services/services';
 //import { SqlLiteProvider } from '../../providers/sql-lite/sql-lite';
 import { HttpParams } from '@angular/common/http';
 import { Storage } from '@ionic/storage';
-import { GoogleMaps, GoogleMap, GoogleMapsEvent, GoogleMapOptions, LatLng, CameraPosition, MarkerOptions, Marker } from '@ionic-native/google-maps';
+import { GoogleMaps, GoogleMap, GoogleMapOptions } from '@ionic-native/google-maps';
 
 /**
  * Generated class for the ContactPage page.
@@ -14,7 +14,7 @@ import { GoogleMaps, GoogleMap, GoogleMapsEvent, GoogleMapOptions, LatLng, Camer
  * Ionic pages and navigation.
  */
 
-@IonicPage()
+
 @Component({
     selector: 'page-contact',
     templateUrl: 'contact.html',
@@ -31,7 +31,7 @@ export class ContactPage {
     map: GoogleMap;
     //constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider, private sqlLiteProvider: SqlLiteProvider) {
     constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider,
-        private googleMaps: GoogleMaps, public platform: Platform, public storage: Storage) {
+        public platform: Platform, public storage: Storage) {
         //console.log('Constructor LakatamiaPage');
         //sqlLiteProvider.addDanceMove('tango');
         //sqlLiteProvider.getDanceMoves();
@@ -109,7 +109,7 @@ export class ContactPage {
             .set('count', '0')
             .set('runoption', 'I')
             .set('USER_UI_LANGUAGE', this.servicesProvider.language)
-            .set('userprofile', '')
+            .set('userprofile', this.servicesProvider.userProfile)
             .set('retcode', '0')
             .set('retmsg', '0')
             .set('rettype', 'I');

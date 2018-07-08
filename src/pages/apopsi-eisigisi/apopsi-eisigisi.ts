@@ -1,9 +1,10 @@
 import { Component, ViewChild } from '@angular/core';
-import { IonicPage, NavController, NavParams, Refresher } from 'ionic-angular';
+import { NavController, NavParams, Refresher } from 'ionic-angular';
 //import { HTTP } from '@ionic-native/http';
 import { ServicesProvider } from '../../providers/services/services';
 //import { SqlLiteProvider } from '../../providers/sql-lite/sql-lite';
 import { HttpParams } from '@angular/common/http';
+import { Storage } from '@ionic/storage';
 
 /**
  * Generated class for the ApopsiEisigisiPage page.
@@ -12,12 +13,13 @@ import { HttpParams } from '@angular/common/http';
  * Ionic pages and navigation.
  */
 
-@IonicPage()
+
 @Component({
   selector: 'page-apopsi-eisigisi',
   templateUrl: 'apopsi-eisigisi.html',
 })
 export class ApopsiEisigisiPage {
+  storageId: any;
   params: any;
   dataset: any;
   isDataAvailable: boolean = false;
@@ -28,7 +30,7 @@ export class ApopsiEisigisiPage {
   //filtersLoaded: Promise<boolean>;
   mysections: string = '1';
   //constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider, private sqlLiteProvider: SqlLiteProvider) {
-  constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider, public storage: Storage) {
     console.log('Constructor ApopsiEisigisiPage');
     //sqlLiteProvider.addDanceMove('tango');
     //sqlLiteProvider.getDanceMoves();
@@ -37,64 +39,75 @@ export class ApopsiEisigisiPage {
   doRefresh(refresher) {
     //console.log('Begin async operation', refresher);
     //this.getContent(http)
-    this.getContent(refresher);
-
-    //setTimeout(() => {
-    //    console.log('Async operation has ended');
-    //    refresher.complete();
-    //}, 10000);
+    if (this.servicesProvider.online) {
+      this.getContent(refresher);
+    }
+    else {
+      //alert(this.storageId);
+      this.storage.get(this.storageId)
+        .then(
+          (data) => {
+            this.dataset = data;
+            this.setData();
+            this.myrefresher.complete();
+          }
+        );
+    }
   }
 
   getContent(refresher) {
-        //alert(this.mysections);
-        this.params = new HttpParams()
-        .set('crtdate', '')
-        .set('INSTID', this.servicesProvider.instId.toString())
-        .set('id', this.navParams.get('id'))
-        .set('TITLE', '')
-        .set('contactid', '')//(this.servicesProvider.checkTokens)?this.servicesProvider.contID.toString():''
-        .set('fname', '')
-        .set('lname', '')
-        .set('category', '') //Parent Category
-        .set('status', '')
-        .set('email', '')
-        .set('phone', '')
-        .set('DESC', '')
-        .set('address', '')
-        .set('addressno', '')
-        .set('latitude', '')
-        .set('longitude', '')
-        .set('visible', '')
-        .set('answer', '')
-        .set('lang', this.servicesProvider.language)
-        .set('sortby', 'F488CRTDATE')
-        .set('sortorder', 'DESC')
-        .set('currentpage', '1')
-        .set('pagesize', '10')
-        .set('count', '0')
-        .set('runoption', 'I')
-        .set('USER_UI_LANGUAGE', this.servicesProvider.language)
-        .set('userprofile', '')
-        .set('retcode', '0')
-        .set('retmsg', '0')
-        .set('rettype', 'I');
-        this.servicesProvider.getContent("GetSubmissions", this.params)
-          .then(data => {
-            //alert(JSON.parse(data.toString()).length);
-            this.dataset = JSON.parse(data.toString());
-            this.isDataAvailable = true;
-            refresher.complete();
-            //alert(data);
-            //console.log("User Login: " + JSON.parse(this.dataset)[0].F420TITLE);
-          });
+    //alert(this.mysections);
+    this.params = new HttpParams()
+      .set('crtdate', '')
+      .set('INSTID', this.servicesProvider.instId.toString())
+      .set('id', this.navParams.get('id'))
+      .set('TITLE', '')
+      .set('contactid', '')//(this.servicesProvider.checkTokens)?this.servicesProvider.contID.toString():''
+      .set('fname', '')
+      .set('lname', '')
+      .set('category', '') //Parent Category
+      .set('status', '')
+      .set('email', '')
+      .set('phone', '')
+      .set('DESC', '')
+      .set('address', '')
+      .set('addressno', '')
+      .set('latitude', '')
+      .set('longitude', '')
+      .set('visible', '')
+      .set('answer', '')
+      .set('lang', this.servicesProvider.language)
+      .set('sortby', 'F488CRTDATE')
+      .set('sortorder', 'DESC')
+      .set('currentpage', '1')
+      .set('pagesize', '10')
+      .set('count', '0')
+      .set('runoption', 'I')
+      .set('USER_UI_LANGUAGE', this.servicesProvider.language)
+      .set('userprofile', this.servicesProvider.userProfile)
+      .set('retcode', '0')
+      .set('retmsg', '0')
+      .set('rettype', 'I');
+    this.servicesProvider.getContent("GetSubmissions", this.params)
+      .then(data => {
+        //alert(JSON.parse(data.toString()).length);
+        this.dataset = JSON.parse(data.toString());
+        this.storage.set(this.storageId.toString(), this.dataset);
+        this.setData();
+        refresher.complete();
+        //alert(data);
+        //console.log("User Login: " + JSON.parse(this.dataset)[0].F420TITLE);
+      });
+  }
 
-
+  setData() {
+    this.isDataAvailable = true;
   }
 
   //if we want to use cache use ionViewDidLoad. To always load data use ionViewCanEnter.
   ionViewCanEnter() {
     //console.log('ionViewDidLoad LakatamiaPage');
-    //alert(this.navParams.get('id'));
+    this.storageId = "ApopsiEisigisiPage" + this.navParams.get('id').toString();
     this.doRefresh(this.myrefresher);
   }
 

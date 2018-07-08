@@ -28,6 +28,9 @@
   <div [ngSwitch]="mysections">
     <ion-list *ngSwitchCase="'1'">
       <div *ngIf="isTab1Available">
+        <div style="text-align: center;" *ngIf="dataset.length==0">
+          ΔΕΝ ΥΠΑΡΧΟΥΝ ΚΑΤΑΧΩΡΗΣΕΙΣ
+        </div>
         <ion-list>
           <ion-item *ngFor="let item of dataset" data-tap-disabled="true" (click)="goToEvent(item.F426ID)">
             <ion-thumbnail item-start>
@@ -44,6 +47,9 @@
     <ion-list *ngSwitchCase="'2'">
 
       <div *ngIf="isTab2Available">
+        <div style="text-align: center;" *ngIf="datasetOld.length==0">
+          ΔΕΝ ΥΠΑΡΧΟΥΝ ΚΑΤΑΧΩΡΗΣΕΙΣ
+        </div>
         <ion-list>
           <ion-item *ngFor="let item of datasetOld" data-tap-disabled="true" (click)="goToEvent(item.F426ID)">
             <ion-thumbnail item-start>

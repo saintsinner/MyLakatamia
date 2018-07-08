@@ -2,7 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { Nav, Platform, Events, MenuController, AlertController } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
-import { Network } from '@ionic-native/network';
+//import { Network } from '@ionic-native/network';
 import { Device } from '@ionic-native/device';
 import { Storage } from '@ionic/storage';
 
@@ -20,6 +20,7 @@ export interface PageInterface {
   component: any;
   icon: string;
   logsOut?: boolean;
+  online?: boolean;
 }
 
 @Component({
@@ -36,27 +37,24 @@ export class MyApp {
   // the login page disables the left menu
   loggedInPages: PageInterface[] = [
     { title: 'MyLakatamia', name: 'HomePage', component: HomePage, icon: 'md-home' },
-    { title: 'Προφίλ', name: 'ProfilePage', component: ProfilePage, icon: 'md-person' },
-    { title: 'Αλλαγή Κωδικού', name: 'ChangePasswordPage', component: ChangePasswordPage, icon: 'md-lock' },
+    { title: 'Προφίλ', name: 'ProfilePage', component: ProfilePage, icon: 'md-person', online: true },
+    { title: 'Αλλαγή Κωδικού', name: 'ChangePasswordPage', component: ChangePasswordPage, icon: 'md-lock', online: true },
     { title: 'Έξοδος', name: 'HomePage', component: HomePage, icon: 'md-log-out', logsOut: true },
     { title: 'Ρυθμίσεις', name: 'SettingsPage', component: SettingsPage, icon: 'md-settings' }
   ];
   loggedOutPages: PageInterface[] = [
     { title: 'MyLakatamia', name: 'HomePage', component: HomePage, icon: 'md-home' },
-    { title: 'Εγγραφή', name: 'ProfilePage', component: ProfilePage, icon: 'md-person' },
-    { title: 'Είσοδος', name: 'LoginPage', component: LoginPage, icon: 'md-log-in' },
+    { title: 'Εγγραφή', name: 'ProfilePage', component: ProfilePage, icon: 'md-person', online: true },
+    { title: 'Είσοδος', name: 'LoginPage', component: LoginPage, icon: 'md-log-in', online: true },
     { title: 'Ρυθμίσεις', name: 'SettingsPage', component: SettingsPage, icon: 'md-settings' }
   ];
 
-  constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen, private network: Network, public events: Events,
+  constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen, public events: Events,
     public menu: MenuController, public alertCtrl: AlertController, public device: Device, public servicesProvider: ServicesProvider, public storage: Storage) {
     this.initializeApp();
 
-    var cn  = setInterval( () => {
-      this.checkForNetwork();
-    }, 3000);
 
-    this.servicesProvider.listenToNetworkEvents();
+
     // // used for an example of ngFor and navigation
     // this.pages = [
     //   { title: 'Home', component: 'HomePage', icon: 'home', role: 5 },
@@ -69,21 +67,32 @@ export class MyApp {
 
   initializeApp() {
     this.platform.ready().then(() => {
+      this.rootPage = HomePage;
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
       this.statusBar.styleDefault();
       this.splashScreen.hide();
 
+      //online offline events
+      var cn = setInterval(() => {
+        this.checkForNetwork();
+      }, 3000);
+      //add listeners for online/offline
+      this.servicesProvider.listenToNetworkEvents();
+
       //store device id
       this.servicesProvider.deviceId = this.device.uuid;
 
-      //enable menu for login/logout
+      //user login events - enable menu for login/logout
       this.servicesProvider.checkTokens()
         .then(
           (data) => {
             this.enableMenu(data);
           });
+      //add listeners for login/logout
+      this.listenToLoginEvents();
 
+      //notification events
       this.storage.get("notificationsOn")
         .then(
           (data) => {
@@ -91,21 +100,14 @@ export class MyApp {
             this.servicesProvider.startNotificationEvents(this.servicesProvider.notificationsOn);
           }
         );
+      //add listeners for notifications
       this.servicesProvider.listenToNotificationEvents();
-
-      
-
-      //add listeners for login/logout and online/offline
-      this.listenToLoginEvents();
-
-      //this.listenToNetworkEvents();
-
 
       // let disconnectSubscription = this.network.onDisconnect().subscribe(() => {
       //   console.log('network was disconnected :-(');
       //   let alert = this.alertCtrl.create({
       //     title: 'Network was disconnected :-(',
-      //     subTitle: 'Please check your connection. And try again',
+      //     message: 'Please check your connection. And try again',
       //     buttons: ['OK']
       //   });
       //   alert.present();
@@ -118,7 +120,7 @@ export class MyApp {
       //   console.log('network connected!');
       //   let alert = this.alertCtrl.create({
       //     title: 'Network connected!',
-      //     subTitle: 'Hurrah!',
+      //     message: 'Hurrah!',
       //     buttons: ['OK']
       //   });
       //   alert.present();
@@ -132,24 +134,32 @@ export class MyApp {
     });
   }
 
-  checkForNetwork(){
+  checkForNetwork() {
     this.servicesProvider.checkNetwork()
-          .then(
-            (data) => {
-              this.servicesProvider.online = data;
-              this.servicesProvider.startNetworkEvents(this.servicesProvider.online);
-            }
-          );
+      .then(
+        (data) => {
+          this.servicesProvider.online = data;
+          this.servicesProvider.startNetworkEvents(this.servicesProvider.online);
+        }
+      );
   }
 
   listenToLoginEvents() {
     this.events.subscribe('user:login', () => {
-      this.enableMenu(true);
+      this.servicesProvider.checkTokens()
+        .then(
+          (data) => {
+            this.enableMenu(true);
+          });
     });
 
     this.events.subscribe('user:logout', () => {
-      this.enableMenu(false);
-    });
+      this.servicesProvider.checkTokens()
+        .then(
+          (data) => {
+            this.enableMenu(false);
+          });
+    })
   }
 
 
@@ -170,11 +180,19 @@ export class MyApp {
 
       const popup = this.alertCtrl.create({
         title: "Μήνυμα",
-        subTitle: "Έχετε εξέλθει από το σύστημα.",
+        message: "Έχετε εξέλθει από το σύστημα.",
         buttons: ['ΕΝΤΑΞΕΙ']
       });
       popup.present();
       this.nav.setRoot(HomePage);
+    }
+    else if (page.online === true && this.servicesProvider.online != true) {
+      const popup = this.alertCtrl.create({
+        title: "Μήνυμα",
+        message: "Πρέπει να είστε συνδεδεμένοι με το διαδύκτυο.",
+        buttons: ['ΕΝΤΑΞΕΙ']
+      });
+      popup.present();
     }
     else {
       this.nav.setRoot(page.component);

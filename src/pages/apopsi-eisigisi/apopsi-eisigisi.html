@@ -22,8 +22,9 @@
     <br>
     <ion-badge>{{dataset[0].F055TITLE}}</ion-badge>
     <h2 style="white-space: normal;">{{dataset[0].F488TITLE}}</h2>
-    <p>{{dataset[0].F488CRTDATE | date: 'dd/MM/yyyy'}}</p>
+    <p><strong>ΗΜΕΡΟΜΗΝΙΑ: </strong>{{dataset[0].F488CRTDATE | date: 'dd/MM/yyyy'}}</p>
     <p>{{dataset[0].F488DESC}}</p>
+    <h3 style="white-space: normal;color:#488aff">ΣΧΟΛΙΑ ΔΗΜΟΥ</h3>
     <p style="color:#488aff">{{dataset[0].F488ANSWER}}</p>
   </div>
 </ion-content>

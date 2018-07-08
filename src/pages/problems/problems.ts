@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { IonicPage, NavController, NavParams, Refresher, InfiniteScroll } from 'ionic-angular';
+import { NavController, NavParams, Refresher, InfiniteScroll } from 'ionic-angular';
 //import { HTTP } from '@ionic-native/http';
 import { ServicesProvider } from '../../providers/services/services';
 //import { SqlLiteProvider } from '../../providers/sql-lite/sql-lite';
@@ -15,7 +15,7 @@ import { ProblemPage } from '../problem/problem';
  * Ionic pages and navigation.
  */
 
-@IonicPage()
+
 @Component({
   selector: 'page-problems',
   templateUrl: 'problems.html',
@@ -84,7 +84,7 @@ export class ProblemsPage {
       .set('contactid', (this.filterContactId == null ? '' : this.filterContactId))//(this.servicesProvider.checkTokens)?this.servicesProvider.contID.toString():''
       .set('fname', '')
       .set('lname', '')
-      .set('category', '1001') //Parent Category
+      .set('category', '1002') //Parent Category
       .set('status', '')
       .set('email', '')
       .set('phone', '')
@@ -103,7 +103,7 @@ export class ProblemsPage {
       .set('count', '0')
       .set('runoption', 'I')
       .set('USER_UI_LANGUAGE', this.servicesProvider.language)
-      .set('userprofile', '')
+      .set('userprofile', this.servicesProvider.userProfile)
       .set('retcode', '0')
       .set('retmsg', '0')
       .set('rettype', 'I');

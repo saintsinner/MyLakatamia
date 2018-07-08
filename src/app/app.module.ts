@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { ErrorHandler, NgModule } from '@angular/core';
-import { IonicApp, IonicErrorHandler, IonicModule, Platform } from 'ionic-angular';
+import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 import { HTTP } from '@ionic-native/http';
 import { Network } from '@ionic-native/network';
 import { HttpClientModule } from '@angular/common/http';
@@ -20,7 +20,10 @@ import { Camera } from '@ionic-native/camera';
 //import { ImagePicker } from '@ionic-native/image-picker';
 import { Base64 } from '@ionic-native/base64';
 import { ServicesProvider } from '../providers/services/services';
-import { SqlLiteProvider } from '../providers/sql-lite/sql-lite';
+//import { SqlLiteProvider } from '../providers/sql-lite/sql-lite';
+import { InAppBrowser } from '@ionic-native/in-app-browser';
+import { SocialSharing } from '@ionic-native/social-sharing';
+import { AppPreferences } from '@ionic-native/app-preferences';
 
 //import { SocialSharing } from '@ionic-native/social-sharing';
 import { SafePipe } from '../pipes/safe/safe';
@@ -36,9 +39,8 @@ import { ContactPage } from '../pages/contact/contact';
 import { EksoflisiLogariasmonPage } from '../pages/eksoflisi-logariasmon/eksoflisi-logariasmon';
 import { EventPage } from '../pages/event/event';
 import { EventsPage } from '../pages/events/events';
-import { KoimitiriaPage } from '../pages/koimitiria/koimitiria';
 import { LakatamiaPage } from '../pages/lakatamia/lakatamia';
-import { LoadingPage } from '../pages/loading/loading';
+//import { LoadingPage } from '../pages/loading/loading';
 import { LoginPage } from '../pages/login/login';
 import { NewPage } from '../pages/new/new';
 import { NewsPage } from '../pages/news/news';
@@ -48,9 +50,8 @@ import { OdigosEksypiretisisPage } from '../pages/odigos-eksypiretisis/odigos-ek
 import { ProblemPage } from '../pages/problem/problem';
 import { ProblemsPage } from '../pages/problems/problems';
 import { ProfilePage } from '../pages/profile/profile';
-import { RegisterPage} from '../pages/register/register';
 import { RestorePasswordPage } from '../pages/restore-password/restore-password';
-import { RestorePasswordConfirmPage } from '../pages/restore-password-confirm/restore-password-confirm';
+//import { RestorePasswordConfirmPage } from '../pages/restore-password-confirm/restore-password-confirm';
 import { SettingsPage } from '../pages/settings/settings';
 import { SubmitComplaintPage } from '../pages/submit-complaint/submit-complaint';
 import { SubmitProblemPage } from '../pages/submit-problem/submit-problem';
@@ -74,9 +75,8 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 	EksoflisiLogariasmonPage,
 	EventPage,
 	EventsPage,
-	KoimitiriaPage,
 	LakatamiaPage,
-	LoadingPage,
+	//LoadingPage,
 	LoginPage,
 	NewPage,
 	NewsPage,
@@ -86,9 +86,8 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 	ProblemPage,
 	ProblemsPage,
 	ProfilePage,
-	RegisterPage,
 	RestorePasswordPage,
-	RestorePasswordConfirmPage,
+	//RestorePasswordConfirmPage,
 	SettingsPage,
 	SubmitComplaintPage,
 	SubmitProblemPage,
@@ -116,9 +115,8 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 	EksoflisiLogariasmonPage,
 	EventPage,
 	EventsPage,
-	KoimitiriaPage,
 	LakatamiaPage,
-	LoadingPage,
+	//LoadingPage,
 	LoginPage,
 	NewPage,
 	NewsPage,
@@ -128,9 +126,8 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 	ProblemPage,
 	ProblemsPage,
 	ProfilePage,
-	RegisterPage,
 	RestorePasswordPage,
-	RestorePasswordConfirmPage,
+	//RestorePasswordConfirmPage,
 	SettingsPage,
 	SubmitComplaintPage,
 	SubmitProblemPage,
@@ -146,7 +143,7 @@ import { SplashScreen } from '@ionic-native/splash-screen';
       FormsModule,
 	  SQLite,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
-	SqlLiteProvider,
+	//SqlLiteProvider,
 	Geolocation,
 	GoogleMaps,
 	Device,
@@ -158,7 +155,10 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 	//File,
 	Camera,
 	//ImagePicker,
-	Base64
+	Base64,
+	InAppBrowser,
+	AppPreferences,
+	SocialSharing
   ]
 })
 export class AppModule {}

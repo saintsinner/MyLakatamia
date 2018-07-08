@@ -7,15 +7,39 @@
 <ion-header>
 
   <ion-navbar>
-      <button ion-button menuToggle>
-          <ion-icon name="menu"></ion-icon>
-        </button>
-    <ion-title>login</ion-title>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Είσοδος</ion-title>
   </ion-navbar>
 
 </ion-header>
 
 
 <ion-content padding>
+  <ion-refresher (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content>pullingIcon="arrow-dropdown"</ion-refresher-content>
+  </ion-refresher>
+  <form [formGroup]="myFormGroup" (ngSubmit)="getUserLogin()">
+    <ion-item>
+      <ion-label floating>Email
+        <span style="color:#ff0000!important;"> *</span>
+      </ion-label>
+      <ion-input type="email" formControlName="username"></ion-input>
+
+    </ion-item>
+    <ion-item>
+      <ion-label floating>Κωδικός
+        <span style="color:#ff0000!important;"> *</span>
+      </ion-label>
+      <ion-input type="password" formControlName="password"></ion-input>
+    </ion-item>
+
+    <!-- <div class="spacer" style="width: 300px; height: 39px;"></div> -->
+    <button ion-button block type="submit">Εισοδος</button>
+  </form>
+  <p style="text-align: center;">
+    <a (click)="goToRestorePassword()">Ξεχάσατε τον κωδικό σας;</a>
+  </p>
 
 </ion-content>

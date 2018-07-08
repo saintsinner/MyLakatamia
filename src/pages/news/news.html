@@ -5,60 +5,66 @@
   Ionic pages and navigation.
 -->
 <ion-header>
-    <ion-navbar>
-      <ion-title>Ανακοινώσεις</ion-title>
-    </ion-navbar>
-  </ion-header>
-  
-  <ion-content padding>
-    <ion-refresher (ionRefresh)="doRefresh($event)">
-      <ion-refresher-content>pullingIcon="arrow-dropdown"</ion-refresher-content>
-    </ion-refresher>
-  
-    <ion-segment [(ngModel)]="mysections">
-      <ion-segment-button value="1" (click)="changeSection()">
-        ΝΕΕΣ
-      </ion-segment-button>
-      <ion-segment-button value="2" (click)="changeSection()">
-        ΠΡΟΗΓΟΥΜΕΝΕΣ
-      </ion-segment-button>
-    </ion-segment>
-    <div class="spacer" style="height: 10px;"></div>
-  
-    <div [ngSwitch]="mysections">
-      <ion-list *ngSwitchCase="'1'">
-        <div *ngIf="isTab1Available">
-          <ion-list>
-            <ion-item *ngFor="let item of dataset" data-tap-disabled="true" (click)="goToNew(item.F401ID)">
-                <ion-thumbnail item-start>
-                    <ion-badge item-start style="padding:10px;font-size:50px;">Αν</ion-badge>
+  <ion-navbar>
+    <ion-title>Ανακοινώσεις</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-refresher (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content>pullingIcon="arrow-dropdown"</ion-refresher-content>
+  </ion-refresher>
+
+  <ion-segment [(ngModel)]="mysections">
+    <ion-segment-button value="1" (click)="changeSection()">
+      ΝΕΕΣ
+    </ion-segment-button>
+    <ion-segment-button value="2" (click)="changeSection()">
+      ΠΡΟΗΓΟΥΜΕΝΕΣ
+    </ion-segment-button>
+  </ion-segment>
+  <div class="spacer" style="height: 10px;"></div>
+
+  <div [ngSwitch]="mysections">
+    <ion-list *ngSwitchCase="'1'">
+      <div *ngIf="isTab1Available">
+        <div style="text-align: center;" *ngIf="dataset.length==0">
+          ΔΕΝ ΥΠΑΡΧΟΥΝ ΚΑΤΑΧΩΡΗΣΕΙΣ
+        </div>
+        <ion-list>
+          <ion-item *ngFor="let item of dataset" data-tap-disabled="true" (click)="goToNew(item.F401ID)">
+            <ion-thumbnail item-start>
+              <ion-badge item-start style="padding:10px;font-size:50px;">Αν</ion-badge>
             </ion-thumbnail>
             <h2 style="white-space: normal;">{{item.F401TITLE}}</h2>
             <p>{{item.F401PUBDATE | date: 'dd/MM/yyyy'}}</p>
-            </ion-item>
-          </ion-list>
-        </div>
-  
-      </ion-list>
-  
-      <ion-list *ngSwitchCase="'2'">
-  
-        <div *ngIf="isTab2Available">
-            <ion-list>
-                <ion-item *ngFor="let item of datasetOld" data-tap-disabled="true" (click)="goToNew(item.F401ID)">
-                    <ion-thumbnail item-start>
-                        <ion-badge item-start style="padding:10px;font-size:50px;">Αν</ion-badge>
-                </ion-thumbnail>
-                <h2 style="white-space: normal;">{{item.F401TITLE}}</h2>
-                <p>{{item.F401PUBDATE | date: 'dd/MM/yyyy'}}</p>
-                </ion-item>
-              </ion-list>
-        </div>
-      </ion-list>
-    </div>
-    <div overflow-scroll="true" padding="true" class="has-header">
-        <ion-infinite-scroll (ionInfinite)="doInfinite($event)" distance="1%">
-          <ion-infinite-scroll-content></ion-infinite-scroll-content>
-        </ion-infinite-scroll>
+          </ion-item>
+        </ion-list>
       </div>
-  </ion-content>
+
+    </ion-list>
+
+    <ion-list *ngSwitchCase="'2'">
+
+      <div *ngIf="isTab2Available">
+        <div style="text-align: center;" *ngIf="datasetOld.length==0">
+          ΔΕΝ ΥΠΑΡΧΟΥΝ ΚΑΤΑΧΩΡΗΣΕΙΣ
+        </div>
+        <ion-list>
+          <ion-item *ngFor="let item of datasetOld" data-tap-disabled="true" (click)="goToNew(item.F401ID)">
+            <ion-thumbnail item-start>
+              <ion-badge item-start style="padding:10px;font-size:50px;">Αν</ion-badge>
+            </ion-thumbnail>
+            <h2 style="white-space: normal;">{{item.F401TITLE}}</h2>
+            <p>{{item.F401PUBDATE | date: 'dd/MM/yyyy'}}</p>
+          </ion-item>
+        </ion-list>
+      </div>
+    </ion-list>
+  </div>
+  <div overflow-scroll="true" padding="true" class="has-header">
+    <ion-infinite-scroll (ionInfinite)="doInfinite($event)" distance="1%">
+      <ion-infinite-scroll-content></ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+  </div>
+</ion-content>

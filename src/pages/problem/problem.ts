@@ -1,10 +1,11 @@
 import { Component, ViewChild } from '@angular/core';
-import { IonicPage, NavController, NavParams, Refresher, Platform } from 'ionic-angular';
+import { NavController, NavParams, Refresher, Platform } from 'ionic-angular';
 //import { HTTP } from '@ionic-native/http';
 import { ServicesProvider } from '../../providers/services/services';
 //import { SqlLiteProvider } from '../../providers/sql-lite/sql-lite';
 import { HttpParams } from '@angular/common/http';
-import { GoogleMaps, GoogleMap, GoogleMapsEvent, GoogleMapOptions, LatLng, CameraPosition, MarkerOptions, Marker } from '@ionic-native/google-maps';
+import { Storage } from '@ionic/storage';
+import { GoogleMaps, GoogleMap, GoogleMapOptions } from '@ionic-native/google-maps';
 
 /**
  * Generated class for the ProblemPage page.
@@ -13,12 +14,13 @@ import { GoogleMaps, GoogleMap, GoogleMapsEvent, GoogleMapOptions, LatLng, Camer
  * Ionic pages and navigation.
  */
 
-@IonicPage()
+
 @Component({
   selector: 'page-problem',
   templateUrl: 'problem.html',
 })
 export class ProblemPage {
+  storageId: any;
   params: any;
   dataset: any;
   isDataAvailable: boolean = false;
@@ -31,7 +33,7 @@ export class ProblemPage {
   mysections: string = '1';
   map: GoogleMap;
   //constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider, private sqlLiteProvider: SqlLiteProvider) {
-  constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider, private googleMaps: GoogleMaps, 
+  constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider, public storage: Storage, 
     public platform: Platform) {
     console.log('Constructor ProblemPage');
 
@@ -43,12 +45,20 @@ export class ProblemPage {
   doRefresh(refresher) {
     //console.log('Begin async operation', refresher);
     //this.getContent(http)
-    this.getContent(refresher);
-
-    //setTimeout(() => {
-    //    console.log('Async operation has ended');
-    //    refresher.complete();
-    //}, 10000);
+    if (this.servicesProvider.online) {
+      this.getContent(refresher);
+    }
+    else {
+      //alert(this.storageId);
+      this.storage.get(this.storageId)
+        .then(
+          (data) => {
+            this.dataset = data;
+            this.setData();
+            this.myrefresher.complete();
+          }
+        );
+    }
   }
 
   getContent(refresher) {
@@ -80,7 +90,7 @@ export class ProblemPage {
       .set('count', '0')
       .set('runoption', 'I')
       .set('USER_UI_LANGUAGE', this.servicesProvider.language)
-      .set('userprofile', '')
+      .set('userprofile', this.servicesProvider.userProfile)
       .set('retcode', '0')
       .set('retmsg', '0')
       .set('rettype', 'I');
@@ -88,27 +98,29 @@ export class ProblemPage {
       .then(data => {
         //alert(JSON.parse(data.toString()).length);
         this.dataset = JSON.parse(data.toString());
-        this.isDataAvailable = true;
-
-        this.platform.ready().then(() => {
-          if (this.dataset[0].longitude.toString().length > 0) {
-            this.isCoordinatesAvailable = true;
-            this.loadMap(this.dataset[0].longitude, this.dataset[0].latitude);
-          }
-        });
-
+        this.storage.set(this.storageId.toString(), this.dataset);
+        this.setData();
         refresher.complete();
         //alert(data);
         //console.log("User Login: " + JSON.parse(this.dataset)[0].F420TITLE);
       });
+  }
 
+  setData() {
+    this.isDataAvailable = true;
 
+    this.platform.ready().then(() => {
+      if (this.dataset[0].F488LONGITUDE!=null) {
+        this.isCoordinatesAvailable = true;
+        this.loadMap(parseFloat(this.dataset[0].F488LONGITUDE), parseFloat(this.dataset[0].F488LATITUDE));
+      }
+    });
   }
 
   //if we want to use cache use ionViewDidLoad. To always load data use ionViewCanEnter.
   ionViewCanEnter() {
     //console.log('ionViewDidLoad LakatamiaPage');
-    //alert(this.navParams.get('id'));
+    this.storageId = "ProblemPage" + this.navParams.get('id').toString();
     this.doRefresh(this.myrefresher);
   }
 

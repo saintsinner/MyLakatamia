@@ -7,15 +7,137 @@
 <ion-header>
 
   <ion-navbar>
-      <button ion-button menuToggle>
-          <ion-icon name="menu"></ion-icon>
-        </button>
-    <ion-title>profile</ion-title>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>{{pagetitle}}</ion-title>
   </ion-navbar>
 
 </ion-header>
 
 
 <ion-content padding>
+  <div id="profile-container2">
+    <form [formGroup]="myFormGroup">
+      <ion-item>
+        <ion-label floating>Α/Α
+        </ion-label>
+        <ion-input type="text" formControlName="txtContID" disabled="true">
+        </ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label floating>Όνομα
+          <span style="color:#ff0000!important;"> *</span>
+        </ion-label>
+        <ion-input type="text" formControlName="txtFName">
+        </ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label floating>Επίθετο
+          <span style="color:#ff0000!important;"> *</span>
+        </ion-label>
+        <ion-input type="text" formControlName="txtLName">
+        </ion-input>
+      </ion-item>
+      <div class="spacer" style="height: 18px;"></div>
+      <h5 id="page15-heading2" style="color:#000000;">Σχέση με τον Δήμο Λακατάμιας:</h5>
+      <ion-list>
+        <ion-item>
+          <ion-label>Διαμένω στο Δήμο </ion-label>
+          <ion-checkbox formControlName="chkCitizen" (click)="clickRelation(1)"></ion-checkbox>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>Ασκώ επιχειρματική δραστηριότητα στο Δήμο </ion-label>
+          <ion-checkbox formControlName="chkBusinessActivity" (click)="clickRelation(1)"></ion-checkbox>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>Είμαι ιδιοκτήτης Ακίνητης Περιουσίας στο Δήμο</ion-label>
+          <ion-checkbox formControlName="chkPropertyOwner" (click)="clickRelation(1)"></ion-checkbox>
+        </ion-item>
+        <ion-item>
+          <ion-label>Κανένα από τα πιο πάνω</ion-label>
+          <ion-checkbox formControlName="chkNoneMunicipalityRelation" (click)="clickRelation(2)"></ion-checkbox>
+        </ion-item>
+      </ion-list>
+      <div class="spacer" style="height: 18px;"></div>
+      <h5 id="page15-heading1" style="color:#000000;">Διεύθυνση</h5>
+      <ion-item>
+        <ion-label floating>Οδός
+          <span style="color:#ff0000!important;"> *</span>
+        </ion-label>
+        <ion-input type="text" formControlName="txtAddr1">
+        </ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label floating>Αριθμός
+          <span style="color:#ff0000!important;"> *</span>
+        </ion-label>
+        <ion-input type="text" formControlName="txtAddr2">
+        </ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label floating>Διαμέρισμα
+        </ion-label>
+        <ion-input type="text" formControlName="txtAppartment">
+        </ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label floating>Ταχ. Κώδικας
+          <span style="color:#ff0000!important;"> *</span>
+        </ion-label>
+        <ion-input type="text" formControlName="txtPostCode">
+        </ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label floating>Πόλη
+          <span style="color:#ff0000!important;"> *</span>
+        </ion-label>
+        <ion-select formControlName="txtCity" okText="ΕΠΙΛΟΓΗ" cancelText="ΑΚΥΡΟ" multiple="false" *ngIf="isDataAvailable">
+          <ion-option *ngFor="let city of T015CITIES" [value]="city.F015ID">{{city.F015DESC}}</ion-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item [hidden]="true">
+        <ion-label floating>Χώρα
+          <!-- <span style="color:#ff0000!important;"> *</span> -->
+        </ion-label>
+        <ion-input type="text" formControlName="txtCountry">
+        </ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label floating>Αριθμός Τηλεφώνου
+          <span style="color:#ff0000!important;"> *</span>
+        </ion-label>
+        <ion-input type="text" formControlName="txtPhone">
+        </ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label floating>Email
+          <span style="color:#ff0000!important;"> *</span>
+        </ion-label>
+        <ion-input type="text" formControlName="txtemail" [disabled]="register">
+        </ion-input>
+      </ion-item>
+      <div class="spacer" style="height: 18px;"></div>
+      <ion-list [hidden]="register">
+        <ion-item [hidden]="register">
+          <a (click)="showTerms('1027')"> Όροι και Προϋποθέσεις</a>
+          |
+          <a (click)="showTerms('1028')">Πολιτική Απορρήτου</a>
+        </ion-item>
+        <ion-item>
+          <ion-label>Έχω διαβάσει και Aποδέχομαι τους όρους.
+            <span style="color:#ff0000!important;"> *</span>
+          </ion-label>
+          <ion-checkbox formControlName="chkTermsCond"></ion-checkbox>
+        </ion-item>
+      </ion-list>
+      <button ion-button block (click)="saveProfile()">Υποβολη</button>
+
+    </form>
+  </div>
 
 </ion-content>

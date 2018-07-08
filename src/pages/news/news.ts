@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { IonicPage, NavController, NavParams, Refresher, InfiniteScroll } from 'ionic-angular';
+import { NavController, NavParams, Refresher, InfiniteScroll } from 'ionic-angular';
 //import { HTTP } from '@ionic-native/http';
 import { ServicesProvider } from '../../providers/services/services';
 //import { SqlLiteProvider } from '../../providers/sql-lite/sql-lite';
@@ -14,7 +14,7 @@ import { NewPage } from '../new/new';
  * Ionic pages and navigation.
  */
 
-@IonicPage()
+
 @Component({
   selector: 'page-news',
   templateUrl: 'news.html',
@@ -93,7 +93,7 @@ export class NewsPage {
       .set('count', '0')
       .set('runoption', 'I')
       .set('USER_UI_LANGUAGE', this.servicesProvider.language)
-      .set('userprofile', '')
+      .set('userprofile', this.servicesProvider.userProfile)
       .set('retcode', '0')
       .set('retmsg', '0')
       .set('rettype', 'I');
@@ -154,8 +154,6 @@ export class NewsPage {
 
   //if we want to use cache use ionViewDidLoad. To always load data use ionViewCanEnter.
   ionViewCanEnter() {
-    //this.servicesProvider.online=false;
-    //this.servicesProvider.isApp=true;
     //console.log('ionViewDidLoad LakatamiaPage');
     this.storageId = "NewsPage" + this.mysections;
     this.doRefresh(this.myrefresher);

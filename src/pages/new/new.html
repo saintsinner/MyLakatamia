@@ -25,22 +25,34 @@
     </div>
     <div padding>
       <h1 [innerHTML]="dataset[0].F401TITLE | safe: 'html'"></h1>
-      <span>{{dataset[0].F401PUBDATE | date: 'dd/MM/yyyy'}}</span>
+      <p><strong>ΗΜΕΡΟΜΗΝΙΑ: </strong>{{dataset[0].F401PUBDATE | date: 'dd/MM/yyyy'}}</p>
       <br>
       <span [innerHTML]="dataset[0].F401LDESC | safe: 'html'"></span>
     </div>
   </div>
 </ion-content>
-<ion-footer no-shadow>
-  <ion-toolbar position="bottom" padding>
-    <div style="float:left; text-align: left;">
-      <ion-icon name="md-share" style="margin:auto;color:#488aff; font-size: 20px;"></ion-icon>
+<ion-footer no-shadow *ngIf="servicesProvider.online">
+  <ion-toolbar position="bottom">
+    <div style="float:left; text-align: left;" [hidden]="false">
+      <button ion-button icon-only clear (click)="shareAction()">
+        <ion-icon name="md-share" style="margin:auto;color:#488aff; font-size: 20px;"></ion-icon>
+      </button>
     </div>
     <div style="float:right; text-align: right;">
-      <ion-icon name="ios-thumbs-up-outline" style="margin:auto;color:#488aff; font-size: 20px;"></ion-icon>
-      0 &nbsp;&nbsp;
-      <ion-icon name="ios-thumbs-down-outline" style="margin:auto;color:#488aff; font-size: 20px;"></ion-icon>
-      0
+      <button ion-button icon-only clear (click)="updateSocialActions('1001')" *ngIf="!deviceLiked">
+        <ion-icon name="ios-thumbs-up-outline" style="margin:auto;color:#488aff; font-size: 20px;"></ion-icon>
+      </button>
+      <button ion-button icon-only clear *ngIf="deviceLiked">
+        <ion-icon name="ios-thumbs-up" style="margin:auto;color:#488aff; font-size: 20px;"></ion-icon>
+      </button>
+      {{likes}} &nbsp;&nbsp;
+      <button ion-button icon-only clear (click)="updateSocialActions('1002')" *ngIf="!deviceDisliked">
+        <ion-icon name="ios-thumbs-down-outline" style="margin:auto;color:#488aff; font-size: 20px;"></ion-icon>
+      </button>
+      <button ion-button icon-only clear *ngIf="deviceDisliked">
+        <ion-icon name="ios-thumbs-down" style="margin:auto;color:#488aff; font-size: 20px;"></ion-icon>
+      </button>
+      {{dislikes}}
     </div>
   </ion-toolbar>
 </ion-footer>

@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { IonicPage, NavController, NavParams, Refresher, InfiniteScroll } from 'ionic-angular';
+import { NavController, NavParams, Refresher } from 'ionic-angular';
 //import { HTTP } from '@ionic-native/http';
 import { ServicesProvider } from '../../providers/services/services';
 //import { SqlLiteProvider } from '../../providers/sql-lite/sql-lite';
@@ -14,7 +14,7 @@ import { Storage } from '@ionic/storage';
  * Ionic pages and navigation.
  */
 
-@IonicPage()
+
 @Component({
   selector: 'page-odigos-eksypiretisis',
   templateUrl: 'odigos-eksypiretisis.html',
@@ -104,7 +104,7 @@ export class OdigosEksypiretisisPage {
       .set('count', '0')
       .set('runoption', 'I')
       .set('USER_UI_LANGUAGE', this.servicesProvider.language)
-      .set('userprofile', '')
+      .set('userprofile', this.servicesProvider.userProfile)
       .set('retcode', '0')
       .set('retmsg', '0')
       .set('rettype', 'I');
@@ -149,8 +149,6 @@ export class OdigosEksypiretisisPage {
 
   //if we want to use cache use ionViewDidLoad instead of ionViewCanEnter
   ionViewCanEnter() {
-    //this.servicesProvider.online = false;
-    //this.servicesProvider.isApp = true;
     if (this.navParams.get('id') != null) {
       this.pageId = this.navParams.get('id');
     }

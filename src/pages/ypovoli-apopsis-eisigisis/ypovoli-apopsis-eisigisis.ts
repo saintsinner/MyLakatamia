@@ -1,11 +1,11 @@
 import { Component, ViewChild } from '@angular/core';
-import { IonicPage, NavController, NavParams, Refresher, AlertController, Events } from 'ionic-angular';
+import { NavController, NavParams, AlertController, Events } from 'ionic-angular';
 //import { HTTP } from '@ionic-native/http';
 import { ServicesProvider } from '../../providers/services/services';
 //import { SqlLiteProvider } from '../../providers/sql-lite/sql-lite';
 import { HttpParams } from '@angular/common/http';
 import { Storage } from '@ionic/storage';
-import { Validators, FormBuilder, FormGroup, ValidationErrors } from '@angular/forms';
+import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { HomePage } from '../home/home';
 
 /**
@@ -15,7 +15,7 @@ import { HomePage } from '../home/home';
  * Ionic pages and navigation.
  */
 
-@IonicPage()
+
 @Component({
   selector: 'page-ypovoli-apopsis-eisigisis',
   templateUrl: 'ypovoli-apopsis-eisigisis.html',
@@ -27,7 +27,6 @@ export class YpovoliApopsisEisigisisPage {
   dataset: any;
   datasetOld: any;
   isDataAvailable: boolean = false;
-  @ViewChild(Refresher) myrefresher: Refresher;
   currentpage = 0;
   private myFormGroup: FormGroup;
   titleLength = 100;
@@ -41,38 +40,9 @@ export class YpovoliApopsisEisigisisPage {
     });
   }
 
-  doRefresh(refresher) {
-    //console.log('Begin async operation', refresher);
-    //this.getContent(http)
-    if (this.servicesProvider.online) {
-      this.dataset = [];
-      this.datasetOld = [];
-      this.currentpage = 1;
-      this.myFormGroup.reset();
-      this.getContent(refresher);
-    }
-    else {
-      this.storage.get(this.storageId)
-        .then(
-          (data) => {
-            this.dataset = data;
-            this.setData();
-            this.myrefresher.complete();
-          }
-        );
-    }
-
-    //setTimeout(() => {
-    //    console.log('Async operation has ended');
-    //    refresher.complete();
-    //}, 10000);
-  }
-
-  getContent(refresher) {
+  getContent() {
     //alert(this.mysections);
     this.params = new HttpParams()
-      //{INSTID:'1044', ID:'', PCTGID:'1003', TITLE:'', DESC:'', PUBLISH:'', SEQ:'', lang: 'EL', sortby:'F487DESC', sortorder:'ASC', currentpage:'1', 
-      //pagesize:'1000', count:'0', runoption:'I', USER_UI_LANGUAGE:'EL', userprofile:'1044WEB', retcode:'0', retmsg:'0', rettype:'I'} })
       .set('INSTID', this.servicesProvider.instId.toString())
       .set('ID', '')
       .set('PCTGID', '1003')
@@ -88,7 +58,7 @@ export class YpovoliApopsisEisigisisPage {
       .set('count', '0')
       .set('runoption', 'I')
       .set('USER_UI_LANGUAGE', this.servicesProvider.language)
-      .set('userprofile', '')
+      .set('userprofile', this.servicesProvider.userProfile)
       .set('retcode', '0')
       .set('retmsg', '0')
       .set('rettype', 'I');
@@ -98,7 +68,6 @@ export class YpovoliApopsisEisigisisPage {
         this.dataset = JSON.parse(data.toString());
         this.storage.set(this.storageId.toString(), this.dataset);
         this.setData();
-        refresher.complete();
         //alert(data);
         //console.log("User Login: " + JSON.parse(this.dataset)[0].F420TITLE);
       });
@@ -109,8 +78,6 @@ export class YpovoliApopsisEisigisisPage {
   }
 
   submitForm() {
-    //this.servicesProvider.online = false;
-    //this.servicesProvider.isApp = true;
     console.log(this.myFormGroup.value)
     if (this.myFormGroup.valid) {
       //alert(this.myFormGroup.value['title']);
@@ -120,7 +87,9 @@ export class YpovoliApopsisEisigisisPage {
         category: this.myFormGroup.value['category'],
         title: this.myFormGroup.value['title'],
         description: this.myFormGroup.value['description'],
-        contId: this.servicesProvider.contID
+        contId: this.servicesProvider.contID,
+        lang: this.servicesProvider.language,
+        userProfile: this.servicesProvider.userProfile
       };
 
       let submissions: any;
@@ -148,7 +117,7 @@ export class YpovoliApopsisEisigisisPage {
                   }
                   const alert = this.alertCtrl.create({
                     title: alertTitle,
-                    subTitle: message[0]["@RETMSG"],
+                    message: message[0]["@RETMSG"],
                     buttons: ['ΕΝΤΑΞΕΙ']
                   });
                   alert.present();
@@ -163,11 +132,11 @@ export class YpovoliApopsisEisigisisPage {
 
               const alert = this.alertCtrl.create({
                 title: alertTitle,
-                subTitle: "Η καταχώρησή σας θα υποβληθεί μόλις ενωθείτε με το διαδίκτυο",
+                message: "Η καταχώρησή σας θα υποβληθεί μόλις ενωθείτε με το διαδίκτυο",
                 buttons: ['ΕΝΤΑΞΕΙ']
               });
               alert.present();
-              this.navCtrl.push(HomePage);
+              this.navCtrl.setRoot(HomePage);
             }
           });
 
@@ -179,18 +148,33 @@ export class YpovoliApopsisEisigisisPage {
       // }
       const popup = this.alertCtrl.create({
         title: 'Πρόβλημα',
-        subTitle: errorMessage,
+        message: errorMessage,
         buttons: ['ΕΝΤΑΞΕΙ']
       });
       popup.present();
     }
   }
 
-  ionViewDidLoad() {
+  ionViewCanEnter() {
     console.log('ionViewDidLoad YpovoliApopsisEisigisisPage');
 
     this.storageId = 'YpovoliApopsisEisigisisPageCategories';
-    this.doRefresh(this.myrefresher);
+    if (this.servicesProvider.online) {
+      this.dataset = [];
+      this.datasetOld = [];
+      this.currentpage = 1;
+      this.myFormGroup.reset();
+      this.getContent();
+    }
+    else {
+      this.storage.get(this.storageId)
+        .then(
+          (data) => {
+            this.dataset = data;
+            this.setData();
+          }
+        );
+    }
   }
 
 }

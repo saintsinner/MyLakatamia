@@ -14,9 +14,6 @@
 
 
 <ion-content padding>
-  <ion-refresher (ionRefresh)="doRefresh($event)">
-    <ion-refresher-content>pullingIcon="arrow-dropdown"</ion-refresher-content>
-  </ion-refresher>
   <div id="map"></div>
   <form [formGroup]="myFormGroup" (ngSubmit)="submitForm()">
     <div *ngIf="servicesProvider.contID==null">
@@ -82,8 +79,8 @@
     <ion-item>
       <ion-label floating>Τοποθεσία
       </ion-label>
-      <ion-input formControlName="latitude"></ion-input>
-      <ion-input formControlName="longitude"></ion-input>
+      <ion-input formControlName="latitude" placeholder="latitude"></ion-input>
+      <ion-input formControlName="longitude" placeholder="longitude"></ion-input>
     </ion-item>
     
     <div style="text-align: center; padding-top: 20px;">

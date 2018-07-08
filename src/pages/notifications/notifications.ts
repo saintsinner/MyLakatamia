@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { IonicPage, NavController, NavParams, Refresher, InfiniteScroll } from 'ionic-angular';
+import { NavController, NavParams, Refresher } from 'ionic-angular';
 //import { HTTP } from '@ionic-native/http';
 import { ServicesProvider } from '../../providers/services/services';
 //import { SqlLiteProvider } from '../../providers/sql-lite/sql-lite';
@@ -14,7 +14,7 @@ import { NotificationPage } from '../notification/notification';
  * Ionic pages and navigation.
  */
 
-@IonicPage()
+
 @Component({
   selector: 'page-notifications',
   templateUrl: 'notifications.html',
@@ -75,7 +75,7 @@ export class NotificationsPage {
       .set('count', '0')
       .set('runoption', 'I')
       .set('USER_UI_LANGUAGE', this.servicesProvider.language)
-      .set('userprofile', '')
+      .set('userprofile', this.servicesProvider.userProfile)
       .set('retcode', '0')
       .set('retmsg', '0')
       .set('rettype', 'I');
@@ -124,10 +124,10 @@ export class NotificationsPage {
       contId: this.servicesProvider.contID,
       notificationId: notificationId,
       isRead: 'True',
-      lang: 'EL',
+      lang: this.servicesProvider.language,
       runoption: 'U',
-      USER_UI_LANGUAGE: 'EL',
-      userprofile: '1044WEB',
+      USER_UI_LANGUAGE: this.servicesProvider.language,
+      userprofile: this.servicesProvider.userProfile,
       retcode: '',
       retmsg: '',
       rettype: ''

@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { IonicPage, NavController, NavParams, Refresher, InfiniteScroll, AlertController } from 'ionic-angular';
+import { NavController, NavParams, Refresher, InfiniteScroll, AlertController } from 'ionic-angular';
 //import { HTTP } from '@ionic-native/http';
 import { ServicesProvider } from '../../providers/services/services';
 //import { SqlLiteProvider } from '../../providers/sql-lite/sql-lite';
@@ -15,7 +15,7 @@ import { ComplaintPage } from '../complaint/complaint';
  * Ionic pages and navigation.
  */
 
-@IonicPage()
+
 @Component({
   selector: 'page-complaints',
   templateUrl: 'complaints.html',
@@ -105,7 +105,7 @@ export class ComplaintsPage {
       .set('count', '0')
       .set('runoption', 'I')
       .set('USER_UI_LANGUAGE', this.servicesProvider.language)
-      .set('userprofile', '')
+      .set('userprofile', this.servicesProvider.userProfile)
       .set('retcode', '0')
       .set('retmsg', '0')
       .set('rettype', 'I');
@@ -241,7 +241,7 @@ export class ComplaintsPage {
           else {
             const popup = this.alertCtrl.create({
               title: "Μήνυμα",
-              subTitle: "Πρέπει να κάνετε είσοδο στην εφαρμογή για να μπορέσετε να υποβάλετε Παράπονο.",
+              message: "Πρέπει να κάνετε είσοδο στην εφαρμογή για να μπορέσετε να υποβάλετε Παράπονο.",
               buttons: ['ΕΝΤΑΞΕΙ']
             });
             popup.present();

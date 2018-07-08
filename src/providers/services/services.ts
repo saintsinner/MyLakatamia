@@ -1,9 +1,10 @@
 ﻿import { HttpClient, HttpErrorResponse, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AlertController, Platform, LoadingController, Events } from 'ionic-angular';
-import { Network } from '@ionic-native/network';
+import { AlertController, Platform, LoadingController, Events, App } from 'ionic-angular';
+//import { Network } from '@ionic-native/network';
 import { Storage } from '@ionic/storage';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer';
+//import { HomePage } from '../../pages/home/home';
 
 
 export interface FileInterface {
@@ -26,9 +27,9 @@ export interface SubmissionInterface {
 export class ServicesProvider {
     baseUrlLocal: string = "http://192.168.10.104/";
     baseUrlLive: string = "https://mylakatamia.zebrac.com/";
-    baseUrl: string = this.baseUrlLocal;
+    baseUrl: string = this.baseUrlLive;
     instId: any = 1044
-    user: string = '1044WEB'
+    userProfile: string = '1044MOB'
     language: string = 'EL'
     data: any;
     myLoading: any;
@@ -39,11 +40,26 @@ export class ServicesProvider {
     deviceId: any;
     notificationsOn: boolean;
     categoryColors = [];
-    constructor(public http: HttpClient, public alertCtrl: AlertController, private network: Network, public platform: Platform,
+    constructor(public app: App, public http: HttpClient, public alertCtrl: AlertController, public platform: Platform,
         public loadingCtrl: LoadingController, public storage: Storage, public events: Events, private fileTransfer: FileTransfer) {
         //console.log('Hello ServicesProvider Provider');
 
         this.platform.ready().then(() => {
+            // if (this.online) {                
+            //     this.processYpovoliApopsisEisigisis();
+            //     this.processSubmitComplaints();
+            //     this.processSubmitProblems();
+            //   }
+            //   else {
+            //     var submissionsOffline = setInterval(() => {
+            //       if (this.online) {
+            //         clearInterval(submissionsOffline);
+            //         this.processYpovoliApopsisEisigisis();
+            //         this.processSubmitComplaints();
+            //         this.processSubmitProblems();
+            //       }
+            //     }, 1000);
+            //   }
             //this.isApp = !document.URL.startsWith('http');
             // this.storage.get("categoryColors")
             //     .then(
@@ -84,24 +100,35 @@ export class ServicesProvider {
     startNetworkEvents(isChecked) {
         if (isChecked) {
             this.events.publish('network:on');
-            this.online = true;
+            //this.online = true;
         }
         else {
             this.events.publish('network:off');
-            this.online = false;
+            //this.online = false;
         }
         //this.storage.set("online", this.online);
     }
 
     listenToNetworkEvents() {
         this.events.subscribe('network:on', () => {
+            //alert(this.online);
+            //if (this.online != true) {
             this.online = true;
+            //console.log("isonline");
+            this.processYpovoliApopsisEisigisis();
+            this.processSubmitComplaints();
+            this.processSubmitProblems();
             //alert(this.online);
             //this.storage.set("online", this.online);
+            //this.navCtrl.setRoot(HomePage);
+            //let nav = this.app.getActiveNav();
+            //nav.setRoot(HomePage); // circular reference
+            //}
         });
 
         this.events.subscribe('network:off', () => {
             this.online = false;
+            //console.log("isoffline");
             //alert(this.online);
             //this.storage.set("online", this.online);
         });
@@ -139,54 +166,7 @@ export class ServicesProvider {
                     });
         });
 
-
-        // if (this.contID != null) {
-        //     // Encode the String
-        //     let encodedString = btoa(localStorage.getItem("Token"));
-        //     //alert(encodedString); // Outputs: "SGVsbG8gV29ybGQh"
-        //     if (encodedString == localStorage.getItem("EncodedToken")) {
-        //         this.contID = localStorage.getItem("Token");
-        //         return true;
-        //     }
-        //     else {
-        //         this.contID = null;
-        //         return false;
-        //     }
-        // }
-        // else {
-        //     this.contID = null;
-        //     return false;
-        // }
-
-        // Decode the String
-        // var decodedString = atob(encodedString);
-        //alert(decodedString);
-        // localStorage.setItem("token",id);
     }
-
-    /*startWatching(){
-       if(this.platform.isWebView()){
- 
-         $rootScope.$on('$cordovaNetwork:online', function(event, networkState){
-           console.log("went online");
-         });
- 
-         $rootScope.$on('$cordovaNetwork:offline', function(event, networkState){
-           console.log("went offline");
-         });
- 
-       }
-       else {
- 
-         window.addEventListener("online", function(e) {
-           console.log("went online");
-         }, false);   
- 
-         window.addEventListener("offline", function(e) {
-           console.log("went offline");
-         }, false); 
-       }      
-   }*/
 
     setCategoryColors() {
         for (var c = 1000; c < 1200; c++) {
@@ -243,7 +223,7 @@ export class ServicesProvider {
                     .subscribe(
                         data => {
                             if (showLoading) {
-                                this.myLoading.dismiss();
+                                this.myLoading.dismiss().catch();
                             }
                             //console.log("User Login: " + data.F420HTMLTOPDESC);
                             this.data = data;
@@ -256,11 +236,11 @@ export class ServicesProvider {
                             //console.log(JSON.parse(params))
                             const popup = this.alertCtrl.create({
                                 title: 'Πρόβλημα',
-                                subTitle: "Υπάρχει πρόβλημα στην επικοινωνία με τον εξυπηρετητή", //err.message
+                                message: "Υπάρχει πρόβλημα στην επικοινωνία με τον εξυπηρετητή", //err.message
                                 buttons: ['ΕΝΤΑΞΕΙ']
                             });
                             if (showLoading) {
-                                this.myLoading.dismiss();
+                                this.myLoading.dismiss().catch();
                             }
                             popup.present();
                         });
@@ -274,14 +254,15 @@ export class ServicesProvider {
         }
     }
 
-    addSubmission(formData) {
+    addSubmission(formData, showLoading: boolean = true) {
         //alert(this.online);
         if (this.online) {
-            this.myLoading = this.loadingCtrl.create({
-                content: 'Παρακαλώ περιμένετε...'
-            });
-            this.myLoading.present();
-
+            if (showLoading) {
+                this.myLoading = this.loadingCtrl.create({
+                    content: 'Παρακαλώ περιμένετε...'
+                });
+                this.myLoading.present();
+            }
             //if (this.data) {
             //    //alert('ok');
             //    return Promise.resolve(this.data);
@@ -300,9 +281,9 @@ export class ServicesProvider {
                     .subscribe(
                         (result) => {
                             console.log("success!");
-
-                            this.myLoading.dismiss();
-
+                            if (showLoading) {
+                                this.myLoading.dismiss().catch();
+                            }
                             resolve(result);
                         },
                         (err: HttpErrorResponse) => {
@@ -310,12 +291,12 @@ export class ServicesProvider {
                             //console.log(JSON.parse(params))
                             const popup = this.alertCtrl.create({
                                 title: 'Πρόβλημα',
-                                subTitle: "Υπάρχει πρόβλημα στην επικοινωνία με τον εξυπηρετητή", //err.message
+                                message: "Υπάρχει πρόβλημα στην επικοινωνία με τον εξυπηρετητή", //err.message
                                 buttons: ['ΕΝΤΑΞΕΙ']
                             });
-
-                            this.myLoading.dismiss();
-
+                            if (showLoading) {
+                                this.myLoading.dismiss().catch();
+                            }
                             popup.present();
                         });
 
@@ -330,12 +311,13 @@ export class ServicesProvider {
         }
     }
 
-    sendData(submissionId, photos) {
-        this.myLoading = this.loadingCtrl.create({
-            content: 'Παρακαλώ περιμένετε...'
-        });
-        this.myLoading.present();
-
+    sendData(submissionId, photos, showLoading: boolean = true) {
+        if (showLoading) {
+            this.myLoading = this.loadingCtrl.create({
+                content: 'Παρακαλώ περιμένετε...'
+            });
+            this.myLoading.present();
+        }
         return new Promise(resolve => {
             let count = 0;
             for (let photo of photos) {
@@ -346,20 +328,168 @@ export class ServicesProvider {
                     fileName: filename,
                     chunkedMode: false,
                     mimeType: "image/jpg",
-                    params: { 'title': filename, "instId": this.instId.toString(), "user": this.user, "refItemId": submissionId.toString() }
+                    params: { 'title': filename, "instId": this.instId.toString(), "userprofile": this.userProfile, "lang": this.language, "refItemId": submissionId.toString() }
                 };
                 const fileTransfer: FileTransferObject = this.fileTransfer.create();
                 fileTransfer.upload(photo.base64Path, this.baseUrl + 'zePortalAPI/api/mylakatamia/UploadImageSubmissions', options)
                     .then((res) => {
                         if (count = photos.length) {
+                            if (showLoading) {
+                                this.myLoading.dismiss().catch();
+                            }
                             resolve(null);
                         }
                     }, (err) => {
                         //this.presentToast(err);
-                        this.myLoading.dismiss();
+                        if (showLoading) {
+                            this.myLoading.dismiss().catch();
+                        }
                     });
             }
         });
+    }
+
+    processYpovoliApopsisEisigisis() {
+        if (this.online) {
+            //alert(this.storage.get("YpovoliApopsisEisigisisPage"))
+            this.storage.get("YpovoliApopsisEisigisisPage")
+                .then(
+                    (data) => {
+                        //alert(data[0].title);
+                        let submissions = [];
+                        submissions = data;
+                        if (submissions != null) {
+                            let ok = true;
+                            for (let submission of submissions) {
+                                //alert(submission.title);
+                                try {
+                                    this.addSubmission(submission)
+                                        .then(data => {
+
+                                        });
+                                } catch (error) {
+                                    //this.myLoading.dismiss().catch();
+                                    //alert(error.message);
+                                    ok = false;
+                                }
+
+                            }
+                            if (ok) {
+                                //this.myLoading.dismiss().catch();
+                                this.storage.remove("YpovoliApopsisEisigisisPage");
+                            }
+                        }
+                    }
+                );
+        }
+    }
+
+    processSubmitProblems() {
+        if (this.online) {
+            //alert(this.storage.get("YpovoliApopsisEisigisisPage"))
+            this.storage.get("SubmitProblemPage")
+                .then(
+                    (data) => {
+                        //alert(data[0].title);
+                        let submissions = [];
+                        submissions = data;
+                        if (submissions != null) {
+                            let ok = true;
+                            for (let submission of submissions) {
+                                //alert(submission.title);
+                                try {
+                                    this.addSubmission(submission.submission)
+                                        .then(data => {
+                                            let message = JSON.parse(data.toString());
+
+                                            if (message[0]["@RETTYPE"] == 'I') {
+                                                //upload files
+                                                //alert(message[0]["@PID"]);
+                                                if (submission.photos.length > 0) {
+                                                    this.sendData(message[0]["@PID"], submission.photos, false).then((res) => {
+                                                        //this.myLoading.dismiss().catch();
+
+                                                        // let alertTitle = "Μήνυμα";
+                                                        // const popup = this.alertCtrl.create({
+                                                        //   title: alertTitle,
+                                                        //   message: message[0]["@RETMSG"],
+                                                        //   buttons: ['ΕΝΤΑΞΕΙ']
+                                                        // });
+                                                        // popup.present();
+                                                        //this.navCtrl.setRoot(HomePage);
+                                                    });
+                                                }
+                                            }
+                                        });
+                                } catch (error) {
+                                    //this.myLoading.dismiss().catch();
+                                    //alert(error.message);
+                                    ok = false;
+                                }
+
+                            }
+                            if (ok) {
+                                //this.myLoading.dismiss().catch();
+                                this.storage.remove("SubmitProblemPage");
+                            }
+                        }
+                    }
+                );
+        }
+    }
+
+    processSubmitComplaints() {
+        if (this.online) {
+            //alert(this.storage.get("YpovoliApopsisEisigisisPage"))
+            this.storage.get("SubmitComplaintPage")
+                .then(
+                    (data) => {
+                        //alert(data[0].title);
+                        let submissions = [];
+                        submissions = data;
+                        if (submissions != null) {
+                            let ok = true;
+                            for (let submission of submissions) {
+                                //alert(submission.title);
+                                try {
+                                    this.addSubmission(submission.submission)
+                                        .then(data => {
+                                            let message = JSON.parse(data.toString());
+
+                                            if (message[0]["@RETTYPE"] == 'I') {
+                                                //upload files
+                                                //alert(message[0]["@PID"]);
+                                                if (submission.photos.length > 0) {
+                                                    this.sendData(message[0]["@PID"], submission.photos, false).then((res) => {
+                                                        //this.myLoading.dismiss().catch();
+
+                                                        // let alertTitle = "Μήνυμα";
+                                                        // const popup = this.alertCtrl.create({
+                                                        //   title: alertTitle,
+                                                        //   message: message[0]["@RETMSG"],
+                                                        //   buttons: ['ΕΝΤΑΞΕΙ']
+                                                        // });
+                                                        // popup.present();
+                                                        //this.navCtrl.setRoot(HomePage);
+                                                    });
+                                                }
+                                            }
+                                        });
+                                } catch (error) {
+                                    //this.myLoading.dismiss().catch();
+                                    //alert(error.message);
+                                    ok = false;
+                                }
+
+                            }
+                            if (ok) {
+                                //this.myLoading.dismiss().catch();
+                                this.storage.remove("SubmitComplaintPage");
+                            }
+                        }
+                    }
+                );
+        }
     }
 
     updateUserNotifications(formData) {
@@ -389,7 +519,7 @@ export class ServicesProvider {
                         (result) => {
                             console.log("success!");
 
-                            this.myLoading.dismiss();
+                            this.myLoading.dismiss().catch();
 
                             resolve(result);
                         },
@@ -398,12 +528,10 @@ export class ServicesProvider {
                             //console.log(JSON.parse(params))
                             const popup = this.alertCtrl.create({
                                 title: 'Πρόβλημα',
-                                subTitle: "Υπάρχει πρόβλημα στην επικοινωνία με τον εξυπηρετητή", //err.message
+                                message: "Υπάρχει πρόβλημα στην επικοινωνία με τον εξυπηρετητή", //err.message
                                 buttons: ['ΕΝΤΑΞΕΙ']
                             });
-
-                            this.myLoading.dismiss();
-
+                            this.myLoading.dismiss().catch();
                             popup.present();
                         });
 
@@ -418,6 +546,120 @@ export class ServicesProvider {
         }
     }
 
+    //mk\\
+    encodeData(dataToEncode): string {
+        // return new Promise(resolve => {
+        var encodedString = btoa(dataToEncode);
+        return (encodedString);
+        // });
+
+    }
+
+    changePass(formData) {
+        //alert(this.online);
+        if (this.online) {
+            this.myLoading = this.loadingCtrl.create({
+                content: 'Παρακαλώ περιμένετε...'
+            });
+            this.myLoading.present();
+
+            console.log('HERE');
+            //if (this.data) {
+            //    //alert('ok');
+            //    return Promise.resolve(this.data);
+            //}
+
+            // let myheaders = new HttpHeaders();
+            // myheaders.set('Content-Type', 'application/json');
+
+            // let options = {
+            //     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+            //   };
+            return new Promise(resolve => {
+                console.log('here - ' + JSON.stringify(formData))
+                this.http.post(this.baseUrl + 'zePortalAPI/api/mylakatamia/PostUpdateContactPassword', JSON.stringify(formData), { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) })
+                    .subscribe(
+                        (result) => {
+                            console.log("success!");
+
+                            this.myLoading.dismiss().catch();
+
+                            resolve(result);
+                        },
+                        (err: HttpErrorResponse) => {
+                            console.log(err.message)
+                            //console.log(JSON.parse(params))
+                            const popup = this.alertCtrl.create({
+                                title: 'Πρόβλημα',
+                                message: "Υπάρχει πρόβλημα στην επικοινωνία με τον εξυπηρετητή", //err.message
+                                buttons: ['ΕΝΤΑΞΕΙ']
+                            });
+                            this.myLoading.dismiss().catch();
+                            popup.present();
+                        });
+
+            });
+        }
+        else {
+            return Promise.resolve(null);
+            // if (this.data) {
+            //     //alert('ok');
+            //     return Promise.resolve(this.data);
+            // }
+        }
+    }
+
+    ContactMNT(formData) {
+        //alert(this.online);
+        if (this.online) {
+            this.myLoading = this.loadingCtrl.create({
+                content: 'Παρακαλώ περιμένετε...'
+            });
+            this.myLoading.present();
+
+            //if (this.data) {
+            //    //alert('ok');
+            //    return Promise.resolve(this.data);
+            //}
+
+            // let myheaders = new HttpHeaders();
+            // myheaders.set('Content-Type', 'application/json');
+
+            // let options = {
+            //     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+            //   };
+            return new Promise(resolve => {
+                this.http.post(this.baseUrl + 'zePortalAPI/api/mylakatamia/PostAddContact', JSON.stringify(formData), { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) })
+                    .subscribe(
+                        (result) => {
+                            console.log("success!");
+
+                            this.myLoading.dismiss().catch();
+
+                            resolve(result);
+                        },
+                        (err: HttpErrorResponse) => {
+                            console.log(err.message)
+                            //console.log(JSON.parse(params))
+                            const popup = this.alertCtrl.create({
+                                title: 'Πρόβλημα',
+                                message: "Υπάρχει πρόβλημα στην επικοινωνία με τον εξυπηρετητή", //err.message
+                                buttons: ['ΕΝΤΑΞΕΙ']
+                            });
+                            this.myLoading.dismiss().catch();
+                            popup.present();
+                        });
+
+            });
+        }
+        else {
+            return Promise.resolve(null);
+            // if (this.data) {
+            //     //alert('ok');
+            //     return Promise.resolve(this.data);
+            // }
+        }
+    }
     // postFile(token:string, file:Blob){
 
     //     let url = WebService.API_POST_FILE + "?token="+token;
