@@ -499,7 +499,7 @@ export class ProfilePage {
       popup.present();
       return false;
     }
-    else {
+    else if (this.register == false) {
       if (this.myFormGroup.get('chkTermsCond').value != true) {
         const popup = this.alertCtrl.create({
           title: "Μήνυμα",
@@ -514,6 +514,10 @@ export class ProfilePage {
         // alert($scope.data.txtCity);
         return true;
       }
+    }
+    else
+    {
+      return true;
     }
   }
   setData() {

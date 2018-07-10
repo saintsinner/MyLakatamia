@@ -67,7 +67,8 @@ export class RestorePasswordPage {
             this.activeSection1 = false;
             this.params = new HttpParams()
               .set('INSTID', this.servicesProvider.instId.toString())
-              .set('CONTID', this.contID);
+              .set('CONTID', this.contID)
+              .set('lang', this.servicesProvider.language);
             this.servicesProvider.getContent("GetConSecQ", this.params)
               .then(data => {
 
@@ -88,7 +89,6 @@ export class RestorePasswordPage {
               })
           }
           else {
-
             let popupTitle = "Μήνυμα";
 
             const popup = this.alertCtrl.create({

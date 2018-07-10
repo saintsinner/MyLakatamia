@@ -48,7 +48,7 @@ export class NewPage {
     //this.getContent(http)
     if (this.servicesProvider.online) {
       this.getContent(refresher);
-      this.getSocialActions();
+      //this.getSocialActions();
     }
     else {
       //alert(this.storageId);
@@ -108,48 +108,48 @@ export class NewPage {
     this.doRefresh(this.myrefresher);
   }
 
-  getSocialActions() {
-    this.params = new HttpParams()
-      .set('INSTID', this.servicesProvider.instId.toString())
-      .set('id', '')
-      .set('deviceid', (this.servicesProvider.deviceId == null ? "" : this.servicesProvider.deviceId))
-      .set('moduleId', this.moduleId)
-      .set('itemId', this.navParams.get('id'))
-      .set('actionType', '')
-      .set('lang', this.servicesProvider.language)
-      .set('runoption', 'I')
-      .set('userprofile', this.servicesProvider.userProfile)
-      .set('retcode', '0')
-      .set('retmsg', '0')
-      .set('rettype', 'I');
-    this.servicesProvider.getContent("GetSocialActions", this.params, false)
-      .then(data => {
-        //alert(JSON.parse(data.toString()).length);
-        this.socialActions = JSON.parse(data.toString());
-        this.likes = 0;
-        this.dislikes = 0;
-        this.deviceLiked = false;
-        this.deviceDisliked = false;
+  // getSocialActions() {
+  //   this.params = new HttpParams()
+  //     .set('INSTID', this.servicesProvider.instId.toString())
+  //     .set('id', '')
+  //     .set('deviceid', (this.servicesProvider.deviceId == null ? "" : this.servicesProvider.deviceId))
+  //     .set('moduleId', this.moduleId)
+  //     .set('itemId', this.navParams.get('id'))
+  //     .set('actionType', '')
+  //     .set('lang', this.servicesProvider.language)
+  //     .set('runoption', 'I')
+  //     .set('userprofile', this.servicesProvider.userProfile)
+  //     .set('retcode', '0')
+  //     .set('retmsg', '0')
+  //     .set('rettype', 'I');
+  //   this.servicesProvider.getContent("GetSocialActions", this.params, false)
+  //     .then(data => {
+  //       //alert(JSON.parse(data.toString()).length);
+  //       this.socialActions = JSON.parse(data.toString());
+  //       this.likes = 0;
+  //       this.dislikes = 0;
+  //       this.deviceLiked = false;
+  //       this.deviceDisliked = false;
 
-        for (let item of this.socialActions) {
-          if (item.F492TYPE.toString() == "1001") {
-            this.likes = this.likes + 1;
-            if (item.F492DEVICEID.toString() == this.servicesProvider.deviceId) {
-              this.deviceLiked = true;
-            }
-          }
-          else if (item.F492TYPE.toString() == "1002") {
-            this.dislikes = this.dislikes + 1;
-            if (item.F492DEVICEID.toString() == this.servicesProvider.deviceId) {
-              this.deviceDisliked = true;
-            }
-          }
-        }
+  //       for (let item of this.socialActions) {
+  //         if (item.F492TYPE.toString() == "1001") {
+  //           this.likes = this.likes + 1;
+  //           if (item.F492DEVICEID.toString() == this.servicesProvider.deviceId) {
+  //             this.deviceLiked = true;
+  //           }
+  //         }
+  //         else if (item.F492TYPE.toString() == "1002") {
+  //           this.dislikes = this.dislikes + 1;
+  //           if (item.F492DEVICEID.toString() == this.servicesProvider.deviceId) {
+  //             this.deviceDisliked = true;
+  //           }
+  //         }
+  //       }
 
-        //alert(data);
-        //console.log("User Login: " + JSON.parse(this.dataset)[0].F420TITLE);
-      })
-  }
+  //       //alert(data);
+  //       //console.log("User Login: " + JSON.parse(this.dataset)[0].F420TITLE);
+  //     })
+  // }
 
   updateSocialActions(actionType) {
     this.params = new HttpParams()
@@ -169,17 +169,17 @@ export class NewPage {
       .then(data => {
         //alert(JSON.parse(data.toString()).length);
         //this.dataset = JSON.parse(data.toString());
-        this.getSocialActions();
+        //this.getSocialActions();
         //alert(data);
         //console.log("User Login: " + JSON.parse(this.dataset)[0].F420TITLE);
       })
   }
 
   shareAction() {
-    let msg = this.dataset[0].F401TITLE;
-    this.socialSharing.share(msg, null, null, null)
+    let message = this.dataset[0].F401TITLE;
+    this.socialSharing.share(message, null, null, null)
     .then(()=>{
-
+      this.updateSocialActions('1003');
     })
     .catch(()=>{
 

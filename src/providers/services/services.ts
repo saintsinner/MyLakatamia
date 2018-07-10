@@ -39,6 +39,7 @@ export class ServicesProvider {
     //isApp: any;
     deviceId: any;
     notificationsOn: boolean;
+    notifications = 0;
     categoryColors = [];
     constructor(public app: App, public http: HttpClient, public alertCtrl: AlertController, public platform: Platform,
         public loadingCtrl: LoadingController, public storage: Storage, public events: Events, private fileTransfer: FileTransfer) {
@@ -97,42 +98,42 @@ export class ServicesProvider {
         });
     }
 
-    startNetworkEvents(isChecked) {
-        if (isChecked) {
-            this.events.publish('network:on');
-            //this.online = true;
-        }
-        else {
-            this.events.publish('network:off');
-            //this.online = false;
-        }
-        //this.storage.set("online", this.online);
-    }
+    // startNetworkEvents(isChecked) {
+    //     if (isChecked) {
+    //         this.events.publish('network:on');
+    //         //this.online = true;
+    //     }
+    //     else {
+    //         this.events.publish('network:off');
+    //         //this.online = false;
+    //     }
+    //     //this.storage.set("online", this.online);
+    // }
 
-    listenToNetworkEvents() {
-        this.events.subscribe('network:on', () => {
-            //alert(this.online);
-            //if (this.online != true) {
-            this.online = true;
-            //console.log("isonline");
-            this.processYpovoliApopsisEisigisis();
-            this.processSubmitComplaints();
-            this.processSubmitProblems();
-            //alert(this.online);
-            //this.storage.set("online", this.online);
-            //this.navCtrl.setRoot(HomePage);
-            //let nav = this.app.getActiveNav();
-            //nav.setRoot(HomePage); // circular reference
-            //}
-        });
+    // listenToNetworkEvents() {
+    //     this.events.subscribe('network:on', () => {
+    //         //alert(this.online);
+    //         //if (this.online != true) {
+    //         this.online = true;
+    //         //console.log("isonline");
+    //         this.processYpovoliApopsisEisigisis();
+    //         this.processSubmitComplaints();
+    //         this.processSubmitProblems();
+    //         //alert(this.online);
+    //         //this.storage.set("online", this.online);
+    //         //this.navCtrl.setRoot(HomePage);
+    //         //let nav = this.app.getActiveNav();
+    //         //nav.setRoot(HomePage); // circular reference
+    //         //}
+    //     });
 
-        this.events.subscribe('network:off', () => {
-            this.online = false;
-            //console.log("isoffline");
-            //alert(this.online);
-            //this.storage.set("online", this.online);
-        });
-    }
+    //     this.events.subscribe('network:off', () => {
+    //         this.online = false;
+    //         //console.log("isoffline");
+    //         //alert(this.online);
+    //         //this.storage.set("online", this.online);
+    //     });
+    // }
 
     checkTokens() {
         return new Promise<boolean>(resolve => {
@@ -179,21 +180,21 @@ export class ServicesProvider {
         }
     }
 
-    checkNetwork() {
-        //alert(this.online);
-        //alert(this.isApp);
-        return new Promise<boolean>(resolve => {
-            this.http.get(this.baseUrl + 'zePortalAPI/api/mylakatamia/CheckNetwork')
-                .subscribe(
-                    data => {
-                        resolve(true);
-                    },
-                    (err: HttpErrorResponse) => {
-                        resolve(false);
-                    });
-        });
+    // checkNetwork() {
+    //     //alert(this.online);
+    //     //alert(this.isApp);
+    //     return new Promise<boolean>(resolve => {
+    //         this.http.get(this.baseUrl + 'zePortalAPI/api/mylakatamia/CheckNetwork')
+    //             .subscribe(
+    //                 data => {
+    //                     resolve(true);
+    //                 },
+    //                 (err: HttpErrorResponse) => {
+    //                     resolve(false);
+    //                 });
+    //     });
 
-    }
+    // }
 
     getContent(myservice: string, params: HttpParams, showLoading: boolean = true) {
         //alert(this.online);
@@ -311,6 +312,26 @@ export class ServicesProvider {
         }
     }
 
+    convertToDataURLviaCanvas(url, outputFormat) {
+        return new Promise((resolve, reject) => {
+          let img = new Image();
+          img.crossOrigin = 'Anonymous';
+          img.onload = function () {
+            let canvas = <HTMLCanvasElement>document.createElement('CANVAS'),
+              ctx = canvas.getContext('2d'),
+              dataURL;
+            canvas.height = img.height;
+            canvas.width = img.width;
+            ctx.drawImage(img, 0, 0);
+            dataURL = canvas.toDataURL(outputFormat);
+            //callback(dataURL);
+            canvas = null;
+            resolve(dataURL);
+          };
+          img.src = url;
+        });
+      }
+
     sendData(submissionId, photos, showLoading: boolean = true) {
         if (showLoading) {
             this.myLoading = this.loadingCtrl.create({
@@ -344,6 +365,7 @@ export class ServicesProvider {
                         if (showLoading) {
                             this.myLoading.dismiss().catch();
                         }
+                        resolve(null);
                     });
             }
         });
@@ -491,6 +513,51 @@ export class ServicesProvider {
                 );
         }
     }
+
+    getNotifications() {
+        if (this.online) {
+          let params = new HttpParams()
+            .set('INSTID', this.instId.toString())
+            .set('ID', '')
+            .set('contId', (this.contID == null ? "" : this.contID))
+            .set('deviceId', (this.deviceId == null ? "" : this.deviceId))
+            .set('notificationId', '')
+            .set('category', '1001')
+            .set('lang', this.language)
+            .set('sortby', 'F491CRTDATE')
+            .set('sortorder', 'DESC')
+            .set('currentpage', '1')
+            .set('pagesize', '10')
+            .set('count', '0')
+            .set('runoption', 'I')
+            .set('USER_UI_LANGUAGE', this.language)
+            .set('userprofile', this.userProfile)
+            .set('retcode', '0')
+            .set('retmsg', '0')
+            .set('rettype', 'I');
+          this.getContent("GetUserNotifications", params, false)
+            .then(data => {
+              //alert('');
+              let dataset = JSON.parse(data.toString());
+              let datasetUnread = [];
+              for (let d of dataset) {
+                if (d.F491READ.toString().toLowerCase().trim() == 'true') {
+                  d.F491READ = true;
+                }
+                else {
+                  d.F491READ = false;
+                  datasetUnread.push(d);
+                }
+              }
+              this.storage.set("NotificationsPage", dataset);
+              //this.dataset = data;
+              //this.filtersLoaded = Promise.resolve(true);
+              this.notifications = datasetUnread.length;
+              //alert(data);
+              //console.log("User Login: " + JSON.parse(this.dataset)[0].F420TITLE);
+            });
+        }
+      }
 
     updateUserNotifications(formData) {
         //alert(this.online);

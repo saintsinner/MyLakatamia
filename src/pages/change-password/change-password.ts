@@ -98,8 +98,8 @@ export class ChangePasswordPage {
             this.Tmsgs = JSON.parse(data);
             if (this.Tmsgs[0]["@RETTYPE"] != 'E') {
               const popup = this.alertCtrl.create({
-                title: this.Tmsgs[0]["@RETMSG"],
-                //message: "Η καταχώρησή σας θα υποβληθεί μόλις ενωθείτε με το διαδίκτυο",
+                title: "Μήνυμα",
+                message: this.Tmsgs[0]["@RETMSG"],
                 buttons: ['ΕΝΤΑΞΕΙ']
               });
               popup.present();
@@ -107,8 +107,8 @@ export class ChangePasswordPage {
             }
             else {
               const popup = this.alertCtrl.create({
-                title: this.Tmsgs[0]["@RETMSG"],
-                // message: "Η καταχώρησή σας θα υποβληθεί μόλις ενωθείτε με το διαδίκτυο",
+                title: "Μήνυμα",
+                message: this.Tmsgs[0]["@RETMSG"],
                 buttons: ['ΕΝΤΑΞΕΙ']
               });
               popup.present();
@@ -118,7 +118,8 @@ export class ChangePasswordPage {
           }
           else {
             const popup = this.alertCtrl.create({
-              title: data,
+              title: "Μήνυμα",
+              message: data,
               buttons: ['ΕΝΤΑΞΕΙ']
             });
             popup.present();

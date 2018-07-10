@@ -63,6 +63,7 @@
     "cordova-plugin-inappbrowser": "^3.0.0",
     "cordova-plugin-ionic-keyboard": "^2.0.5",
     "cordova-plugin-ionic-webview": "^1.1.19",
+    "cordova-plugin-network-information": "^2.0.1",
     "cordova-plugin-splashscreen": "^5.0.2",
     "cordova-plugin-statusbar": "^2.4.2",
     "cordova-plugin-telerik-imagepicker": "^2.2.2",
@@ -112,7 +113,8 @@
       "cordova-plugin-actionsheet": {},
       "cordova-plugin-filepath": {},
       "cordova-plugin-inappbrowser": {},
-      "cordova-plugin-x-socialsharing": {}
+      "cordova-plugin-x-socialsharing": {},
+      "cordova-plugin-network-information": {}
     },
     "platforms": [
       "browser",

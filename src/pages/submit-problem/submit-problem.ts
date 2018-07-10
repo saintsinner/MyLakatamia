@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { NavController, NavParams, AlertController, Events, Platform, ActionSheetController, ToastController } from 'ionic-angular';
+import { NavController, NavParams, AlertController, Events, Platform, ActionSheetController, ToastController, normalizeURL } from 'ionic-angular';
 //import { HTTP } from '@ionic-native/http';
 import { ServicesProvider } from '../../providers/services/services';
 //import { SqlLiteProvider } from '../../providers/sql-lite/sql-lite';
@@ -70,21 +70,21 @@ export class SubmitProblemPage {
     private formBuilder: FormBuilder, public servicesProvider: ServicesProvider, public events: Events,
     public alertCtrl: AlertController, public storage: Storage, public platform: Platform, private camera: Camera,
     private actionSheetCtrl: ActionSheetController, private toastCtrl: ToastController) {
-      this.myFormGroup = this.formBuilder.group({
-        category: ['', Validators.compose([Validators.required])],
-        title: ['', Validators.compose([Validators.maxLength(this.titleLength), Validators.required])],
-        description: ['', Validators.compose([Validators.maxLength(this.descriptionLength), Validators.required])],
-        latitude: [{ value: '' }],
-        longitude: [{ value: '' }],
-        firstName: ['', Validators.compose([Validators.maxLength(this.firstNameLength)])],
-        lastName: ['', Validators.compose([Validators.maxLength(this.lastNameLength)])],
-        email: ['', Validators.compose([Validators.maxLength(this.emailLength)])],
-        phone: ['', Validators.compose([Validators.maxLength(this.phoneLength)])],
-        address: ['', Validators.compose([Validators.required])],
-        houseNumber: ['', Validators.compose([Validators.maxLength(this.houseNumberLength), Validators.required])]
-      });
+    this.myFormGroup = this.formBuilder.group({
+      category: ['', Validators.compose([Validators.required])],
+      title: ['', Validators.compose([Validators.maxLength(this.titleLength), Validators.required])],
+      description: ['', Validators.compose([Validators.maxLength(this.descriptionLength), Validators.required])],
+      latitude: [{ value: '' }],
+      longitude: [{ value: '' }],
+      firstName: ['', Validators.compose([Validators.maxLength(this.firstNameLength)])],
+      lastName: ['', Validators.compose([Validators.maxLength(this.lastNameLength)])],
+      email: ['', Validators.compose([Validators.maxLength(this.emailLength)])],
+      phone: ['', Validators.compose([Validators.maxLength(this.phoneLength)])],
+      address: ['', Validators.compose([Validators.required])],
+      houseNumber: ['', Validators.compose([Validators.maxLength(this.houseNumberLength), Validators.required])]
+    });
 
-    platform.ready().then(() => {      
+    platform.ready().then(() => {
       this.loadMap();
     });
   }
@@ -152,41 +152,41 @@ export class SubmitProblemPage {
     this.isDataAvailable = true;
   }
 
-loadMap(){
-  let options = { timeout: 10000, enableHighAccuracy: true, maximumAge: 3600 };
-      this.geolocation.getCurrentPosition(options).then(res => {
+  loadMap() {
+    let options = { timeout: 10000, enableHighAccuracy: true, maximumAge: 3600 };
+    this.geolocation.getCurrentPosition(options).then(res => {
 
-        console.log(res.coords.latitude);
-        console.log(res.coords.longitude);
+      console.log(res.coords.latitude);
+      console.log(res.coords.longitude);
 
-        let mapOptions: GoogleMapOptions = {
-          camera: {
-            target: {
-              lat: res.coords.latitude,
-              lng: res.coords.longitude
-            },
-            zoom: 17,
-            tilt: 20
-          }
-        };
-
-        this.map = GoogleMaps.create('map', mapOptions);
-
-        let marker: Marker = this.map.addMarkerSync({
-          title: 'Βρίσκεσε εδώ',
-          icon: 'blue',
-          animation: 'DROP',
-          position: {
+      let mapOptions: GoogleMapOptions = {
+        camera: {
+          target: {
             lat: res.coords.latitude,
             lng: res.coords.longitude
-          }
-        });
-        this.myFormGroup.patchValue({ latitude: res.coords.latitude.toString() });
-        this.myFormGroup.patchValue({ longitude: res.coords.longitude.toString() });
-      }).catch((error) => {
-        console.log('Error getting location', error.message);
+          },
+          zoom: 17,
+          tilt: 20
+        }
+      };
+
+      this.map = GoogleMaps.create('map', mapOptions);
+
+      let marker: Marker = this.map.addMarkerSync({
+        title: 'Βρίσκεσε εδώ',
+        icon: 'blue',
+        animation: 'DROP',
+        position: {
+          lat: res.coords.latitude,
+          lng: res.coords.longitude
+        }
       });
-}
+      this.myFormGroup.patchValue({ latitude: res.coords.latitude.toString() });
+      this.myFormGroup.patchValue({ longitude: res.coords.longitude.toString() });
+    }).catch((error) => {
+      console.log('Error getting location', error.message);
+    });
+  }
 
   public presentActionSheet() {
     let actionSheet = this.actionSheetCtrl.create({
@@ -216,24 +216,32 @@ loadMap(){
   takePhoto(sourceType) {
     if (this.photos.length < 6) {
       var options = {
-        quality: 50, // picture quality
+        quality: 70, // picture quality
         sourceType: sourceType,
         correctOrientation: true,
-        destinationType: this.camera.DestinationType.DATA_URL,
+        destinationType: this.camera.DestinationType.FILE_URI,
         encodingType: this.camera.EncodingType.JPEG,
         mediaType: this.camera.MediaType.PICTURE,
-        targetWidth: 600,
-        targetHeight: 600,
+        //targetWidth: 600,
+        //targetHeight: 600,
         saveToPhotoAlbum: false
       }
 
       // Get the data of an image
       this.camera.getPicture(options).then((imageData) => {
-        this.base64Image = "data:image/jpeg;base64," + imageData;
-        this.photos.push({ base64Path: this.base64Image, uri: imageData });
+        let imageURI = imageData;
+        if (this.platform.is("ios")) {
+          imageURI = normalizeURL(imageData);
+        }
+        this.servicesProvider.convertToDataURLviaCanvas(imageURI, "image/jpeg").then(imageBase64 => {
+          this.base64Image = imageBase64.toString();
+          this.photos.push({ base64Path: this.base64Image, uri: imageURI });
+        });
+        //this.base64Image = "data:image/jpeg;base64," + imageData;
+
         //this.photos.reverse(); // show them in descending order
       }, (err) => {
-        this.presentToast('Πρόβλημα με την επιλογή αρχείου.');
+        //this.presentToast('Πρόβλημα με την επιλογή αρχείου.');
       });
     }
     else {
@@ -315,7 +323,12 @@ loadMap(){
             this.storage.set("SubmitProblemPage", submissions);
 
             if (this.servicesProvider.online) {
-              this.servicesProvider.addSubmission(postdata)
+              this.servicesProvider.myLoading = this.servicesProvider.loadingCtrl.create({
+                content: 'Παρακαλώ περιμένετε...'
+              });
+              this.servicesProvider.myLoading.present();
+
+              this.servicesProvider.addSubmission(postdata, false)
                 .then(data => {
                   //alert(JSON.parse(data.toString()).length);
                   let message = JSON.parse(data.toString());
@@ -324,7 +337,7 @@ loadMap(){
                     //upload files
                     //alert(message[0]["@PID"]);
                     if (this.photos.length > 0) {
-                      this.servicesProvider.sendData(message[0]["@PID"], this.photos).then((res) => {
+                      this.servicesProvider.sendData(message[0]["@PID"], this.photos, false).then((res) => {
                         this.storage.remove("SubmitProblemPage");
 
                         this.servicesProvider.myLoading.dismiss();
@@ -340,6 +353,8 @@ loadMap(){
                       });
                     }
                     else {
+                      this.servicesProvider.myLoading.dismiss();
+
                       let alertTitle = "Μήνυμα";
                       const popup = this.alertCtrl.create({
                         title: alertTitle,
@@ -351,6 +366,8 @@ loadMap(){
                     }
                   }
                   else {
+                    this.servicesProvider.myLoading.dismiss();
+
                     let alertTitle = "Πρόβλημα";
                     const popup = this.alertCtrl.create({
                       title: alertTitle,

@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { NavController, NavParams, AlertController, Events, Platform, ActionSheetController, ToastController } from 'ionic-angular';
+import { NavController, NavParams, AlertController, Events, Platform, ActionSheetController, ToastController, normalizeURL } from 'ionic-angular';
 //import { HTTP } from '@ionic-native/http';
 import { ServicesProvider } from '../../providers/services/services';
 //import { SqlLiteProvider } from '../../providers/sql-lite/sql-lite';
@@ -132,24 +132,32 @@ export class SubmitComplaintPage {
   takePhoto(sourceType) {
     if (this.photos.length < 6) {
       var options = {
-        quality: 50, // picture quality
+        quality: 70, // picture quality
         sourceType: sourceType,
         correctOrientation: true,
-        destinationType: this.camera.DestinationType.DATA_URL,
+        destinationType: this.camera.DestinationType.FILE_URI,
         encodingType: this.camera.EncodingType.JPEG,
         mediaType: this.camera.MediaType.PICTURE,
-        targetWidth: 600,
-        targetHeight: 600,
+        //targetWidth: 600,
+        //targetHeight: 600,
         saveToPhotoAlbum: false
       }
 
       // Get the data of an image
       this.camera.getPicture(options).then((imageData) => {
-        this.base64Image = "data:image/jpeg;base64," + imageData;
-        this.photos.push({ base64Path: this.base64Image, uri: imageData });
+        let imageURI = imageData;
+        if (this.platform.is("ios")) {
+          imageURI = normalizeURL(imageData);
+        }
+        this.servicesProvider.convertToDataURLviaCanvas(imageURI, "image/jpeg").then(imageBase64 => {
+          this.base64Image = imageBase64.toString();
+          this.photos.push({ base64Path: this.base64Image, uri: imageURI });
+        });
+        //this.base64Image = "data:image/jpeg;base64," + imageData;
+
         //this.photos.reverse(); // show them in descending order
       }, (err) => {
-        this.presentToast('Πρόβλημα με την επιλογή αρχείου.');
+        //this.presentToast('Πρόβλημα με την επιλογή αρχείου.');
       });
     }
     else {
@@ -223,7 +231,12 @@ export class SubmitComplaintPage {
             this.storage.set("SubmitComplaintPage", submissions);
 
             if (this.servicesProvider.online) {
-              this.servicesProvider.addSubmission(postdata)
+              this.servicesProvider.myLoading = this.servicesProvider.loadingCtrl.create({
+                content: 'Παρακαλώ περιμένετε...'
+              });
+              this.servicesProvider.myLoading.present();
+
+              this.servicesProvider.addSubmission(postdata, false)
                 .then(data => {
                   //alert(JSON.parse(data.toString()).length);
                   let message = JSON.parse(data.toString());
@@ -232,7 +245,7 @@ export class SubmitComplaintPage {
                     //upload files
                     //alert(message[0]["@PID"]);
                     if (this.photos.length > 0) {
-                      this.servicesProvider.sendData(message[0]["@PID"],this.photos).then((res) => {
+                      this.servicesProvider.sendData(message[0]["@PID"], this.photos, false).then((res) => {
                         this.storage.remove("SubmitComplaintPage");
 
                         this.servicesProvider.myLoading.dismiss();
@@ -248,6 +261,8 @@ export class SubmitComplaintPage {
                       });
                     }
                     else {
+                      this.servicesProvider.myLoading.dismiss();
+
                       let alertTitle = "Μήνυμα";
                       const popup = this.alertCtrl.create({
                         title: alertTitle,
@@ -259,6 +274,8 @@ export class SubmitComplaintPage {
                     }
                   }
                   else {
+                    this.servicesProvider.myLoading.dismiss();
+
                     let alertTitle = "Πρόβλημα";
                     const popup = this.alertCtrl.create({
                       title: alertTitle,

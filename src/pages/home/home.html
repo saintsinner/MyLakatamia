@@ -7,7 +7,7 @@
     <ion-title>MyLakatamia</ion-title>
     <ion-buttons end>
       <button ion-button icon-only (click)="goToNotifications()" id="notification-button" clear *ngIf="servicesProvider.notificationsOn">
-        <ion-icon name="notifications"><ion-badge id="notifications-badge" color="danger" *ngIf="notifications>0">{{notifications}}</ion-badge></ion-icon>        
+        <ion-icon name="notifications"><ion-badge id="notifications-badge" color="danger" *ngIf="servicesProvider.notifications>0">{{servicesProvider.notifications}}</ion-badge></ion-icon>        
       </button>
       <button ion-button icon-only clear *ngIf="!servicesProvider.notificationsOn">
           <ion-icon name="notifications-off"></ion-icon>        

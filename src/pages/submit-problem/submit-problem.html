@@ -63,26 +63,26 @@
       <ion-textarea formControlName="description" maxlength="{{descriptionLength.toString()}}"></ion-textarea>
     </ion-item>
     <ion-item>
-        <ion-label floating>Οδός
-          <span style="color:#ff0000!important;"> *</span>
-        </ion-label>
-        <ion-select formControlName="address" okText="ΕΠΙΛΟΓΗ" cancelText="ΑΚΥΡΟ" multiple="false" *ngIf="isDataAvailable">
-          <ion-option *ngFor="let item of addresses" [value]="item.F083ID">{{item.F083ADDRESS}}</ion-option>
-        </ion-select>
-      </ion-item>
-      <ion-item>
-          <ion-label floating>Αριθμός
-            <span style="color:#ff0000!important;"> * ({{houseNumberLength.toString()}} χαρακτήρες)</span>
-          </ion-label>
-          <ion-input type="text" formControlName="houseNumber" maxlength="{{houseNumberLength.toString()}}"></ion-input>
-        </ion-item>
+      <ion-label floating>Οδός
+        <span style="color:#ff0000!important;"> *</span>
+      </ion-label>
+      <ion-select formControlName="address" okText="ΕΠΙΛΟΓΗ" cancelText="ΑΚΥΡΟ" multiple="false" *ngIf="isDataAvailable">
+        <ion-option *ngFor="let item of addresses" [value]="item.F083ID">{{item.F083ADDRESS}}</ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label floating>Αριθμός
+        <span style="color:#ff0000!important;"> * ({{houseNumberLength.toString()}} χαρακτήρες)</span>
+      </ion-label>
+      <ion-input type="text" formControlName="houseNumber" maxlength="{{houseNumberLength.toString()}}"></ion-input>
+    </ion-item>
     <ion-item>
       <ion-label floating>Τοποθεσία
       </ion-label>
-      <ion-input formControlName="latitude" placeholder="latitude"></ion-input>
+      <ion-input formControlName="latitude" placeholder=""></ion-input>
       <ion-input formControlName="longitude" placeholder="longitude"></ion-input>
     </ion-item>
-    
+
     <div style="text-align: center; padding-top: 20px;">
       <ion-badge ion-button block outline (click)="presentActionSheet()">
         <div>
@@ -92,21 +92,14 @@
       </ion-badge>
       <ion-grid>
         <ion-row>
-          <ion-col col-4 *ngFor="let photo of photos; let id = index" style="overflow:hidden; height:100px;">
+          <ion-col col-4 *ngFor="let photo of photos; let id = index" style="overflow:hidden; height:150px;">
             <ion-card class="block">
               <ion-icon name="trash" style="font-size:30px;" (click)="deletePhoto(id)"></ion-icon>
-              <img [src]="photo.base64Path" *ngIf="photo" />
+              <img [src]="photo.uri" *ngIf="photo" style="height:140px;" />
             </ion-card>
           </ion-col>
         </ion-row>
       </ion-grid>
-
-      <ion-list>
-        <ion-item *ngFor="let item of myfiles" data-tap-disabled="true">
-          <p>{{item.name}}</p>
-          <ion-icon name="trash" item-end (click)="removeFile(item.name)"></ion-icon>
-        </ion-item>
-      </ion-list>
     </div>
 
     <button ion-button type="submit" full>Υποβολη</button>

@@ -7,9 +7,9 @@
 <ion-header>
 
   <ion-navbar>
-      <button ion-button menuToggle>
-          <ion-icon name="menu"></ion-icon>
-        </button>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
     <ion-title>Ρυθμίσεις</ion-title>
   </ion-navbar>
 
@@ -17,8 +17,8 @@
 
 
 <ion-content padding>
-    <ion-item>
-        <ion-label>Ειδοποιήσεις</ion-label>
-        <ion-toggle [(ngModel)]="servicesProvider.notificationsOn" (ionChange)="notify($event)"></ion-toggle>
-      </ion-item>
+  <ion-item>
+    <ion-label>Ειδοποιήσεις</ion-label>
+    <ion-toggle [(ngModel)]="servicesProvider.notificationsOn" (ionChange)="notify($event)"></ion-toggle>
+  </ion-item>
 </ion-content>

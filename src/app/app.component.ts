@@ -2,7 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { Nav, Platform, Events, MenuController, AlertController } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
-//import { Network } from '@ionic-native/network';
+import { Network } from '@ionic-native/network';
 import { Device } from '@ionic-native/device';
 import { Storage } from '@ionic/storage';
 
@@ -13,6 +13,7 @@ import { ProfilePage } from '../pages/profile/profile';
 import { ChangePasswordPage } from '../pages/change-password/change-password';
 import { LoginPage } from '../pages/login/login';
 import { SettingsPage } from '../pages/settings/settings';
+import { CreditsPage } from '../pages/credits/credits';
 
 export interface PageInterface {
   title: string;
@@ -40,20 +41,23 @@ export class MyApp {
     { title: 'Προφίλ', name: 'ProfilePage', component: ProfilePage, icon: 'md-person', online: true },
     { title: 'Αλλαγή Κωδικού', name: 'ChangePasswordPage', component: ChangePasswordPage, icon: 'md-lock', online: true },
     { title: 'Έξοδος', name: 'HomePage', component: HomePage, icon: 'md-log-out', logsOut: true },
-    { title: 'Ρυθμίσεις', name: 'SettingsPage', component: SettingsPage, icon: 'md-settings' }
+    { title: 'Ρυθμίσεις', name: 'SettingsPage', component: SettingsPage, icon: 'md-settings' },
+    { title: 'Εφαρμογή', name: 'CreditsPage', component: CreditsPage, icon: 'md-bookmark' }
   ];
   loggedOutPages: PageInterface[] = [
     { title: 'MyLakatamia', name: 'HomePage', component: HomePage, icon: 'md-home' },
     { title: 'Εγγραφή', name: 'ProfilePage', component: ProfilePage, icon: 'md-person', online: true },
     { title: 'Είσοδος', name: 'LoginPage', component: LoginPage, icon: 'md-log-in', online: true },
-    { title: 'Ρυθμίσεις', name: 'SettingsPage', component: SettingsPage, icon: 'md-settings' }
+    { title: 'Ρυθμίσεις', name: 'SettingsPage', component: SettingsPage, icon: 'md-settings' },
+    { title: 'Εφαρμογή', name: 'CreditsPage', component: CreditsPage, icon: 'md-bookmark' }
   ];
 
-  constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen, public events: Events,
+  constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen, public events: Events, public network: Network,
     public menu: MenuController, public alertCtrl: AlertController, public device: Device, public servicesProvider: ServicesProvider, public storage: Storage) {
     this.initializeApp();
 
-
+    //// stop connect watch
+    //connectSubscription.unsubscribe();
 
     // // used for an example of ngFor and navigation
     // this.pages = [
@@ -73,12 +77,49 @@ export class MyApp {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
 
-      //online offline events
-      var cn = setInterval(() => {
-        this.checkForNetwork();
-      }, 3000);
-      //add listeners for online/offline
-      this.servicesProvider.listenToNetworkEvents();
+      //if web browser assume you are online because listeners do not work in browser
+      if (document.URL.startsWith('http')) {
+        this.servicesProvider.online = true;
+        this.servicesProvider.getNotifications();
+        this.servicesProvider.processYpovoliApopsisEisigisis();
+        this.servicesProvider.processSubmitComplaints();
+        this.servicesProvider.processSubmitProblems();
+      }
+      else {
+        this.startupOnlineActions();
+      }
+      // watch network for a disconnect
+      let disconnectSubscription = this.network.onDisconnect().subscribe(() => {
+        //alert('');
+        console.log('network was disconnected :-(');
+        this.servicesProvider.online = false;
+        // //console.log("isonline");
+        // this.processYpovoliApopsisEisigisis();
+        // this.processSubmitComplaints();
+        // this.processSubmitProblems();
+      });
+
+      //// stop disconnect watch
+      //disconnectSubscription.unsubscribe();
+
+      // watch network for a connection
+      let connectSubscription = this.network.onConnect().subscribe(() => {
+        this.startupOnlineActions();
+      });
+
+      // this.servicesProvider.checkNetwork()
+      //   .then(
+      //     (data) => {
+      //       this.servicesProvider.online = data;
+      //     }
+      //   );
+
+      // //online offline events
+      // var cn = setInterval(() => {
+      //   this.checkForNetwork();
+      // }, 3000);
+      // //add listeners for online/offline
+      // this.servicesProvider.listenToNetworkEvents();
 
       //store device id
       this.servicesProvider.deviceId = this.device.uuid;
@@ -134,15 +175,15 @@ export class MyApp {
     });
   }
 
-  checkForNetwork() {
-    this.servicesProvider.checkNetwork()
-      .then(
-        (data) => {
-          this.servicesProvider.online = data;
-          this.servicesProvider.startNetworkEvents(this.servicesProvider.online);
-        }
-      );
-  }
+  // checkForNetwork() {
+  //   this.servicesProvider.checkNetwork()
+  //     .then(
+  //       (data) => {
+  //         this.servicesProvider.online = data;
+  //         this.servicesProvider.startNetworkEvents(this.servicesProvider.online);
+  //       }
+  //     );
+  // }
 
   listenToLoginEvents() {
     this.events.subscribe('user:login', () => {
@@ -162,7 +203,32 @@ export class MyApp {
     })
   }
 
+  startupOnlineActions() {
+    if (this.network.type !== 'none') {
+      //alert('');
+      this.servicesProvider.online = true;
+      console.log('network connected!');
+      // We just got a connection but we need to wait briefly
+      // before we determine the connection type. Might need to wait.
+      // prior to doing any api requests as well.
+      setTimeout(() => {
+        this.servicesProvider.online = true;
+        //console.log("isonline");
+        this.servicesProvider.getNotifications();
+        this.servicesProvider.processYpovoliApopsisEisigisis();
+        this.servicesProvider.processSubmitComplaints();
+        this.servicesProvider.processSubmitProblems();
+        // if (this.network.type === 'wifi') {
+        //   console.log('we got a wifi connection, woohoo!');
+        // }
+      }, 3000);
+    } else if (this.network.type === 'none') {
+      this.servicesProvider.online = false;
+    } else {
+      this.servicesProvider.online = false;
+    }
 
+  }
 
   enableMenu(loggedIn: boolean) {
     this.menu.enable(loggedIn, 'loggedInMenu');
@@ -180,7 +246,7 @@ export class MyApp {
 
       const popup = this.alertCtrl.create({
         title: "Μήνυμα",
-        message: "Έχετε εξέλθει από το σύστημα.",
+        message: "ΕΧΕΤΕ ΑΠΟΣΥΝΔΕΘΕΙ ΕΠΙΤΥΧΩΣ",
         buttons: ['ΕΝΤΑΞΕΙ']
       });
       popup.present();
@@ -189,7 +255,7 @@ export class MyApp {
     else if (page.online === true && this.servicesProvider.online != true) {
       const popup = this.alertCtrl.create({
         title: "Μήνυμα",
-        message: "Πρέπει να είστε συνδεδεμένοι με το διαδύκτυο.",
+        message: "ΠΡΕΠΕΙ ΝΑ ΕΙΣΤΕ ΣΥΝΔΕΔΕΜΕΝΟΙ ΜΕ ΤΟ ΔΙΑΔΙΚΤΥΟ",
         buttons: ['ΕΝΤΑΞΕΙ']
       });
       popup.present();
