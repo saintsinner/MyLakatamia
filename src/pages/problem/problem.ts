@@ -5,7 +5,8 @@ import { ServicesProvider } from '../../providers/services/services';
 //import { SqlLiteProvider } from '../../providers/sql-lite/sql-lite';
 import { HttpParams } from '@angular/common/http';
 import { Storage } from '@ionic/storage';
-import { GoogleMaps, GoogleMap, GoogleMapOptions } from '@ionic-native/google-maps';
+import { GoogleMaps, GoogleMap, GoogleMapOptions, Marker, MarkerOptions } from '@ionic-native/google-maps';
+import { PhotoViewer } from '@ionic-native/photo-viewer';
 
 /**
  * Generated class for the ProblemPage page.
@@ -23,7 +24,9 @@ export class ProblemPage {
   storageId: any;
   params: any;
   dataset: any;
+  datasetImages: any;
   isDataAvailable: boolean = false;
+  isDataImagesAvailable: boolean = false;
   isTab1Available: boolean = false;
   isTab2Available: boolean = false;
   isCoordinatesAvailable: boolean = false;
@@ -33,8 +36,8 @@ export class ProblemPage {
   mysections: string = '1';
   map: GoogleMap;
   //constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider, private sqlLiteProvider: SqlLiteProvider) {
-  constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider, public storage: Storage, 
-    public platform: Platform) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider, public storage: Storage,
+    public platform: Platform, public photoViewer: PhotoViewer) {
     console.log('Constructor ProblemPage');
 
 
@@ -104,13 +107,25 @@ export class ProblemPage {
         //alert(data);
         //console.log("User Login: " + JSON.parse(this.dataset)[0].F420TITLE);
       });
+    this.params = new HttpParams()
+      .set('INSTID', this.servicesProvider.instId.toString())
+      .set('lang', this.servicesProvider.language)
+      .set('refItemId', this.navParams.get('id'))
+      .set('refTableId', '488')
+    this.servicesProvider.getContent("GetSubImages", this.params, false)
+      .then(data => {
+        //alert(JSON.parse(data.toString()).length);
+        this.datasetImages = JSON.parse(data.toString());
+        this.isDataImagesAvailable = true;
+        //refresher.complete();
+      });
   }
 
   setData() {
     this.isDataAvailable = true;
 
     this.platform.ready().then(() => {
-      if (this.dataset[0].F488LONGITUDE!=null) {
+      if (this.dataset[0].F488LONGITUDE != null) {
         this.isCoordinatesAvailable = true;
         this.loadMap(parseFloat(this.dataset[0].F488LONGITUDE), parseFloat(this.dataset[0].F488LATITUDE));
       }
@@ -139,18 +154,23 @@ export class ProblemPage {
 
     this.map = GoogleMaps.create('map', mapOptions);
 
-    // let marker: Marker = this.map.addMarkerSync({
-    //     title: 'Ionic',
-    //     icon: 'blue',
-    //     animation: 'DROP',
-    //     position: {
-    //         lat: 35.1103776939127,
-    //         lng: 33.300821106221065
-    //     }
-    // });
+    let marker: Marker = this.map.addMarkerSync({
+      title: 'ΕΔΩ',
+      icon: 'blue',
+      animation: 'DROP',
+      position: {
+        lat: latitude,
+        lng: longitude
+      }
+    });
     //   marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(() => {
     //     alert('clicked');
     //   });
+  }
+
+  viewLargerImage(itemID: string) {
+    this.photoViewer.show(this.servicesProvider.baseUrl + "zeportalapi/PreviewImage.ashx?itemId=" + itemID + "&refTableId=488&imageSize=L&language=" + this.servicesProvider.language);
+
   }
 
 }

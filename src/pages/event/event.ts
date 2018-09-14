@@ -177,7 +177,8 @@ export class EventPage {
 
   shareAction() {
     let message = this.dataset[0].F426TITLE;
-    //let message = this.dataset[0].F426HTMLL1;
+    //let messageb = this.dataset[0].F426DATEFROM;
+    // this.dataset[0].F426HTMLL1
     this.socialSharing.share(message, null, null, null)
     .then(()=>{
       this.updateSocialActions('1003');

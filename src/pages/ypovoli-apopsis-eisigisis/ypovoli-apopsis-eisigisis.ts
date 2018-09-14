@@ -104,7 +104,8 @@ export class YpovoliApopsisEisigisisPage {
             submissions.push(postdata);
             this.storage.set("YpovoliApopsisEisigisisPage", submissions);
             if (this.servicesProvider.online) {
-              this.servicesProvider.addSubmission(postdata)
+              let mySubmissionLoading: any;
+              this.servicesProvider.addSubmission(postdata, mySubmissionLoading)
                 .then(data => {
                   this.storage.remove("YpovoliApopsisEisigisisPage");
                   //alert(JSON.parse(data.toString()).length);

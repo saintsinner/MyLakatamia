@@ -21,7 +21,8 @@
   </ion-refresher>
   <div *ngIf="isDataAvailable">
     <div>
-      <img src="assets/imgs/pezogefira.jpg" style="width: 100%;">
+      <!-- <img src="assets/imgs/pezogefira.jpg" style="width: 100%;">  -->
+      <img src="{{servicesProvider.baseUrl}}zeportalapi/PreviewImage.ashx?refItemId={{dataset[0].F401ID}}&refTableId=401&imageSize=L&language=EL&imgType=N" style="display: block; margin-left: auto; margin-right: auto;">
     </div>
     <div padding>
       <h1 [innerHTML]="dataset[0].F401TITLE | safe: 'html'"></h1>
@@ -31,13 +32,13 @@
     </div>
   </div>
 </ion-content>
-<ion-footer no-shadow *ngIf="servicesProvider.online">
+<ion-footer no-shadow *ngIf="servicesProvider.online" [hidden]="true">
   <ion-toolbar position="bottom">
-    <div style="float:left; text-align: left;" [hidden]="false">
-      <button ion-button icon-only clear (click)="shareAction()">
+   <div style="float:left; text-align: left;">
+      <button ion-button icon-only clear (click)="shareAction()" visible= "false"> 
         <ion-icon name="md-share" style="margin:auto;color:#488aff; font-size: 20px;"></ion-icon>
       </button>
-    </div>
+    </div> 
     <!-- <div style="float:right; text-align: right;">
       <button ion-button icon-only clear (click)="updateSocialActions('1001')" *ngIf="!deviceLiked">
         <ion-icon name="ios-thumbs-up-outline" style="margin:auto;color:#488aff; font-size: 20px;"></ion-icon>

@@ -5,6 +5,8 @@ import { ServicesProvider } from '../../providers/services/services';
 //import { SqlLiteProvider } from '../../providers/sql-lite/sql-lite';
 import { HttpParams } from '@angular/common/http';
 import { Storage } from '@ionic/storage';
+import { PhotoViewer } from '@ionic-native/photo-viewer';
+
 
 /**
  * Generated class for the ComplaintPage page.
@@ -22,7 +24,9 @@ export class ComplaintPage {
   storageId: any;
   params: any;
   dataset: any;
+  datasetImages: any;
   isDataAvailable: boolean = false;
+  isDataImagesAvailable: boolean = false;
   isTab1Available: boolean = false;
   isTab2Available: boolean = false;
   @ViewChild(Refresher) myrefresher: Refresher;
@@ -30,7 +34,7 @@ export class ComplaintPage {
   //filtersLoaded: Promise<boolean>;
   mysections: string = '1';
   //constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider, private sqlLiteProvider: SqlLiteProvider) {
-  constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider, public storage: Storage) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider, public storage: Storage, public photoViewer: PhotoViewer) {
     console.log('Constructor ComplaintPage');
     //sqlLiteProvider.addDanceMove('tango');
     //sqlLiteProvider.getDanceMoves();
@@ -98,6 +102,19 @@ export class ComplaintPage {
         //alert(data);
         //console.log("User Login: " + JSON.parse(this.dataset)[0].F420TITLE);
       });
+      this.params = new HttpParams()
+      .set('INSTID', this.servicesProvider.instId.toString())
+      .set('lang', this.servicesProvider.language)
+      .set('refItemId', this.navParams.get('id'))
+      .set('refTableId', '488') 
+      this.servicesProvider.getContent("GetSubImages", this.params, false)
+      .then(data => {
+        //alert(JSON.parse(data.toString()).length);
+        this.datasetImages = JSON.parse(data.toString());
+       this.isDataImagesAvailable = true;
+        //refresher.complete();
+      });
+
   }
 
   setData() {
@@ -109,6 +126,11 @@ export class ComplaintPage {
     //console.log('ionViewDidLoad LakatamiaPage');
     this.storageId = "ComplaintPage" + this.navParams.get('id').toString();
     this.doRefresh(this.myrefresher);
+  }
+
+  viewLargerImage(itemID: string ){
+      this.photoViewer.show(this.servicesProvider.baseUrl+"zeportalapi/PreviewImage.ashx?itemId="+itemID+"&refTableId=488&imageSize=L&language="+ this.servicesProvider.language);
+
   }
 
 }

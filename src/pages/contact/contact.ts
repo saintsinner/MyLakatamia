@@ -5,7 +5,7 @@ import { ServicesProvider } from '../../providers/services/services';
 //import { SqlLiteProvider } from '../../providers/sql-lite/sql-lite';
 import { HttpParams } from '@angular/common/http';
 import { Storage } from '@ionic/storage';
-import { GoogleMaps, GoogleMap, GoogleMapOptions } from '@ionic-native/google-maps';
+import { GoogleMaps, GoogleMap, GoogleMapOptions, Marker } from '@ionic-native/google-maps';
 
 /**
  * Generated class for the ContactPage page.
@@ -145,15 +145,15 @@ export class ContactPage {
 
         this.map = GoogleMaps.create('map', mapOptions);
 
-        // let marker: Marker = this.map.addMarkerSync({
-        //     title: 'Ionic',
-        //     icon: 'blue',
-        //     animation: 'DROP',
-        //     position: {
-        //         lat: 35.1103776939127,
-        //         lng: 33.300821106221065
-        //     }
-        // });
+        let marker: Marker = this.map.addMarkerSync({
+            title: 'ΔΗΜΑΡΧΕΙΟ ΛΑΚΑΤΑΜΙΑΣ',
+            icon: 'blue',
+            animation: 'DROP',
+             position: {
+                lat: 35.1103776939127,
+                lng: 33.300821106221065
+            }
+        });
         //   marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(() => {
         //     alert('clicked');
         //   });

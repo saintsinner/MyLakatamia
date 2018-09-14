@@ -46,7 +46,7 @@ export class EventsPage {
   doRefresh(refresher) {
     //console.log('Begin async operation', refresher);
     //this.getContent(http)
-    if (this.servicesProvider.online) {
+    if (this.servicesProvider.online && this.mysections == '1') {
       this.mysections = '1';
       this.datefrom = new Date().toISOString().substr(0, 10);
       this.dateto = "3000-01-01";
@@ -63,6 +63,32 @@ export class EventsPage {
         .then(
           (data) => {
             this.dataset = data;
+            this.setData();
+            this.myrefresher.complete();
+          }
+        );
+    }
+
+
+    if (this.servicesProvider.online && this.mysections == '2') {
+      this.mysections = '2';
+      var newdate = new Date();
+      newdate.setDate(newdate.getDate() - 2);
+      this.dateto = newdate.toISOString().substr(0, 10);
+      this.datefrom = "2000-01-01";
+      this.dataset = [];
+      this.datasetOld = [];
+      this.currentpage = 1;
+      this.theEnd = false;
+      this.getContent(refresher);
+    }
+    else {
+      //alert(this.storageId);
+      this.theEnd = true;
+      this.storage.get(this.storageId)
+        .then(
+          (data) => {
+            this.datasetOld = data;
             this.setData();
             this.myrefresher.complete();
           }
@@ -111,6 +137,7 @@ export class EventsPage {
           }
           else {
             //this.noData=true;
+            this.storage.remove(this.storageId);
             this.theEnd = true;
           }
         }
@@ -123,6 +150,7 @@ export class EventsPage {
           }
           else {
             //this.noData=true;
+            this.storage.remove(this.storageId);
             this.theEnd = true;
           }
         }

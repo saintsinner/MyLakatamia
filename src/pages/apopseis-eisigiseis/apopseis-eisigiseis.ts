@@ -46,7 +46,7 @@ export class ApopseisEisigiseisPage {
   doRefresh(refresher) {
     //console.log('Begin async operation', refresher);
     //this.getContent(http)
-    if (this.servicesProvider.online) {
+    if (this.servicesProvider.online && this.mysections == '1') {
       this.mysections = '1';
       this.showVisible = "True";
       this.filterContactId = null;
@@ -62,6 +62,28 @@ export class ApopseisEisigiseisPage {
         .then(
           (data) => {
             this.dataset = data;
+            this.setData();
+            this.myrefresher.complete();
+          }
+        );
+    }
+
+    if (this.servicesProvider.online && this.mysections == '2') {
+      this.mysections = '2';
+      this.showVisible = "True";
+    // this.filterContactId = null;
+      this.dataset = [];
+      this.datasetOld = [];
+      this.currentpage = 1;
+      this.theEnd = false;
+      this.getContent(refresher);
+    }
+    else {
+      this.theEnd = true;
+      this.storage.get(this.storageId)
+        .then(
+          (data) => {
+            this.datasetOld = data;
             this.setData();
             this.myrefresher.complete();
           }
@@ -120,6 +142,7 @@ export class ApopseisEisigiseisPage {
           }
           else {
             //this.noData=true;
+            this.storage.remove(this.storageId);
             this.theEnd = true;
           }
         }
@@ -132,6 +155,7 @@ export class ApopseisEisigiseisPage {
           }
           else {
             //this.noData=true;
+            this.storage.remove(this.storageId);
             this.theEnd = true;
           }
         }

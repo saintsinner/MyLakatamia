@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, NgModule } from '@angular/core';
 import { NavController, NavParams, AlertController, Events, Platform, ActionSheetController, ToastController, normalizeURL } from 'ionic-angular';
 //import { HTTP } from '@ionic-native/http';
 import { ServicesProvider } from '../../providers/services/services';
@@ -7,7 +7,7 @@ import { HttpParams } from '@angular/common/http';
 import { Storage } from '@ionic/storage';
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { Geolocation } from '@ionic-native/geolocation';
-import { GoogleMaps, GoogleMap, GoogleMapOptions, Marker } from '@ionic-native/google-maps';
+import { GoogleMaps, GoogleMap, GoogleMapOptions, Marker, LatLng, GoogleMapsEvent, MarkerOptions } from '@ionic-native/google-maps';
 //import { FileChooser } from '@ionic-native/file-chooser';
 //import { IOSFilePicker } from '@ionic-native/file-picker';
 //import { FilePath } from '@ionic-native/file-path';
@@ -16,6 +16,9 @@ import { Camera } from '@ionic-native/camera';
 //import { ImagePicker } from '@ionic-native/image-picker';
 //import { Base64 } from '@ionic-native/base64';
 import { HomePage } from '../home/home';
+
+//import { SelectSearchable } from 'ionic-select-searchable';
+import { SelectSearchableComponent } from 'ionic-select-searchable';
 
 //declare var cordova: any
 
@@ -28,6 +31,7 @@ export interface SubmissionInterface {
   submission: any;
   photos: FileInterface[];
 }
+
 
 /**
  * Generated class for the SubmitProblemPage page.
@@ -42,6 +46,10 @@ export interface SubmissionInterface {
   templateUrl: 'submit-problem.html',
 })
 export class SubmitProblemPage {
+  //@ViewChild('myselect') selectComponent: SelectSearchableComponent;
+  //address1 = null;
+  //position: string = "";
+  streets=[];
   storageId: any;
   storageIdAddresses: any;
   pageId: any;
@@ -55,6 +63,7 @@ export class SubmitProblemPage {
   descriptionLength = 500;
   latitudeLength = 30;
   longituteLength = 30;
+  //latlngLength= 30;
   firstNameLength = 50;
   lastNameLength = 50;
   emailLength = 100;
@@ -65,6 +74,7 @@ export class SubmitProblemPage {
   //lastImage: string = null;
   public photos: FileInterface[] = [];
   public base64Image: string;
+  showVisible = "True";
   map: GoogleMap;
   constructor(public navCtrl: NavController, public navParams: NavParams, public geolocation: Geolocation,
     private formBuilder: FormBuilder, public servicesProvider: ServicesProvider, public events: Events,
@@ -75,6 +85,7 @@ export class SubmitProblemPage {
       title: ['', Validators.compose([Validators.maxLength(this.titleLength), Validators.required])],
       description: ['', Validators.compose([Validators.maxLength(this.descriptionLength), Validators.required])],
       latitude: [{ value: '' }],
+      //latlng: [{ value: '' }],
       longitude: [{ value: '' }],
       firstName: ['', Validators.compose([Validators.maxLength(this.firstNameLength)])],
       lastName: ['', Validators.compose([Validators.maxLength(this.lastNameLength)])],
@@ -85,10 +96,19 @@ export class SubmitProblemPage {
     });
 
     platform.ready().then(() => {
-      this.loadMap();
+     this.loadMap();
+     //this.loadMap2();
     });
   }
 
+  addressChange(event: {
+    component: SelectSearchableComponent,
+    value: any 
+}) {
+    //console.log('event: ', event);
+    //console.log(this.addresses);
+   // let address1 = event.value;
+}
 
   getContent() {
     //alert(this.mysections);
@@ -152,6 +172,33 @@ export class SubmitProblemPage {
     this.isDataAvailable = true;
   }
 
+      /*let marker: Marker = this.map.addMarkerSync({
+        title: 'Βρίσκεσε εδώ',
+        icon: 'blue',
+        draggable: true ,
+        animation: 'DROP',
+        position: {
+          lat: res.coords.latitude,
+          lng: res.coords.longitude
+        }
+      }); */
+      /*let markerOptions: MarkerOptions = {
+        position: {
+          lat: res.coords.latitude,
+          lng: res.coords.longitude
+        },
+        title: 'My position',
+        snippet: "Soprendente",
+        draggable: true
+      };
+      this.map.addMarker(markerOptions).then((maker: Marker) => {
+        maker.showInfoWindow();
+        maker.addEventListener(GoogleMapsEvent.MARKER_DRAG_END).subscribe((some: any) => {
+          maker.getPosition()
+        })*/
+
+     
+
   loadMap() {
     let options = { timeout: 10000, enableHighAccuracy: true, maximumAge: 3600 };
     this.geolocation.getCurrentPosition(options).then(res => {
@@ -172,21 +219,89 @@ export class SubmitProblemPage {
 
       this.map = GoogleMaps.create('map', mapOptions);
 
-      let marker: Marker = this.map.addMarkerSync({
-        title: 'Βρίσκεσε εδώ',
-        icon: 'blue',
-        animation: 'DROP',
+      let markerOptions: MarkerOptions = {
         position: {
           lat: res.coords.latitude,
-          lng: res.coords.longitude
-        }
-      });
+          lng: res.coords.longitude},
+        title: 'Βρίσκεσε εδώ',
+        icon: 'blue',
+        animation:'DROP',
+        draggable: true
+      };
+
+
+      this.map.addMarker(markerOptions).then((marker: Marker) => {
+        marker.showInfoWindow();
+        marker.addEventListener(GoogleMapsEvent.MARKER_DRAG_END).subscribe((some: any) => {
+
+
+        this.myFormGroup.patchValue({ latitude: marker.getPosition().lat });
+        this.myFormGroup.patchValue({ longitude: marker.getPosition().lng });
+             
+            });
+        });
+        
       this.myFormGroup.patchValue({ latitude: res.coords.latitude.toString() });
       this.myFormGroup.patchValue({ longitude: res.coords.longitude.toString() });
     }).catch((error) => {
       console.log('Error getting location', error.message);
     });
   }
+
+  /*loadMap2() {
+    let options = { timeout: 10000, enableHighAccuracy: true, maximumAge: 3600 };
+    this.geolocation.getCurrentPosition(options).then(res => {
+
+      console.log(res.coords.latitude);
+      console.log(res.coords.longitude);
+
+      let mapOptions: GoogleMapOptions = {
+        camera: {
+          target: {
+            lat: res.coords.latitude,
+            lng: res.coords.longitude
+          },
+          zoom: 17,
+          tilt: 20
+        }
+      };
+
+      this.map = GoogleMaps.create('mapResize', mapOptions);
+
+      let markerOptions: MarkerOptions = {
+        position: {
+          lat: res.coords.latitude,
+          lng: res.coords.longitude},
+        title: 'Βρίσκεσε εδώ',
+        icon: 'blue',
+        animation:'DROP',
+        draggable: true
+      };
+
+
+      this.map.addMarker(markerOptions).then((marker: Marker) => {
+        marker.showInfoWindow();
+        marker.addEventListener(GoogleMapsEvent.MARKER_DRAG_END).subscribe((some: any) => {
+
+
+        this.myFormGroup.patchValue({ latitude: marker.getPosition().lat });
+        this.myFormGroup.patchValue({ longitude: marker.getPosition().lng });
+             
+            });
+        });
+        
+      this.myFormGroup.patchValue({ latitude: res.coords.latitude.toString() });
+      this.myFormGroup.patchValue({ longitude: res.coords.longitude.toString() });
+    }).catch((error) => {
+      console.log('Error getting location', error.message);
+    });
+    //this.showVisible = "false";
+  }*/
+
+ /* resizeMap(){
+     this.loadMap2();
+  }*/
+
 
   public presentActionSheet() {
     let actionSheet = this.actionSheetCtrl.create({
@@ -246,7 +361,7 @@ export class SubmitProblemPage {
     }
     else {
       const alert = this.alertCtrl.create({
-        title: "Μήνυμσ",
+        title: "Μήνυμα",
         message: "Μπορείτε να ανεβάσετε μέχρι 6 αρχεία.",
         buttons: ['ΕΝΤΑΞΕΙ']
       });
@@ -299,6 +414,7 @@ export class SubmitProblemPage {
         description: this.myFormGroup.value['description'],
         latitude: this.myFormGroup.value['latitude'],
         longitude: this.myFormGroup.value['longitude'],
+        //latlng: this.myFormGroup.value['latlng'],
         firstName: this.myFormGroup.value['firstName'],
         lastName: this.myFormGroup.value['lastName'],
         email: this.myFormGroup.value['email'],
@@ -323,14 +439,26 @@ export class SubmitProblemPage {
             this.storage.set("SubmitProblemPage", submissions);
 
             if (this.servicesProvider.online) {
+             /* let alertTitle = "Μήνυμα";
+                        const popup = this.alertCtrl.create({
+                          title: alertTitle,
+                          message: "You are here!",
+                          buttons: ['ΕΝΤΑΞΕΙ']
+                        });
+                        popup.present();*/
               this.servicesProvider.myLoading = this.servicesProvider.loadingCtrl.create({
                 content: 'Παρακαλώ περιμένετε...'
               });
+              //if (this.servicesProvider.errorAppeared){
+              //  this.servicesProvider.myLoading.dismiss();
+            //  }else{
               this.servicesProvider.myLoading.present();
+              
 
-              this.servicesProvider.addSubmission(postdata, false)
+              this.servicesProvider.addSubmission(postdata, false, true)
                 .then(data => {
                   //alert(JSON.parse(data.toString()).length);
+                  this.servicesProvider.myLoading.present();
                   let message = JSON.parse(data.toString());
 
                   if (message[0]["@RETTYPE"] == 'I') {
@@ -353,7 +481,7 @@ export class SubmitProblemPage {
                       });
                     }
                     else {
-                      this.servicesProvider.myLoading.dismiss();
+                     this.servicesProvider.myLoading.dismiss();
 
                       let alertTitle = "Μήνυμα";
                       const popup = this.alertCtrl.create({
@@ -366,16 +494,21 @@ export class SubmitProblemPage {
                     }
                   }
                   else {
-                    this.servicesProvider.myLoading.dismiss();
+                   this.servicesProvider.myLoading.dismiss();
 
-                    let alertTitle = "Πρόβλημα";
+                    let alertTitle = "Πρόβλημα2";
                     const popup = this.alertCtrl.create({
                       title: alertTitle,
-                      message: message[0]["@RETMSG"],
+                     // message: message[0]["@RETMSG"],
+                     message: "error in sub problem page",
                       buttons: ['ΕΝΤΑΞΕΙ']
                     });
+                    //this.servicesProvider.myLoading.dismiss();
                     popup.present();
                   }
+                }).catch((error) => {
+                  console.log("Error at the code:",error);
+                  //this.servicesProvider.myLoading.dismiss();
                 });
               //this.servicesProvider.addSubmission(data);
             }
@@ -391,6 +524,10 @@ export class SubmitProblemPage {
               this.navCtrl.setRoot(HomePage);
             }
           });
+          /*.catch((error) => {
+            console.log(error);
+            this.servicesProvider.myLoading.dismiss();
+          });*/
 
     } else {
       var errorMessage = "Παρακαλώ συμπληρώστε τα πεδία με έγκυρα δεδομένα";

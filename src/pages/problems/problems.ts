@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { NavController, NavParams, Refresher, InfiniteScroll } from 'ionic-angular';
+import { NavController, NavParams, Refresher, InfiniteScroll, AlertController } from 'ionic-angular';
 //import { HTTP } from '@ionic-native/http';
 import { ServicesProvider } from '../../providers/services/services';
 //import { SqlLiteProvider } from '../../providers/sql-lite/sql-lite';
@@ -38,7 +38,7 @@ export class ProblemsPage {
   theEnd = false;
   showVisible = "True";
   //constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider, private sqlLiteProvider: SqlLiteProvider) {
-  constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider, public storage: Storage) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider, public storage: Storage, public alertCtrl: AlertController) {
     console.log('Constructor ProblemsPage');
 
   }
@@ -46,7 +46,7 @@ export class ProblemsPage {
   doRefresh(refresher) {
     //console.log('Begin async operation', refresher);
     //this.getContent(http)
-    if (this.servicesProvider.online) {
+    if (this.servicesProvider.online && this.mysections == '1') {
       this.mysections = '1';
       this.showVisible = "True";
       this.filterContactId = null;
@@ -62,6 +62,51 @@ export class ProblemsPage {
         .then(
           (data) => {
             this.dataset = data;
+            this.setData();
+            this.myrefresher.complete();
+          }
+        );
+    }
+
+    /*if(!this.servicesProvider.online && this.mysections == '1'){
+
+      this.mysections = '1';
+      this.showVisible = "True";
+      this.filterContactId = null;
+      this.dataset = [];
+      this.datasetOld = [];
+      this.currentpage = 1;
+      this.theEnd = false;
+      this.getContent(refresher);
+
+    }else {
+      this.theEnd = true;
+      this.storage.get(this.storageId)
+        .then(
+          (data) => {
+            this.dataset = data;
+            this.setData();
+            this.myrefresher.complete();
+          }
+        );
+    }*/
+
+    if (this.servicesProvider.online && this.mysections == '2') {
+      this.mysections = '2';
+      this.showVisible = "";
+      //this.filterContactId = null;
+      this.dataset = [];
+      this.datasetOld = [];
+      this.currentpage = 1;
+      this.theEnd = false;
+      this.getContent(refresher);
+    }
+    else {
+      this.theEnd = true;
+      this.storage.get(this.storageId)
+        .then(
+          (data) => {
+            this.datasetOld = data;
             this.setData();
             this.myrefresher.complete();
           }
@@ -120,6 +165,7 @@ export class ProblemsPage {
           }
           else {
             //this.noData=true;
+            this.storage.remove(this.storageId);
             this.theEnd = true;
           }
         }
@@ -132,6 +178,7 @@ export class ProblemsPage {
           }
           else {
             //this.noData=true;
+            this.storage.remove(this.storageId);
             this.theEnd = true;
           }
         }
@@ -161,7 +208,57 @@ export class ProblemsPage {
   ionViewCanEnter() {
     this.storageId = "ProblemsPage" + this.mysections;
     this.doRefresh(this.myrefresher);
-    //console.log('ionViewDidLoad LakatamiaPage');
+  //console.log('ionViewDidLoad LakatamiaPage');
+  }
+
+  changeSection() {
+    this.currentpage = 0;
+    this.theEnd = false;
+    this.storageId = "ProblemsPage" + this.mysections;
+
+    if (this.mysections == '1') {
+      this.dataset = [];
+      this.filterContactId = null;
+      this.showVisible = "True";
+
+      if (this.servicesProvider.online) {
+        this.doInfinite(this.myinfinitescroll);
+      }
+      else {
+        this.theEnd = true;
+        this.myinfinitescroll.complete();
+        this.storage.get(this.storageId)
+          .then(
+            (data) => {
+              this.dataset = data;
+              this.setData();
+              this.myrefresher.complete();
+            }
+          );
+      }
+    }
+    else {
+      this.datasetOld = [];
+      this.filterContactId = this.servicesProvider.contID;
+      this.showVisible = "";
+
+      if (this.servicesProvider.online) {
+        this.doInfinite(this.myinfinitescroll);
+      }
+      else {
+        this.theEnd = true;
+        this.myinfinitescroll.complete();
+        this.storage.get(this.storageId)
+          .then(
+            (data) => {
+              this.datasetOld = data;
+              this.setData();
+              this.myrefresher.complete();
+            }
+          );
+      }
+    }
+
   }
 
   doInfinite(infiniteScroll) {
@@ -179,9 +276,32 @@ export class ProblemsPage {
     this.navCtrl.push(ProblemPage, { id: id });
   }
 
+ /* goToCreateSubmission() {
+    this.navCtrl.push(SubmitProblemPage);
+  }*/
+
   goToCreateSubmission() {
     this.navCtrl.push(SubmitProblemPage);
   }
+
+  /*goToCreateSubmission() {
+    this.servicesProvider.checkTokens()
+      .then(
+        (data) => {
+          if (data == true) {
+            this.navCtrl.push(SubmitProblemPage);
+          }
+          else {
+            const popup = this.alertCtrl.create({
+              title: "Μήνυμα",
+              message: "Πρέπει να κάνετε είσοδο στην εφαρμογή για να μπορέσετε να υποβάλετε Πρόβλημα.",
+              buttons: ['ΕΝΤΑΞΕΙ']
+            });
+            popup.present();
+          }
+        });
+  }*/
+
 
 }
 

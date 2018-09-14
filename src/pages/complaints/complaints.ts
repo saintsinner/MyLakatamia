@@ -36,7 +36,7 @@ export class ComplaintsPage {
   mysections: string = '1';
   currentpage = 0;
   theEnd = false;
-  showVisible = "True";
+  showVisible = "";
   //constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider, private sqlLiteProvider: SqlLiteProvider) {
   constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider, public storage: Storage, public alertCtrl: AlertController) {
     console.log('Constructor ComplaintsPage');
@@ -49,7 +49,8 @@ export class ComplaintsPage {
     if (this.servicesProvider.online) {
       this.mysections = '1';
       this.showVisible = "True";
-      this.filterContactId = null;
+      //this.filterContactId = null;
+      this.filterContactId = this.servicesProvider.contID;
       this.dataset = [];
       this.datasetOld = [];
       this.currentpage = 1;
@@ -67,8 +68,6 @@ export class ComplaintsPage {
           }
         );
     }
-
-
 
     //setTimeout(() => {
     //    console.log('Async operation has ended');
@@ -122,6 +121,7 @@ export class ComplaintsPage {
           }
           else {
             //this.noData=true;
+            this.storage.remove(this.storageId);
             this.theEnd = true;
           }
         }
@@ -134,6 +134,7 @@ export class ComplaintsPage {
           }
           else {
             //this.noData=true;
+            this.storage.remove(this.storageId);
             this.theEnd = true;
           }
         }
@@ -162,58 +163,8 @@ export class ComplaintsPage {
   //if we want to use cache use ionViewDidLoad. To always load data use ionViewCanEnter.
   ionViewCanEnter() {
     this.storageId = "ComplaintsPage" + this.mysections;
-    //console.log('ionViewDidLoad LakatamiaPage');
     this.doRefresh(this.myrefresher);
-  }
-
-  changeSection() {
-    this.currentpage = 0;
-    this.theEnd = false;
-    this.storageId = "ComplaintsPage" + this.mysections;
-
-    if (this.mysections == '1') {
-      this.dataset = [];
-      this.filterContactId = null;
-      this.showVisible = "True";
-
-      if (this.servicesProvider.online) {
-        this.doInfinite(this.myinfinitescroll);
-      }
-      else {
-        this.theEnd = true;
-        this.myinfinitescroll.complete();
-        this.storage.get(this.storageId)
-          .then(
-            (data) => {
-              this.dataset = data;
-              this.setData();
-              this.myrefresher.complete();
-            }
-          );
-      }
-    }
-    else {
-      this.datasetOld = [];
-      this.filterContactId = this.servicesProvider.contID;
-      this.showVisible = "False";
-
-      if (this.servicesProvider.online) {
-        this.doInfinite(this.myinfinitescroll);
-      }
-      else {
-        this.theEnd = true;
-        this.myinfinitescroll.complete();
-        this.storage.get(this.storageId)
-          .then(
-            (data) => {
-              this.datasetOld = data;
-              this.setData();
-              this.myrefresher.complete();
-            }
-          );
-      }
-    }
-
+    //console.log('ionViewDidLoad LakatamiaPage');
   }
 
   doInfinite(infiniteScroll) {
@@ -250,4 +201,3 @@ export class ComplaintsPage {
   }
 
 }
-

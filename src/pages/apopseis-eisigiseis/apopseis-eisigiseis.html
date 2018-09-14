@@ -39,7 +39,7 @@
             </ion-thumbnail>
             <span style="font-size:8pt; color:#488aff; white-space: normal;">{{item.F487TITLE + (item.F487DESC.trim()!=''? ' - ' + item.F487DESC:'')}}</span>
             <br>
-            <ion-badge>{{item.F055TITLE}}</ion-badge>
+            <ion-badge [color]="item.F055DESC">{{item.F055TITLE}}</ion-badge>
             <h2 style="white-space: normal;">{{item.F488TITLE}}</h2>
             <p>{{item.F488CRTDATE | date: 'dd/MM/yyyy'}}</p>
             <ion-badge item-end *ngIf="item.F488CONTACTID==servicesProvider.contID">
@@ -65,7 +65,7 @@
             </ion-thumbnail>
             <span style="font-size:8pt; color:#488aff; white-space: normal;">{{item.F487TITLE + (item.F487DESC.trim()!=''? ' - ' + item.F487DESC:'')}}</span>
             <br>
-            <ion-badge>{{item.F055TITLE}}</ion-badge>
+            <ion-badge [color]="item.F055DESC">{{item.F055TITLE}}</ion-badge>
             <h2 style="white-space: normal;">{{item.F488TITLE}}</h2>
             <p>{{item.F488CRTDATE | date: 'dd/MM/yyyy'}}</p>
           </ion-item>

@@ -36,6 +36,7 @@ export class NewPage {
   dislikes = 0;
   deviceLiked: boolean;
   deviceDisliked: boolean;
+ // showVisible = "True";
   //constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider, private sqlLiteProvider: SqlLiteProvider) {
   constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider, public storage: Storage, public socialSharing: SocialSharing) {
     //console.log('Constructor LakatamiaPage');
@@ -176,8 +177,11 @@ export class NewPage {
   }
 
   shareAction() {
-    let message = this.dataset[0].F401TITLE;
-    this.socialSharing.share(message, null, null, null)
+   // this.showVisible = "False";
+    let message = this.dataset[0].F401TITLE + "  " +  this.dataset[0].F401PUBDATE;
+    //let messageb = this.dataset[0].F401PUBDATE;
+    //this.dataset[0].F401PUBDATE;
+    this.socialSharing.share(message,null, null, null)
     .then(()=>{
       this.updateSocialActions('1003');
     })

@@ -21,12 +21,26 @@
     <div id="map" *ngIf="isCoordinatesAvailable"></div>
     <span style="font-size:8pt; color:#488aff">{{dataset[0].F487TITLE + (dataset[0].F487DESC.trim()!=''? ' - ' + dataset[0].F487DESC:'')}}</span>
     <br>
-    <ion-badge>{{dataset[0].F055TITLE}}</ion-badge>
+    <ion-badge [color]="dataset[0].F055DESC">{{dataset[0].F055TITLE}}</ion-badge>
     <h2 style="white-space: normal;">{{dataset[0].F488TITLE}}</h2>
     <p><strong>ΗΜΕΡΟΜΗΝΙΑ: </strong>{{dataset[0].F488CRTDATE | date: 'dd/MM/yyyy'}}</p>
     <p><strong>ΔΙΕΥΘΥΝΣΗ: </strong>{{dataset[0].F488ADDRESS}} {{dataset[0].F488ADDRESSNO}}</p>
     <p>{{dataset[0].F488DESC}}</p>
     <h3 style="white-space: normal;color:#488aff">ΣΧΟΛΙΑ ΔΗΜΟΥ</h3>
     <p style="color:#488aff">{{dataset[0].F488ANSWER}}</p>
+  </div>
+
+  <div *ngIf="isDataImagesAvailable">
+  <div item-end *ngIf="dataset[0].F488CONTACTID==servicesProvider.contID">
+      <ion-grid>
+          <ion-row>
+            <ion-col col-4 *ngFor="let item of datasetImages" style="overflow:hidden; height:150px;">
+              <ion-card class="block">
+                <img src="{{servicesProvider.baseUrl}}zeportalapi/PreviewImage.ashx?itemId={{item.F488ID}}&refTableId=488&imageSize=S&language=EL" (click)="viewLargerImage(item.F488ID)" style="height:85px;">
+              </ion-card>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
   </div>
 </ion-content>

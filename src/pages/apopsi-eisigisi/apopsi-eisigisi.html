@@ -20,7 +20,7 @@
   <div *ngIf="isDataAvailable">
     <span style="font-size:8pt; color:#488aff">{{dataset[0].F487TITLE + (dataset[0].F487DESC.trim()!=''? ' - ' + dataset[0].F487DESC:'')}}</span>
     <br>
-    <ion-badge>{{dataset[0].F055TITLE}}</ion-badge>
+    <ion-badge [color]="dataset[0].F055DESC">{{dataset[0].F055TITLE}}</ion-badge>
     <h2 style="white-space: normal;">{{dataset[0].F488TITLE}}</h2>
     <p><strong>ΗΜΕΡΟΜΗΝΙΑ: </strong>{{dataset[0].F488CRTDATE | date: 'dd/MM/yyyy'}}</p>
     <p>{{dataset[0].F488DESC}}</p>

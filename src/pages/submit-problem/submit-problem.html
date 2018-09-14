@@ -1,5 +1,5 @@
 <!--
-  Generated template for the SubmitProblemPage page.
+  Generated template for the SubmitProblemPage page. 
 
   See http://ionicframework.com/docs/components/#navigation for more info on
   Ionic pages and navigation.
@@ -62,13 +62,32 @@
       </ion-label>
       <ion-textarea formControlName="description" maxlength="{{descriptionLength.toString()}}"></ion-textarea>
     </ion-item>
+     <!-- <ion-item><ion-searchbar (ionInput)="getAddress($event)"></ion-searchbar></ion-item>
     <ion-item>
-      <ion-label floating>Οδός
+     <ion-label floating>Οδός  
         <span style="color:#ff0000!important;"> *</span>
       </ion-label>
-      <ion-select formControlName="address" okText="ΕΠΙΛΟΓΗ" cancelText="ΑΚΥΡΟ" multiple="false" *ngIf="isDataAvailable">
+     <select-searchable formControlName="address" okText="ΕΠΙΛΟΓΗ" cancelText="ΑΚΥΡΟ" multiple="false" *ngIf="isDataAvailable"
         <ion-option *ngFor="let item of addresses" [value]="item.F083ID">{{item.F083ADDRESS}}</ion-option>
-      </ion-select>
+      </select-searchable>
+    </ion-item> -->
+    <ion-item>
+        <ion-label floating>Οδός</ion-label>
+        <select-searchable 
+            item-content
+            [(ngModel)]="streets"
+            formControlName="address"
+            [items]="addresses"
+            itemValueField="F083ID"
+            itemTextField="F083ADDRESS"
+            [canSearch]="true"
+            [canClear]="true"
+            searchPlaceholder="Ψάξε οδό..."
+            okButtonText="EΠΙΛΟΓΗ"
+            clearButtonText="ΑΛΛΑΓΗ"
+            closeButtonText="Close"
+            (onChange)="addressChange($event)">
+        </select-searchable>
     </ion-item>
     <ion-item>
       <ion-label floating>Αριθμός
@@ -79,7 +98,8 @@
     <ion-item>
       <ion-label floating>Τοποθεσία
       </ion-label>
-      <ion-input formControlName="latitude" placeholder=""></ion-input>
+     <!-- <ion-input formControlName="latlng" placeholder="Lat and Lng"></ion-input> -->
+      <ion-input formControlName="latitude" placeholder="latitude"></ion-input>
       <ion-input formControlName="longitude" placeholder="longitude"></ion-input>
     </ion-item>
 

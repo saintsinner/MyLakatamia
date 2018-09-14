@@ -22,7 +22,7 @@
     <ion-refresher-content>pullingIcon="arrow-dropdown"</ion-refresher-content>
   </ion-refresher>
 
-  <ion-segment [(ngModel)]="mysections">
+ <!-- <ion-segment [(ngModel)]="mysections">
     <ion-segment-button value="1" (click)="changeSection()">
       ΚΑΤΑΛΟΓΟΣ
     </ion-segment-button>
@@ -54,10 +54,11 @@
           </ion-item>
         </ion-list>
       </div>
-
     </ion-list>
 
-    <ion-list *ngSwitchCase="'2'">
+
+
+   <ion-list *ngSwitchCase="'2'">
       <div *ngIf="isTab2Available">
         <div style="text-align: center;" *ngIf="datasetOld.length==0">
           ΔΕΝ ΥΠΑΡΧΟΥΝ ΚΑΤΑΧΩΡΗΣΕΙΣ
@@ -78,7 +79,30 @@
         </ion-list>
       </div>
     </ion-list>
+  </div> -->
+
+
+  <div *ngIf="isTab1Available">
+    <div style="text-align: center;" *ngIf="dataset.length==0">
+      ΔΕΝ ΥΠΑΡΧΟΥΝ ΚΑΤΑΧΩΡΗΣΕΙΣ
+    </div>
+    <ion-list>
+      <ion-item *ngFor="let item of dataset" data-tap-disabled="true" (click)="goToSubmission(item.F488ID)">
+        <ion-thumbnail item-start>
+          <ion-badge item-start style="padding:10px;font-size:50px;">
+            <ion-icon name="md-person"></ion-icon>
+          </ion-badge>
+        </ion-thumbnail>
+        <span style="font-size:8pt; color:#488aff; white-space: normal;">{{item.F487TITLE + (item.F487DESC.trim()!=''? ' - ' + item.F487DESC:'')}}</span>
+        <br>
+        <ion-badge [color]="item.F055DESC">{{item.F055TITLE}}</ion-badge>
+        <h2 style="white-space: normal;">{{item.F488TITLE}}</h2>
+        <p>{{item.F488CRTDATE | date: 'dd/MM/yyyy'}}</p>
+      </ion-item>
+    </ion-list>
   </div>
+
+
   <div overflow-scroll="true" padding="true" class="has-header">
     <ion-infinite-scroll (ionInfinite)="doInfinite($event)" distance="1%">
       <ion-infinite-scroll-content></ion-infinite-scroll-content>

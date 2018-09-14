@@ -1,6 +1,6 @@
 ﻿import { HttpClient, HttpErrorResponse, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AlertController, Platform, LoadingController, Events, App } from 'ionic-angular';
+import { AlertController, Platform, LoadingController, Events, App, ToastController} from 'ionic-angular';
 //import { Network } from '@ionic-native/network';
 import { Storage } from '@ionic/storage';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer';
@@ -25,9 +25,10 @@ export interface SubmissionInterface {
 */
 @Injectable()
 export class ServicesProvider {
-    baseUrlLocal: string = "http://192.168.10.104/";
+   baseUrlLocal: string = "http://192.168.10.104/"; 
+   // baseUrlLocal: string = "http://localhost/";// on controller call missing the ?
     baseUrlLive: string = "https://mylakatamia.zebrac.com/";
-    baseUrl: string = this.baseUrlLive;
+    baseUrl: string = this.baseUrlLocal;
     instId: any = 1044
     userProfile: string = '1044MOB'
     language: string = 'EL'
@@ -35,17 +36,26 @@ export class ServicesProvider {
     myLoading: any;
     contID: any = null;
     online: boolean;
+    errorAppeared: boolean;
     disconnectSubscription: any;
     //isApp: any;
     deviceId: any;
     notificationsOn: boolean;
     notifications = 0;
     categoryColors = [];
+    //toastNetwork: any;
     constructor(public app: App, public http: HttpClient, public alertCtrl: AlertController, public platform: Platform,
-        public loadingCtrl: LoadingController, public storage: Storage, public events: Events, private fileTransfer: FileTransfer) {
+        public loadingCtrl: LoadingController, public storage: Storage, public events: Events, private fileTransfer: FileTransfer, private toast: ToastController) {
         //console.log('Hello ServicesProvider Provider');
+    //    this.toastNetwork = this.toast.create({
+    //         message: "Είστε σε " + "OFFLINE" + " mode.",
+    //         //duration: 5000,
+    //         position: 'top',
+    //         cssClass: "offlineToast"
+    //       });
 
-        this.platform.ready().then(() => {
+        
+        this.platform.ready().then(() => {        
             // if (this.online) {                
             //     this.processYpovoliApopsisEisigisis();
             //     this.processSubmitComplaints();
@@ -219,7 +229,12 @@ export class ServicesProvider {
             //myheaders.set('user', this.user);
 
             return new Promise(resolve => {
-
+               // alert(JSON.stringify(this.baseUrl + 'zePortalAPI/api/mylakatamia/' + myservice, {params}));
+                const popup = this.alertCtrl.create({
+                    title: 'Πρόβλημα1',
+                    message: this.baseUrl + "zePortalAPI/api/mylakatamia/" + myservice, //Υπάρχει πρόβλημα στην επικοινωνία με τον εξυπηρετητή"
+                    buttons: ['ΕΝΤΑΞΕΙ']
+                });
                 this.http.get(this.baseUrl + 'zePortalAPI/api/mylakatamia/' + myservice, { params })
                     .subscribe(
                         data => {
@@ -237,12 +252,13 @@ export class ServicesProvider {
                             //console.log(JSON.parse(params))
                             const popup = this.alertCtrl.create({
                                 title: 'Πρόβλημα',
-                                message: "Υπάρχει πρόβλημα στην επικοινωνία με τον εξυπηρετητή", //err.message
+                                message: err.message, //"Υπάρχει πρόβλημα στην επικοινωνία με τον εξυπηρετητή", //err.message
                                 buttons: ['ΕΝΤΑΞΕΙ']
                             });
                             if (showLoading) {
                                 this.myLoading.dismiss().catch();
                             }
+                            
                             popup.present();
                         });
             });
@@ -255,14 +271,14 @@ export class ServicesProvider {
         }
     }
 
-    addSubmission(formData, showLoading: boolean = true) {
+    addSubmission(formData, submissionLoading: any, showLoading: boolean = true, hasCustomLoading: boolean = false) {
         //alert(this.online);
         if (this.online) {
             if (showLoading) {
-                this.myLoading = this.loadingCtrl.create({
+                submissionLoading = this.loadingCtrl.create({
                     content: 'Παρακαλώ περιμένετε...'
                 });
-                this.myLoading.present();
+                submissionLoading.present();
             }
             //if (this.data) {
             //    //alert('ok');
@@ -277,26 +293,28 @@ export class ServicesProvider {
             // let options = {
             //     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
             //   };
+         //   alert(JSON.stringify(formData));
             return new Promise(resolve => {
                 this.http.post(this.baseUrl + 'zePortalAPI/api/mylakatamia/PostAddSubmission', JSON.stringify(formData), { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) })
                     .subscribe(
                         (result) => {
                             console.log("success!");
                             if (showLoading) {
-                                this.myLoading.dismiss().catch();
+                                submissionLoading.dismiss().catch();
                             }
                             resolve(result);
                         },
-                        (err: HttpErrorResponse) => {
+                       (err: HttpErrorResponse) => {
+                        this.errorAppeared = true;
                             console.log(err.message)
                             //console.log(JSON.parse(params))
                             const popup = this.alertCtrl.create({
-                                title: 'Πρόβλημα',
-                                message: "Υπάρχει πρόβλημα στην επικοινωνία με τον εξυπηρετητή", //err.message
+                                title: 'Πρόβλημα1',
+                                message: "Υπάρχει πρόβλημα στην επικοινωνία με τον εξυπηρετητή", // err.message
                                 buttons: ['ΕΝΤΑΞΕΙ']
                             });
-                            if (showLoading) {
-                                this.myLoading.dismiss().catch();
+                            if (showLoading || hasCustomLoading) {
+                                submissionLoading.dismiss().catch();
                             }
                             popup.present();
                         });
@@ -304,7 +322,11 @@ export class ServicesProvider {
             });
         }
         else {
+           /* if (showLoading) {
+                this.myLoading.dismiss().catch();
+            }*/
             return Promise.resolve(null);
+            
             // if (this.data) {
             //     //alert('ok');
             //     return Promise.resolve(this.data);
@@ -385,7 +407,8 @@ export class ServicesProvider {
                             for (let submission of submissions) {
                                 //alert(submission.title);
                                 try {
-                                    this.addSubmission(submission)
+                                    let mySubmissionLoading: any;
+                                    this.addSubmission(submission, mySubmissionLoading)
                                         .then(data => {
 
                                         });
@@ -420,7 +443,8 @@ export class ServicesProvider {
                             for (let submission of submissions) {
                                 //alert(submission.title);
                                 try {
-                                    this.addSubmission(submission.submission)
+                                    let mySubmissionLoading: any;
+                                    this.addSubmission(submission.submission, mySubmissionLoading)
                                         .then(data => {
                                             let message = JSON.parse(data.toString());
 
@@ -474,7 +498,8 @@ export class ServicesProvider {
                             for (let submission of submissions) {
                                 //alert(submission.title);
                                 try {
-                                    this.addSubmission(submission.submission)
+                                    let mySubmissionLoading: any;
+                                    this.addSubmission(submission.submission, mySubmissionLoading)
                                         .then(data => {
                                             let message = JSON.parse(data.toString());
 

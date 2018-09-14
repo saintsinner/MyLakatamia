@@ -34,7 +34,8 @@
         <ion-list>
           <ion-item *ngFor="let item of dataset" data-tap-disabled="true" (click)="goToNew(item.F401ID)">
             <ion-thumbnail item-start>
-              <ion-badge item-start style="padding:10px;font-size:50px;">Αν</ion-badge>
+              <ion-badge item-start style="padding:1px;font-size:50px;" *ngIf="servicesProvider.online"><img src="{{servicesProvider.baseUrl}}zeportalapi/PreviewImage.ashx?refItemId={{item.F401ID}}&refTableId=401&imageSize=S&imgHeight=100&imgWidth=100&language=EL&imgType=N"></ion-badge>
+              <ion-badge item-start style="padding:10px;font-size:50px;" *ngIf="!servicesProvider.online">Aν</ion-badge> 
             </ion-thumbnail>
             <h2 style="white-space: normal;">{{item.F401TITLE}}</h2>
             <p>{{item.F401PUBDATE | date: 'dd/MM/yyyy'}}</p>
@@ -53,7 +54,8 @@
         <ion-list>
           <ion-item *ngFor="let item of datasetOld" data-tap-disabled="true" (click)="goToNew(item.F401ID)">
             <ion-thumbnail item-start>
-              <ion-badge item-start style="padding:10px;font-size:50px;">Αν</ion-badge>
+              <ion-badge item-start style="padding:1px;font-size:50px;" *ngIf="servicesProvider.online"><img src="{{servicesProvider.baseUrl}}zeportalapi/PreviewImage.ashx?refItemId={{item.F401ID}}&refTableId=401&imageSize=S&imgHeight=100&imgWidth=100&language=EL&imgType=N"></ion-badge>
+              <ion-badge item-start style="padding:10px;font-size:50px;" *ngIf="!servicesProvider.online">Aν</ion-badge>
             </ion-thumbnail>
             <h2 style="white-space: normal;">{{item.F401TITLE}}</h2>
             <p>{{item.F401PUBDATE | date: 'dd/MM/yyyy'}}</p>
