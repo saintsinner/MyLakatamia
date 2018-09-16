@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "223335679988",
+    "firebase_url": "https://mylakatamia-1526393755204.firebaseio.com",
+    "project_id": "mylakatamia-1526393755204",
+    "storage_bucket": "mylakatamia-1526393755204.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:223335679988:android:e0404b050e753f01",
+        "android_client_info": {
+          "package_name": "com.zebrac.mylakatamia"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "223335679988-rtns4v9jdtooanu32jmd1assjifiot9s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAowVMoPoQzljOJ9gvp8nxDX1-KR8QJpfA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

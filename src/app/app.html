@@ -42,3 +42,4 @@
 
 <!-- Disable swipe-to-go-back because it's poor UX to combine STGB with side menus -->
 <ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>
+<ion-footer style="background-color: orange;color: white;text-align: center;" *ngIf="!servicesProvider.online">Είστε σε OFFLINE mode</ion-footer>

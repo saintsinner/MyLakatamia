@@ -14,6 +14,7 @@ import { ChangePasswordPage } from '../pages/change-password/change-password';
 import { LoginPage } from '../pages/login/login';
 import { SettingsPage } from '../pages/settings/settings';
 import { CreditsPage } from '../pages/credits/credits';
+import { Firebase } from '@ionic-native/firebase';
 
 export interface PageInterface {
   title: string;
@@ -24,6 +25,7 @@ export interface PageInterface {
   online?: boolean;
 }
 
+//declare var FCMPlugin;
 @Component({
   templateUrl: 'app.html'
 })
@@ -53,7 +55,8 @@ export class MyApp {
   ];
 
   constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen, public events: Events, public network: Network,
-    public menu: MenuController, public alertCtrl: AlertController, public device: Device, public servicesProvider: ServicesProvider, public storage: Storage) {
+    public menu: MenuController, public alertCtrl: AlertController, public device: Device, public servicesProvider: ServicesProvider, public storage: Storage,
+    private firebase: Firebase) {
     this.initializeApp();
 
     //// stop connect watch
@@ -77,6 +80,13 @@ export class MyApp {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
 
+      if (this.network.type != "none") {
+        this.servicesProvider.online = true;
+
+      } else {
+        this.servicesProvider.online = false;
+      }
+
       //if web browser assume you are online because listeners do not work in browser
       if (document.URL.startsWith('http')) {
         this.servicesProvider.online = true;
@@ -85,27 +95,61 @@ export class MyApp {
         this.servicesProvider.processSubmitComplaints();
         this.servicesProvider.processSubmitProblems();
       }
+      // else {
+      //   this.startupOnlineActions();
+      //  }
       else {
-        this.startupOnlineActions();
+        this.network.onConnect().subscribe(data => {
+          console.log(data.type)
+          this.servicesProvider.online = true;
+          // if (this.servicesProvider.toastNetwork != null) {
+          //   this.servicesProvider.toastNetwork.dismiss();
+          // }
+          //this.displayNetworkUpdate(data.type);
+          setTimeout(() => {
+            //this.servicesProvider.online = true;
+            //console.log("isonline");
+            this.servicesProvider.getNotifications();
+            this.servicesProvider.processYpovoliApopsisEisigisis();
+            this.servicesProvider.processSubmitComplaints();
+            this.servicesProvider.processSubmitProblems();
+            // if (this.network.type === 'wifi') {
+            //   console.log('we got a wifi connection, woohoo!');
+            // }
+          }, 500);
+        }, error => console.error(error));
+
+        this.network.onDisconnect().subscribe(data => {
+          console.log(data.type)
+          this.servicesProvider.online = false;
+          // this.servicesProvider.toastNetwork = this.toast.create({
+          //   message: "Είστε σε " + "OFFLINE" + " mode.",
+          //   //duration: 5000,
+          //   position: 'top'
+          // });
+          //this.servicesProvider.toastNetwork.present();
+          //this.displayNetworkUpdate(data.type);
+        }, error => console.error(error));
       }
-      // watch network for a disconnect
-      let disconnectSubscription = this.network.onDisconnect().subscribe(() => {
-        //alert('');
-        console.log('network was disconnected :-(');
-        this.servicesProvider.online = false;
-        // //console.log("isonline");
-        // this.processYpovoliApopsisEisigisis();
-        // this.processSubmitComplaints();
-        // this.processSubmitProblems();
-      });
+      // }
+      // // watch network for a disconnect
+      //   let disconnectSubscription = this.network.onDisconnect().subscribe(() => {
+      //   //alert('');
+      //    console.log('network was disconnected :-(');
+      //    this.servicesProvider.online = false;
+      //   // //console.log("isonline");
+      //   // this.processYpovoliApopsisEisigisis();
+      //   // this.processSubmitComplaints();
+      //   // this.processSubmitProblems();
+      //  });
 
       //// stop disconnect watch
       //disconnectSubscription.unsubscribe();
 
-      // watch network for a connection
-      let connectSubscription = this.network.onConnect().subscribe(() => {
-        this.startupOnlineActions();
-      });
+      // // watch network for a connection
+      // let connectSubscription = this.network.onConnect().subscribe(() => {
+      //   this.startupOnlineActions();
+      // });
 
       // this.servicesProvider.checkNetwork()
       //   .then(
@@ -172,6 +216,48 @@ export class MyApp {
       // });
       // connectSubscription.unsubscribe();
 
+      this.firebase.getToken()
+        .then((token) => {
+          let postdata = {
+            instId: this.servicesProvider.instId,
+            deviceId: (this.servicesProvider.deviceId == null ? "" : this.servicesProvider.deviceId),
+            token: (token == null ? "" : token),
+            contId: (this.servicesProvider.contID == null ? "" : this.servicesProvider.contID),
+            lang: this.servicesProvider.language,
+            RUNOPTION: "A",
+            LANGUAGE: this.servicesProvider.language,
+            USERPROFILE: this.servicesProvider.userProfile
+          };
+
+          this.servicesProvider.updateTokens(postdata)
+            .then(data => {
+              //alert(JSON.parse(data.toString()).length);
+              //let message = JSON.parse(data.toString());
+              console.log('Token: ' + (token == null ? "" : token));
+            });
+        }) // save the token server-side and use it to push notifications to this device
+        .catch(error => console.log('Error getting token ' + error));
+
+      this.firebase.onTokenRefresh()
+        .subscribe((token) => {
+          let postdata = {
+            instId: this.servicesProvider.instId,
+            deviceId: (this.servicesProvider.deviceId == null ? "" : this.servicesProvider.deviceId),
+            token: (token == null ? "" : token),
+            contId: (this.servicesProvider.contID == null ? "" : this.servicesProvider.contID),
+            lang: this.servicesProvider.language,
+            RUNOPTION: "A",
+            LANGUAGE: this.servicesProvider.language,
+            USERPROFILE: this.servicesProvider.userProfile
+          };
+
+          this.servicesProvider.updateTokens(postdata)
+            .then(data => {
+              //alert(JSON.parse(data.toString()).length);
+              //let message = JSON.parse(data.toString());
+              console.log('Token: ' + (token == null ? "" : token));
+            });
+        });
     });
   }
 
@@ -203,32 +289,32 @@ export class MyApp {
     })
   }
 
-  startupOnlineActions() {
-    if (this.network.type !== 'none') {
-      //alert('');
-      this.servicesProvider.online = true;
-      console.log('network connected!');
-      // We just got a connection but we need to wait briefly
-      // before we determine the connection type. Might need to wait.
-      // prior to doing any api requests as well.
-      setTimeout(() => {
-        this.servicesProvider.online = true;
-        //console.log("isonline");
-        this.servicesProvider.getNotifications();
-        this.servicesProvider.processYpovoliApopsisEisigisis();
-        this.servicesProvider.processSubmitComplaints();
-        this.servicesProvider.processSubmitProblems();
-        // if (this.network.type === 'wifi') {
-        //   console.log('we got a wifi connection, woohoo!');
-        // }
-      }, 3000);
-    } else if (this.network.type === 'none') {
-      this.servicesProvider.online = false;
-    } else {
-      this.servicesProvider.online = false;
-    }
+  // startupOnlineActions() {
+  //   if (this.network.type !== 'none') {
+  //     //alert('');
+  //     this.servicesProvider.online = true;
+  //     console.log('network connected!');
+  //     // We just got a connection but we need to wait briefly
+  //     // before we determine the connection type. Might need to wait.
+  //     // prior to doing any api requests as well.
+  //     setTimeout(() => {
+  //       this.servicesProvider.online = true;
+  //       //console.log("isonline");
+  //       this.servicesProvider.getNotifications();
+  //       this.servicesProvider.processYpovoliApopsisEisigisis();
+  //       this.servicesProvider.processSubmitComplaints();
+  //       this.servicesProvider.processSubmitProblems();
+  //       // if (this.network.type === 'wifi') {
+  //       //   console.log('we got a wifi connection, woohoo!');
+  //       // }
+  //     }, 3000);
+  //   } else if (this.network.type === 'none') {
+  //     this.servicesProvider.online = false;
+  //   } else {
+  //     this.servicesProvider.online = false;
+  //   }
 
-  }
+  // }
 
   enableMenu(loggedIn: boolean) {
     this.menu.enable(loggedIn, 'loggedInMenu');

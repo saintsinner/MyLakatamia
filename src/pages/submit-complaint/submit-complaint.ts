@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { NavController, NavParams, AlertController, Events, Platform, ActionSheetController, ToastController, normalizeURL } from 'ionic-angular';
+import { NavController, NavParams, AlertController, Events, Platform, ActionSheetController, normalizeURL } from 'ionic-angular';
 //import { HTTP } from '@ionic-native/http';
 import { ServicesProvider } from '../../providers/services/services';
 //import { SqlLiteProvider } from '../../providers/sql-lite/sql-lite';
@@ -57,7 +57,7 @@ export class SubmitComplaintPage {
   public base64Image: string;
   constructor(public navCtrl: NavController, public navParams: NavParams, private formBuilder: FormBuilder, public servicesProvider: ServicesProvider, public events: Events,
     public alertCtrl: AlertController, public storage: Storage, public platform: Platform, private camera: Camera,
-    private actionSheetCtrl: ActionSheetController, private toastCtrl: ToastController) {
+    private actionSheetCtrl: ActionSheetController) {
     this.myFormGroup = this.formBuilder.group({
       category: ['', Validators.compose([Validators.required])],
       title: ['', Validators.compose([Validators.maxLength(this.titleLength), Validators.required])],
@@ -194,14 +194,14 @@ export class SubmitComplaintPage {
     alert.present();
   }
 
-  private presentToast(text) {
-    let toast = this.toastCtrl.create({
-      message: text,
-      duration: 3000,
-      position: 'top'
-    });
-    toast.present();
-  }
+  // private presentToast(text) {
+  //   let toast = this.toastCtrl.create({
+  //     message: text,
+  //     duration: 3000,
+  //     position: 'top'
+  //   });
+  //   toast.present();
+  // }
 
   submitForm() {
     console.log(this.myFormGroup.value)

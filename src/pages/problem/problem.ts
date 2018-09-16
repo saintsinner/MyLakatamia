@@ -112,7 +112,7 @@ export class ProblemPage {
       .set('lang', this.servicesProvider.language)
       .set('refItemId', this.navParams.get('id'))
       .set('refTableId', '488')
-    this.servicesProvider.getContent("GetSubImages", this.params, false)
+    this.servicesProvider.getContent("GetImages", this.params, false)
       .then(data => {
         //alert(JSON.parse(data.toString()).length);
         this.datasetImages = JSON.parse(data.toString());

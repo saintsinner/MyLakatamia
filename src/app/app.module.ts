@@ -26,6 +26,7 @@ import { SocialSharing } from '@ionic-native/social-sharing';
 import { AppPreferences } from '@ionic-native/app-preferences';
 import { PhotoViewer } from '@ionic-native/photo-viewer';
 import { SelectSearchableModule } from 'ionic-select-searchable';
+import { Firebase } from '@ionic-native/firebase';
 
 //import { SocialSharing } from '@ionic-native/social-sharing';
 import { SafePipe } from '../pipes/safe/safe';
@@ -165,7 +166,8 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 	InAppBrowser,
 	AppPreferences,
 	SocialSharing,
-	PhotoViewer
+	PhotoViewer,
+	Firebase
   ]
 })
 export class AppModule {}
