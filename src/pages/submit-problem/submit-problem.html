@@ -73,7 +73,7 @@
     </ion-item> -->
     <ion-item>
         <ion-label floating>Οδός</ion-label>
-        <select-searchable 
+        <ionic-selectable
             item-content
             [(ngModel)]="streets"
             formControlName="address"
@@ -84,10 +84,11 @@
             [canClear]="true"
             searchPlaceholder="Αναζήτηση"
             okButtonText="EΠΙΛΟΓΗ"
-            clearButtonText="ΑΛΛΑΓΗ"
+            clearButtonText="ΚΑΘΑΡΙΣΜΑ"
             closeButtonText="ΑΚΥΡΟ"
+            [shouldStoreItemValue]="true"
             (onChange)="addressChange($event)">
-        </select-searchable>
+        </ionic-selectable>
     </ion-item>
     <ion-item>
       <ion-label floating>Αριθμός

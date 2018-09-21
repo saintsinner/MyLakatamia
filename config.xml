@@ -116,5 +116,6 @@
         <variable name="LOCATION_WHEN_IN_USE_DESCRIPTION" value="This app wants to get your location while this app runs only." />
         <variable name="LOCATION_ALWAYS_USAGE_DESCRIPTION" value="This app wants to get your location always, even this app runs in background." />
     </plugin>
+    <plugin name="cordova-plugin-badge" spec="^0.8.7" />
     <engine name="browser" spec="5.0.3" />
 </widget>

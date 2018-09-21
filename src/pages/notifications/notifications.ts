@@ -1,11 +1,12 @@
 import { Component, ViewChild } from '@angular/core';
-import { NavController, NavParams, Refresher } from 'ionic-angular';
+import { NavController, Platform, NavParams, Refresher } from 'ionic-angular';
 //import { HTTP } from '@ionic-native/http';
 import { ServicesProvider } from '../../providers/services/services';
 //import { SqlLiteProvider } from '../../providers/sql-lite/sql-lite';
 import { HttpParams } from '@angular/common/http';
 import { Storage } from '@ionic/storage';
 import { NotificationPage } from '../notification/notification';
+import { Badge } from '@ionic-native/badge';
 
 /**
  * Generated class for the NotificationsPage page.
@@ -29,7 +30,7 @@ export class NotificationsPage {
   isTab2Available: boolean = false;
   @ViewChild(Refresher) myrefresher: Refresher;
   //constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider, private sqlLiteProvider: SqlLiteProvider) {
-  constructor(public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider, public storage: Storage) {
+  constructor(public platform: Platform, public navCtrl: NavController, public navParams: NavParams, public servicesProvider: ServicesProvider, public storage: Storage, private badge: Badge) {
     //console.log('Constructor LakatamiaPage');
     //sqlLiteProvider.addDanceMove('tango');
     //sqlLiteProvider.getDanceMoves();
@@ -71,7 +72,7 @@ export class NotificationsPage {
       .set('sortby', 'F491CRTDATE')
       .set('sortorder', 'DESC')
       .set('currentpage', '1')
-      .set('pagesize', '10')
+      .set('pagesize', '99')
       .set('count', '0')
       .set('runoption', 'I')
       .set('USER_UI_LANGUAGE', this.servicesProvider.language)
@@ -136,6 +137,11 @@ export class NotificationsPage {
     this.servicesProvider.updateUserNotifications(postdata)
       .then(data => {
         let message = JSON.parse(data.toString());
+        if(this.platform.is('ios'))
+        {
+          //const permBadge = this.badge.requestPermission();
+          this.badge.clear();
+        }
         this.navCtrl.push(NotificationPage, { id: id });
       });
   }

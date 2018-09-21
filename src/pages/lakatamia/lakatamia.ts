@@ -6,6 +6,8 @@ import { ServicesProvider } from '../../providers/services/services';
 import { HttpParams } from '@angular/common/http';
 import { Storage } from '@ionic/storage';
 
+
+
 /**
  * Generated class for the LakatamiaPage page.
  *
@@ -37,11 +39,28 @@ export class LakatamiaPage {
         //sqlLiteProvider.getDanceMoves();
     }
 
+
+
     doRefresh(refresher) {
         //console.log('Begin async operation', refresher);
         //this.getContent(http)
-        if (this.servicesProvider.online) {
+        if (this.servicesProvider.online && this.mysections == '1') {
             this.mysections = '1';
+            this.getContent(refresher);
+        }
+        else {
+            this.storage.get(this.storageId)
+                .then(
+                    (data) => {
+                        this.dataset = data;
+                        this.setData();
+                        this.myrefresher.complete();
+                    }
+                );
+        }
+
+        if (this.servicesProvider.online && this.mysections == '2') {
+            this.mysections = '2';
             this.getContent(refresher);
         }
         else {

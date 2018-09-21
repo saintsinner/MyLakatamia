@@ -15,6 +15,7 @@ import { LoginPage } from '../pages/login/login';
 import { SettingsPage } from '../pages/settings/settings';
 import { CreditsPage } from '../pages/credits/credits';
 import { Firebase } from '@ionic-native/firebase';
+import { Badge } from '@ionic-native/badge';
 
 export interface PageInterface {
   title: string;
@@ -56,7 +57,7 @@ export class MyApp {
 
   constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen, public events: Events, public network: Network,
     public menu: MenuController, public alertCtrl: AlertController, public device: Device, public servicesProvider: ServicesProvider, public storage: Storage,
-    private firebase: Firebase) {
+    private firebase: Firebase, private badge: Badge) {
     this.initializeApp();
 
     //// stop connect watch
@@ -87,20 +88,21 @@ export class MyApp {
         this.servicesProvider.online = false;
       }
 
-      //if web browser assume you are online because listeners do not work in browser
-      if (document.URL.startsWith('http')) {
-        this.servicesProvider.online = true;
-        this.servicesProvider.getNotifications();
-        this.servicesProvider.processYpovoliApopsisEisigisis();
-        this.servicesProvider.processSubmitComplaints();
-        this.servicesProvider.processSubmitProblems();
-      }
+      // //if web browser assume you are online because listeners do not work in browser (comment this when on mobile)
+      // if (document.URL.startsWith('http')) {
+      //   this.servicesProvider.online = true;
+      //   this.servicesProvider.getNotifications();
+      //   this.servicesProvider.processYpovoliApopsisEisigisis();
+      //   this.servicesProvider.processSubmitComplaints();
+      //   this.servicesProvider.processSubmitProblems();
+      // }
+      // // else {
+      // //   this.startupOnlineActions();
+      // //  }
       // else {
-      //   this.startupOnlineActions();
-      //  }
-      else {
         this.network.onConnect().subscribe(data => {
-          console.log(data.type)
+          //console.log(data.type)
+          console.log("you are online")
           this.servicesProvider.online = true;
           // if (this.servicesProvider.toastNetwork != null) {
           //   this.servicesProvider.toastNetwork.dismiss();
@@ -116,11 +118,12 @@ export class MyApp {
             // if (this.network.type === 'wifi') {
             //   console.log('we got a wifi connection, woohoo!');
             // }
-          }, 500);
+          }, 3000);
         }, error => console.error(error));
 
         this.network.onDisconnect().subscribe(data => {
-          console.log(data.type)
+          //console.log(data.type)
+          console.log("you are offline")
           this.servicesProvider.online = false;
           // this.servicesProvider.toastNetwork = this.toast.create({
           //   message: "Είστε σε " + "OFFLINE" + " mode.",
@@ -130,7 +133,8 @@ export class MyApp {
           //this.servicesProvider.toastNetwork.present();
           //this.displayNetworkUpdate(data.type);
         }, error => console.error(error));
-      }
+      //}
+
       // }
       // // watch network for a disconnect
       //   let disconnectSubscription = this.network.onDisconnect().subscribe(() => {
@@ -223,11 +227,14 @@ export class MyApp {
             deviceId: (this.servicesProvider.deviceId == null ? "" : this.servicesProvider.deviceId),
             token: (token == null ? "" : token),
             contId: (this.servicesProvider.contID == null ? "" : this.servicesProvider.contID),
+            enable: true,
             lang: this.servicesProvider.language,
             RUNOPTION: "A",
             LANGUAGE: this.servicesProvider.language,
             USERPROFILE: this.servicesProvider.userProfile
           };
+
+          this.servicesProvider.deviceToken = token;
 
           this.servicesProvider.updateTokens(postdata)
             .then(data => {
@@ -245,11 +252,14 @@ export class MyApp {
             deviceId: (this.servicesProvider.deviceId == null ? "" : this.servicesProvider.deviceId),
             token: (token == null ? "" : token),
             contId: (this.servicesProvider.contID == null ? "" : this.servicesProvider.contID),
+            enable: true,
             lang: this.servicesProvider.language,
             RUNOPTION: "A",
             LANGUAGE: this.servicesProvider.language,
             USERPROFILE: this.servicesProvider.userProfile
           };
+
+          this.servicesProvider.deviceToken = token;
 
           this.servicesProvider.updateTokens(postdata)
             .then(data => {
@@ -258,6 +268,13 @@ export class MyApp {
               console.log('Token: ' + (token == null ? "" : token));
             });
         });
+
+        if(this.platform.is('ios'))
+        {
+          const permFCM = this.firebase.grantPermission();
+          //const permBadge = this.badge.requestPermission();
+          this.badge.clear();
+        }
     });
   }
 

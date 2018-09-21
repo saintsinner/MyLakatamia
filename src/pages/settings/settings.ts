@@ -24,11 +24,32 @@ export class SettingsPage {
   }
 
   ionViewCanEnter() {
-    console.log('ionViewDidLoad SettingsPage');    
+    console.log('ionViewDidLoad SettingsPage');
   }
 
   notify(event) {
     this.servicesProvider.startNotificationEvents(event.checked);
-  }  
+
+    let enableNotifications: boolean = event.checked;
+
+    let postdata = {
+      instId: this.servicesProvider.instId,
+      deviceId: (this.servicesProvider.deviceId == null ? "" : this.servicesProvider.deviceId),
+      token: (this.servicesProvider.deviceToken == null ? "" : this.servicesProvider.deviceToken),
+      contId: (this.servicesProvider.contID == null ? "" : this.servicesProvider.contID),
+      enable: enableNotifications,
+      lang: this.servicesProvider.language,
+      RUNOPTION: "R",
+      LANGUAGE: this.servicesProvider.language,
+      USERPROFILE: this.servicesProvider.userProfile
+    };
+
+    this.servicesProvider.updateTokens(postdata)
+      .then(data => {
+        //alert(JSON.parse(data.toString()).length);
+        //let message = JSON.parse(data.toString());
+        console.log('Token: ' + (this.servicesProvider.deviceToken == null ? "" : this.servicesProvider.deviceToken));
+      });
+  }
 
 }

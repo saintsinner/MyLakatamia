@@ -236,7 +236,7 @@ export class SubmitComplaintPage {
               });
               this.servicesProvider.myLoading.present();
 
-              this.servicesProvider.addSubmission(postdata, false)
+              this.servicesProvider.addSubmission(postdata, this.servicesProvider.myLoading, false, true)
                 .then(data => {
                   //alert(JSON.parse(data.toString()).length);
                   let message = JSON.parse(data.toString());

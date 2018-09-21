@@ -25,10 +25,9 @@ export interface SubmissionInterface {
 */
 @Injectable()
 export class ServicesProvider {
-    baseUrlLocal: string = "http://192.168.10.104/";
-    // baseUrlLocal: string = "http://localhost/";// on controller call missing the ?
+    baseUrlLocal: string = "http://192.168.10.104/"; //use IP of the PC
     baseUrlLive: string = "https://mylakatamia.zebrac.com/";
-    baseUrl: string = this.baseUrlLocal;
+    baseUrl: string = this.baseUrlLive;
     instId: any = 1044
     userProfile: string = '1044MOB'
     language: string = 'EL'
@@ -43,6 +42,7 @@ export class ServicesProvider {
     notificationsOn: boolean;
     notifications = 0;
     categoryColors = [];
+    deviceToken: string;
     //toastNetwork: any;
     constructor(public app: App, public http: HttpClient, public alertCtrl: AlertController, public platform: Platform,
         public loadingCtrl: LoadingController, public storage: Storage, public events: Events, private fileTransfer: FileTransfer, private toast: ToastController) {
@@ -231,7 +231,7 @@ export class ServicesProvider {
             return new Promise(resolve => {
                 // alert(JSON.stringify(this.baseUrl + 'zePortalAPI/api/mylakatamia/' + myservice, {params}));
                 const popup = this.alertCtrl.create({
-                    title: 'Πρόβλημα1',
+                    title: 'Πρόβλημα',
                     message: this.baseUrl + "zePortalAPI/api/mylakatamia/" + myservice, //Υπάρχει πρόβλημα στην επικοινωνία με τον εξυπηρετητή"
                     buttons: ['ΕΝΤΑΞΕΙ']
                 });
@@ -309,7 +309,7 @@ export class ServicesProvider {
                             console.log(err.message)
                             //console.log(JSON.parse(params))
                             const popup = this.alertCtrl.create({
-                                title: 'Πρόβλημα1',
+                                title: 'Πρόβλημα',
                                 message: "Υπάρχει πρόβλημα στην επικοινωνία με τον εξυπηρετητή", // err.message
                                 buttons: ['ΕΝΤΑΞΕΙ']
                             });
@@ -552,7 +552,7 @@ export class ServicesProvider {
                 .set('sortby', 'F491CRTDATE')
                 .set('sortorder', 'DESC')
                 .set('currentpage', '1')
-                .set('pagesize', '10')
+                .set('pagesize', '99')
                 .set('count', '0')
                 .set('runoption', 'I')
                 .set('USER_UI_LANGUAGE', this.language)

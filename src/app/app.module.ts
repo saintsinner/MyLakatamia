@@ -25,8 +25,10 @@ import { InAppBrowser } from '@ionic-native/in-app-browser';
 import { SocialSharing } from '@ionic-native/social-sharing';
 import { AppPreferences } from '@ionic-native/app-preferences';
 import { PhotoViewer } from '@ionic-native/photo-viewer';
-import { SelectSearchableModule } from 'ionic-select-searchable';
+//import { SelectSearchableModule } from 'ionic-select-searchable';
+import { IonicSelectableModule } from 'ionic-selectable';
 import { Firebase } from '@ionic-native/firebase';
+import { Badge } from '@ionic-native/badge';
 
 //import { SocialSharing } from '@ionic-native/social-sharing';
 import { SafePipe } from '../pipes/safe/safe';
@@ -105,7 +107,7 @@ import { SplashScreen } from '@ionic-native/splash-screen';
       HttpClientModule,
 	  FormsModule,
 	  IonicStorageModule.forRoot(),
-	  SelectSearchableModule
+	  IonicSelectableModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -167,7 +169,8 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 	AppPreferences,
 	SocialSharing,
 	PhotoViewer,
-	Firebase
+	Firebase,
+	Badge
   ]
 })
 export class AppModule {}

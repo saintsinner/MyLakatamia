@@ -19,6 +19,6 @@
 <ion-content padding>
   <ion-item>
     <ion-label>Ειδοποιήσεις</ion-label>
-    <ion-toggle [(ngModel)]="servicesProvider.notificationsOn" (ionChange)="notify($event)"></ion-toggle>
+    <ion-toggle [(ngModel)]="servicesProvider.notificationsOn" (ionChange)="notify($event)" [disabled]="!servicesProvider.online"></ion-toggle>
   </ion-item>
 </ion-content>
