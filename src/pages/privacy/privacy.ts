@@ -127,7 +127,7 @@ import { HomePage } from '../home/home';
         //this.servicesProvider.checkNetwork();
 
         this.pageId = '1028';
-        this.storageId = 'ContactPage';
+        this.storageId = 'PrivacyPage';
         this.doRefresh(this.myrefresher);
 
         //console.log('ionViewDidLoad LakatamiaPage');
