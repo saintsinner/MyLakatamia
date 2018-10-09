@@ -62,6 +62,8 @@ import { SubmitComplaintPage } from '../pages/submit-complaint/submit-complaint'
 import { SubmitProblemPage } from '../pages/submit-problem/submit-problem';
 import { YpovoliApopsisEisigisisPage } from '../pages/ypovoli-apopsis-eisigisis/ypovoli-apopsis-eisigisis';
 import { CreditsPage } from '../pages/credits/credits';
+import { TermsPage } from '../pages/terms/terms';
+import { PrivacyPage } from '../pages/privacy/privacy';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
@@ -99,7 +101,9 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 	SubmitProblemPage,
 	YpovoliApopsisEisigisisPage,
 	CreditsPage,
-	SafePipe
+	SafePipe,
+	TermsPage,
+	PrivacyPage
   ],
   imports: [
     BrowserModule,
@@ -140,7 +144,9 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 	SubmitComplaintPage,
 	SubmitProblemPage,
 	YpovoliApopsisEisigisisPage,
-	CreditsPage
+	CreditsPage,
+	TermsPage,
+	PrivacyPage
   ],
   providers: [
 	ServicesProvider,

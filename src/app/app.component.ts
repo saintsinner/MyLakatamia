@@ -14,6 +14,8 @@ import { ChangePasswordPage } from '../pages/change-password/change-password';
 import { LoginPage } from '../pages/login/login';
 import { SettingsPage } from '../pages/settings/settings';
 import { CreditsPage } from '../pages/credits/credits';
+import { TermsPage } from '../pages/terms/terms';
+import { PrivacyPage } from '../pages/privacy/privacy';
 import { Firebase } from '@ionic-native/firebase';
 import { Badge } from '@ionic-native/badge';
 
@@ -45,6 +47,8 @@ export class MyApp {
     { title: 'Αλλαγή Κωδικού', name: 'ChangePasswordPage', component: ChangePasswordPage, icon: 'md-lock', online: true },
     { title: 'Έξοδος', name: 'HomePage', component: HomePage, icon: 'md-log-out', logsOut: true },
     { title: 'Ρυθμίσεις', name: 'SettingsPage', component: SettingsPage, icon: 'md-settings' },
+    { title: 'Όροι Χρήσης', name: 'TermsPage', component: TermsPage, icon: 'ios-paper' },
+    { title: 'Πολιτική Απορρήτου', name: 'PrivacyPage', component: PrivacyPage, icon: 'md-finger-print' },
     { title: 'Εφαρμογή', name: 'CreditsPage', component: CreditsPage, icon: 'md-bookmark' }
   ];
   loggedOutPages: PageInterface[] = [
@@ -52,6 +56,8 @@ export class MyApp {
     { title: 'Εγγραφή', name: 'ProfilePage', component: ProfilePage, icon: 'md-person', online: true },
     { title: 'Είσοδος', name: 'LoginPage', component: LoginPage, icon: 'md-log-in', online: true },
     { title: 'Ρυθμίσεις', name: 'SettingsPage', component: SettingsPage, icon: 'md-settings' },
+    { title: 'Όροι Χρήσης', name: 'TermsPage', component: TermsPage, icon: 'ios-paper' },
+    { title: 'Πολιτική Απορρήτου', name: 'PrivacyPage', component: PrivacyPage, icon: 'md-finger-print' },
     { title: 'Εφαρμογή', name: 'CreditsPage', component: CreditsPage, icon: 'md-bookmark' }
   ];
 

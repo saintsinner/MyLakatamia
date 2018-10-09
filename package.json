@@ -134,12 +134,12 @@
       "cordova-plugin-network-information": {},
       "cordova-plugin-app-preferences": {},
       "com-sarriaroman-photoviewer": {},
-      "cordova-plugin-console": {},
       "cordova-plugin-screen-orientation": {},
       "cordova.plugins.diagnostic": {},
       "cordova-support-google-services": {},
       "cordova-plugin-firebase": {},
-      "cordova-plugin-badge": {}
+      "cordova-plugin-badge": {},
+      "cordova-plugin-console": {}
     },
     "platforms": [
       "browser"

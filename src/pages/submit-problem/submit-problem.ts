@@ -1,4 +1,4 @@
-import { Component, ViewChild, NgModule } from '@angular/core';
+import { Component, ViewChild, NgModule, ElementRef } from '@angular/core';
 import { NavController, NavParams, AlertController, Events, Platform, ActionSheetController, normalizeURL } from 'ionic-angular';
 //import { HTTP } from '@ionic-native/http';
 import { ServicesProvider } from '../../providers/services/services';
@@ -57,6 +57,12 @@ export class SubmitProblemPage {
   dataset: any;
   addresses: any;
   isDataAvailable: boolean = false;
+  isMapAvailable: boolean = true;
+  startingLat: any;
+  startingLng: any;
+  laterLat: any;
+  laterLng: any;
+  mapState: any;
   currentpage = 0;
   private myFormGroup: FormGroup;
   titleLength = 100;
@@ -77,6 +83,7 @@ export class SubmitProblemPage {
   public base64Image: string;
   showVisible = "True";
   map: GoogleMap;
+  @ViewChild('map') mapH: ElementRef;
   constructor(public navCtrl: NavController, public navParams: NavParams, public geolocation: Geolocation,
     private formBuilder: FormBuilder, public servicesProvider: ServicesProvider, public events: Events,
     public alertCtrl: AlertController, public storage: Storage, public platform: Platform, private camera: Camera,
@@ -176,31 +183,35 @@ export class SubmitProblemPage {
     this.isDataAvailable = true;
   }
 
-  /*let marker: Marker = this.map.addMarkerSync({
-    title: 'Βρίσκεσε εδώ',
-    icon: 'blue',
-    draggable: true ,
-    animation: 'DROP',
-    position: {
-      lat: res.coords.latitude,
-      lng: res.coords.longitude
-    }
-  }); */
-  /*let markerOptions: MarkerOptions = {
-    position: {
-      lat: res.coords.latitude,
-      lng: res.coords.longitude
-    },
-    title: 'My position',
-    snippet: "Soprendente",
-    draggable: true
-  };
-  this.map.addMarker(markerOptions).then((maker: Marker) => {
-    maker.showInfoWindow();
-    maker.addEventListener(GoogleMapsEvent.MARKER_DRAG_END).subscribe((some: any) => {
-      maker.getPosition()
-    })*/
+   /* showMap($event){
+    
+      if ($event.checked)
+      {
+       // this.isMapAvailable = false;
+       // this.mapH.nativeElement.style.height = 0 + '%'
+        this.myFormGroup.patchValue({ latitude:'' });
+        this.myFormGroup.patchValue({ longitude: '' });
 
+      }
+       
+       if (!$event.checked)
+      {
+        //this.isMapAvailable = true;
+        
+
+        if (this.mapState == 1){
+          this.myFormGroup.patchValue({ latitude: this.startingLat });
+          this.myFormGroup.patchValue({ longitude: this.startingLng });
+        }
+
+        if (this.mapState == 2){
+        this.myFormGroup.patchValue({ latitude: this.laterLat });
+        this.myFormGroup.patchValue({ longitude: this.laterLng });
+        }
+      }
+
+    }
+*/
 
 
   loadMap() {
@@ -242,12 +253,19 @@ export class SubmitProblemPage {
 
           this.myFormGroup.patchValue({ latitude: marker.getPosition().lat });
           this.myFormGroup.patchValue({ longitude: marker.getPosition().lng });
+          this.mapState = 2;
+          this.laterLat = marker.getPosition().lat;
+          this.laterLng = marker.getPosition().lng;
 
         });
       });
 
       this.myFormGroup.patchValue({ latitude: res.coords.latitude.toString() });
       this.myFormGroup.patchValue({ longitude: res.coords.longitude.toString() });
+      this.mapState = 1;
+      this.startingLat = res.coords.latitude.toString();
+      this.startingLng = res.coords.longitude.toString();
+
     }).catch((error) => {
       console.log('Error getting location', error.message);
     });
@@ -424,7 +442,7 @@ export class SubmitProblemPage {
         lastName: this.myFormGroup.value['lastName'],
         email: this.myFormGroup.value['email'],
         phone: this.myFormGroup.value['phone'],
-        address: this.selectedAddress,//this.myFormGroup.value['address'],
+        address: this.myFormGroup.value['address'],
         houseNumber: this.myFormGroup.value['houseNumber'],
         contId: (this.servicesProvider.contID == null ? '' : this.servicesProvider.contID),
         lang: this.servicesProvider.language,

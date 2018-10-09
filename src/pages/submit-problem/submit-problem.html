@@ -14,6 +14,14 @@
 
 
 <ion-content padding>
+
+  <!-- <ion-item>
+    <ion-label style="color:darkgray;">Χωρίς Χρήση Χάρτη</ion-label>
+    <ion-checkbox (ionChange)="showMap($event)"></ion-checkbox>
+  </ion-item> -->
+  <ion-item>
+    <ion-label style="color:darkgray;">Eπιλογή Τοποθεσίας στο Χάρτη</ion-label>
+  </ion-item>
   <div id="map"></div>
   <form [formGroup]="myFormGroup" (ngSubmit)="submitForm()">
     <div *ngIf="servicesProvider.contID==null">
@@ -60,9 +68,9 @@
       <ion-label floating>Περιγραφή
         <span style="color:#ff0000!important;"> * ({{descriptionLength.toString()}} χαρακτήρες)</span>
       </ion-label>
-      <ion-textarea formControlName="description" maxlength="{{descriptionLength.toString()}}"></ion-textarea>
+      <ion-textarea type="text" formControlName="description" maxlength="{{descriptionLength.toString()}}"></ion-textarea>
     </ion-item>
-     <!-- <ion-item><ion-searchbar (ionInput)="getAddress($event)"></ion-searchbar></ion-item>
+    <!-- <ion-item><ion-searchbar (ionInput)="getAddress($event)"></ion-searchbar></ion-item>
     <ion-item>
      <ion-label floating>Οδός  
         <span style="color:#ff0000!important;"> *</span>
@@ -72,23 +80,13 @@
       </select-searchable>
     </ion-item> -->
     <ion-item>
-        <ion-label floating>Οδός</ion-label>
-        <ionic-selectable
-            item-content
-            [(ngModel)]="streets"
-            formControlName="address"
-            [items]="addresses"
-            itemValueField="F083ID"
-            itemTextField="F083ADDRESS"
-            [canSearch]="true"
-            [canClear]="true"
-            searchPlaceholder="Αναζήτηση"
-            okButtonText="EΠΙΛΟΓΗ"
-            clearButtonText="ΚΑΘΑΡΙΣΜΑ"
-            closeButtonText="ΑΚΥΡΟ"
-            [shouldStoreItemValue]="true"
-            (onChange)="addressChange($event)">
-        </ionic-selectable>
+      <ion-label floating>Οδός
+        <span style="color:#ff0000!important;"> * </span>
+      </ion-label>
+      <ionic-selectable item-content [(ngModel)]="streets" formControlName="address" [items]="addresses" itemValueField="F083ID"
+        itemTextField="F083ADDRESS" [canSearch]="true" [canClear]="true" searchPlaceholder="Αναζήτηση" okButtonText="EΠΙΛΟΓΗ"
+        clearButtonText="ΚΑΘΑΡΙΣΜΑ" closeButtonText="ΑΚΥΡΟ" [shouldStoreItemValue]="true" (onChange)="addressChange($event)">
+      </ionic-selectable>
     </ion-item>
     <ion-item>
       <ion-label floating>Αριθμός
@@ -96,13 +94,13 @@
       </ion-label>
       <ion-input type="text" formControlName="houseNumber" maxlength="{{houseNumberLength.toString()}}"></ion-input>
     </ion-item>
-    <ion-item>
+    <ion-item [hidden]="true">
       <ion-label floating>Τοποθεσία
       </ion-label>
-     <!-- <ion-input formControlName="latlng" placeholder="Lat and Lng"></ion-input> -->
       <ion-input formControlName="latitude" placeholder="latitude"></ion-input>
       <ion-input formControlName="longitude" placeholder="longitude"></ion-input>
     </ion-item>
+
 
     <div style="text-align: center; padding-top: 20px;">
       <ion-badge ion-button block outline (click)="presentActionSheet()">
@@ -122,8 +120,7 @@
         </ion-row>
       </ion-grid>
     </div>
-
-    <button ion-button type="submit" full>Υποβολη</button>
-
+    <button ion-button type="submit" full>Υποβολη</button>  
   </form>
+
 </ion-content>
